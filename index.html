@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GIG SQUAD">
+<meta name="theme-color" content="#0d0d14">
+<link rel="manifest" href="manifest.json">
+<title>GIG SQUAD</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d14;--surface:#14141f;--card:#1a1a2a;--border:rgba(255,255,255,.07);
+  --za:#FF6FD8;--zb:#FF9B5E;--la:#5EE7DF;--lb:#6C63FF;
+  --gold:#FFD166;--green:#06D6A0;--red:#EF476F;--xp:#A78BFA;
+  --text:#F0F0FF;--muted:rgba(240,240,255,.42);
+  --safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-top:var(--safe-top)}
+
+/* ── MESH BG ── */
+.mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.mesh span{position:absolute;border-radius:50%;filter:blur(90px);opacity:.14}
+.m1{width:500px;height:500px;background:var(--za);top:-120px;left:-100px;animation:drift 12s ease-in-out infinite alternate}
+.m2{width:400px;height:400px;background:var(--lb);bottom:-80px;right:-80px;animation:drift 15s ease-in-out infinite alternate-reverse}
+.m3{width:320px;height:320px;background:var(--la);top:40%;left:55%;animation:drift 10s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,30px) scale(1.12)}}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 20px 40px;overflow-y:auto}
+#login-screen.h{display:none}
+.ls-logo{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;background:linear-gradient(120deg,var(--za),var(--gold),var(--la));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;text-align:center}
+.ls-sub{font-size:.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:36px;text-align:center}
+.ls-who{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;text-align:center}
+.profile-cards{display:flex;gap:14px;margin-bottom:32px;flex-wrap:wrap;justify-content:center}
+.pcard{width:140px;padding:24px 16px;border-radius:24px;border:1px solid var(--border);background:var(--card);cursor:pointer;text-align:center;transition:all .25s;user-select:none}
+.pcard:active{transform:scale(.95)}
+.pcard.zp{border-color:rgba(255,111,216,.25)}
+.pcard.lp{border-color:rgba(94,231,223,.25)}
+.pcard.pp{border-color:rgba(248,113,113,.25)}
+.pcard.selected.zp{background:linear-gradient(135deg,rgba(255,111,216,.18),rgba(255,155,94,.08));border-color:var(--za);box-shadow:0 0 28px rgba(255,111,216,.25)}
+.pcard.selected.lp{background:linear-gradient(135deg,rgba(94,231,223,.18),rgba(108,99,255,.1));border-color:var(--la);box-shadow:0 0 28px rgba(94,231,223,.25)}
+.pcard.selected.pp{background:linear-gradient(135deg,rgba(248,113,113,.14),rgba(239,71,111,.06));border-color:#f87171;box-shadow:0 0 28px rgba(248,113,113,.2)}
+.pcard-av{font-size:3rem;margin-bottom:10px;display:block}
+.pcard-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:3px}
+.pcard-role{font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+
+/* PIN pad */
+.pin-section{width:100%;max-width:280px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.pin-section.h{display:none}
+.pin-who{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;text-align:center}
+.pin-dots{display:flex;gap:14px}
+.pdot{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.2);transition:all .15s}
+.pdot.filled{background:var(--za);border-color:var(--za)}
+.pdot.filled.lp{background:var(--la);border-color:var(--la)}
+.pdot.filled.pp{background:#f87171;border-color:#f87171}
+.pin-err{font-size:.78rem;color:var(--red);font-weight:700;min-height:18px;text-align:center}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.pk{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;padding:15px;border-radius:16px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;text-align:center}
+.pk:active{transform:scale(.92);background:rgba(255,255,255,.1)}
+.pk.sm{font-size:.8rem;color:var(--muted)}
+.pin-hint{font-size:.68rem;color:var(--muted);text-align:center;line-height:1.5}
+
+/* ── MAIN APP ── */
+#main-app{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 16px 90px}
+#main-app.h{display:none}
+
+header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items:center}
+.hdr-name{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800}
+.hdr-logout{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:100px;padding:7px 14px;cursor:pointer;transition:all .2s}
+.hdr-logout:active{background:rgba(255,255,255,.08)}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(10,10,18,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 calc(8px + var(--safe-bot))}
+.bn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border-radius:12px;cursor:pointer;transition:all .2s;border:none;background:transparent;color:var(--muted)}
+.bn .bni{font-size:1.35rem;line-height:1}
+.bn .bnl{font-size:.56rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.bn.on{color:var(--text)}
+.bn.on.nz{color:var(--za)}
+.bn.on.nl{color:var(--la)}
+.bn.on.nb{color:var(--gold)}
+.bn.on.ns{color:#34d399}
+.bn.on.np{color:#f87171}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeUp .28s ease both}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── WALLET ── */
+.wallet{border-radius:26px;padding:24px 22px 20px;position:relative;overflow:hidden;margin-bottom:16px}
+.wallet.zw{background:linear-gradient(135deg,#3d1030,#2a0d22);border:1px solid rgba(255,111,216,.18)}
+.wallet.lw{background:linear-gradient(135deg,#0d2535,#0d1525);border:1px solid rgba(94,231,223,.18)}
+.wglow{position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;opacity:.2;filter:blur(50px)}
+.zw .wglow{background:var(--za)}.lw .wglow{background:var(--la)}
+.wtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;position:relative}
+.wname{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;line-height:1}
+.wage{font-size:.66rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.wavatar{font-size:2.6rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
+.strbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.2);border-radius:100px;padding:4px 11px;font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:10px}
+
+/* Money row */
+.money-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px}
+.wmoney{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;line-height:1}
+.cashout-btn{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;padding:8px 16px;border-radius:100px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold),#f97316);color:#1a0800;letter-spacing:.5px;transition:all .2s;white-space:nowrap;align-self:center}
+.cashout-btn:active{transform:scale(.94)}
+.wmoneysub{font-size:.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600}
+.plabel{display:flex;justify-content:space-between;font-size:.66rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.ptrack{height:9px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;margin-bottom:16px}
+.pfill{height:100%;border-radius:100px;transition:width .9s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.pfill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shim 2.2s infinite}
+@keyframes shim{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+.zw .pfill{background:linear-gradient(90deg,var(--za),var(--zb))}.lw .pfill{background:linear-gradient(90deg,var(--la),var(--lb))}
+
+/* ── FORTNITE XP BAR ── */
+.xp-section{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.12);border-radius:16px;padding:12px 14px;margin-bottom:4px}
+.xp-top-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.xp-level-badge{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#7c3aed,var(--xp));font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:white;flex-shrink:0;box-shadow:0 4px 16px rgba(124,58,237,.4);position:relative}
+.xp-level-badge::before{content:'LVL';position:absolute;top:4px;left:0;right:0;text-align:center;font-size:.42rem;font-weight:800;letter-spacing:1px;color:rgba(255,255,255,.6)}
+.xp-level-num{margin-top:6px}
+.xp-title-col{flex:1}
+.xp-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--xp);margin-bottom:1px}
+.xp-subtitle{font-size:.65rem;color:var(--muted);font-weight:600}
+.xp-bar-wrap{position:relative}
+.xp-bar-track{height:12px;background:rgba(167,139,250,.12);border-radius:100px;overflow:hidden;margin-bottom:4px;border:1px solid rgba(167,139,250,.15)}
+.xp-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#7c3aed,var(--xp),#c4b5fd);transition:width 1s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.xp-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:shim 1.8s infinite}
+.xp-bar-labels{display:flex;justify-content:space-between;font-size:.62rem;font-weight:700;color:rgba(167,139,250,.6)}
+.xp-next-badge{font-size:.62rem;color:rgba(167,139,250,.5);text-align:right}
+
+.chips{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:5px 11px;font-size:.7rem;font-weight:700}
+.chip.g{color:var(--green);border-color:rgba(6,214,160,.2)}.chip.p{color:var(--xp);border-color:rgba(167,139,250,.2)}.chip.y{color:var(--gold);border-color:rgba(255,209,102,.2)}
+
+/* ── XP STORE ── */
+.xpstore{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(167,139,250,.05));border:1px solid rgba(167,139,250,.15);border-radius:18px;padding:14px 16px;margin-bottom:18px}
+.xpsttl{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--xp);margin-bottom:10px}
+.xpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:7px}
+.xpitem{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.13);border-radius:12px;padding:10px;text-align:center;cursor:pointer;transition:all .2s}
+.xpitem:active{transform:scale(.95)}
+.xpitem.claimed{opacity:.4;cursor:default;pointer-events:none}
+.xre{font-size:1.5rem;display:block;margin-bottom:3px}
+.xrn{font-size:.67rem;font-weight:700;margin-bottom:3px}
+.xrc{font-size:.62rem;font-weight:800;color:var(--xp);letter-spacing:1px}
+
+/* ── SECTION TITLE ── */
+.stitle{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.pill{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid var(--border);padding:2px 8px;border-radius:100px;color:var(--muted)}
+
+/* ── GIG GRID ── */
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:24px}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;user-select:none}
+.gc:active{transform:scale(.96)}
+.gc.done{opacity:.4;cursor:default;pointer-events:none}
+.gc.core{border-left:2px solid rgba(255,255,255,.1)}
+.gctop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.gce{font-size:1.75rem}.gcr{text-align:right}
+.gcpay{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;background:linear-gradient(135deg,var(--gold),#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gcxp{font-size:.62rem;font-weight:700;color:var(--xp);letter-spacing:1px}
+.gccl{font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.2);text-align:right}
+.gcn{font-weight:700;font-size:.88rem;margin-bottom:2px;line-height:1.2}
+.gcd{font-size:.7rem;color:var(--muted);line-height:1.35;margin-bottom:8px}
+.gcfoot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.gctags{display:flex;gap:4px;flex-wrap:wrap}
+.gtag{font-size:.57rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:100px}
+.t-physical{background:rgba(255,111,216,.13);color:var(--za)}.t-brain{background:rgba(108,99,255,.13);color:#a78bfa}.t-creative{background:rgba(94,231,223,.13);color:var(--la)}.t-social{background:rgba(255,209,102,.13);color:var(--gold)}.t-core{background:rgba(255,255,255,.05);color:rgba(255,255,255,.26)}.t-bonus{background:rgba(6,214,160,.13);color:var(--green)}
+.gcfreq{font-size:.56rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.17)}
+.dstamp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem;animation:pop .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── BOARD FILTERS ── */
+.bhero{background:linear-gradient(135deg,rgba(255,209,102,.12),rgba(249,115,22,.07));border:1px solid rgba(255,209,102,.16);border-radius:22px;padding:18px 20px;margin-bottom:18px}
+.bhtitle{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:3px}
+.bhsub{font-size:.74rem;color:var(--muted);font-weight:600}
+.filter-group{margin-bottom:14px}
+.filter-label{font-size:.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.frow{display:flex;gap:7px;flex-wrap:wrap}
+.fp{font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;transition:all .2s}
+.fp.on{background:white;color:#0d0d14;border-color:white}
+.fp.onz{background:var(--za);color:white;border-color:var(--za)}
+.fp.onl{background:var(--la);color:#0d2535;border-color:var(--la)}
+
+/* ── SCOREBOARD ── */
+.sb-hero{background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(6,214,160,.06));border:1px solid rgba(52,211,153,.18);border-radius:22px;padding:20px 22px;margin-bottom:20px;text-align:center}
+.sb-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:4px}
+.sb-sub{font-size:.76rem;color:var(--muted);font-weight:600}
+.sb-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.sb-card{border-radius:20px;padding:18px;text-align:center;position:relative;overflow:hidden}
+.sb-card.zc{background:linear-gradient(135deg,#3d1030,#2a0d22);border:1px solid rgba(255,111,216,.22)}
+.sb-card.lc{background:linear-gradient(135deg,#0d2535,#0d1525);border:1px solid rgba(94,231,223,.22)}
+.sb-card .glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:120px;height:120px;border-radius:50%;filter:blur(40px);opacity:.25}
+.sb-card.zc .glow{background:var(--za)}.sb-card.lc .glow{background:var(--la)}
+.sb-av{font-size:2.6rem;margin-bottom:6px;position:relative}
+.sb-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:2px}
+.sb-level-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#7c3aed,var(--xp));border-radius:100px;padding:4px 12px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;color:white;margin-bottom:10px}
+.sb-stat{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:.76rem}
+.sb-stat:last-of-type{border:none}
+.sb-sl{color:var(--muted);font-weight:600}
+.sb-sv{font-weight:800}
+.sb-lead{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:16px}
+.sb-lead-title{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.cat-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+.cat-row:last-of-type{border:none}
+.cat-name{flex:1;font-size:.78rem;font-weight:600}
+.cat-bar-wrap{flex:2;display:flex;gap:4px;align-items:center}
+.cat-bar{height:8px;border-radius:100px;min-width:4px;transition:width .8s ease}
+.cat-bar.zbar{background:linear-gradient(90deg,var(--za),var(--zb))}
+.cat-bar.lbar{background:linear-gradient(90deg,var(--la),var(--lb))}
+.cat-num{font-size:.68rem;font-weight:700;min-width:28px;text-align:right}
+
+/* ── BUDGET ── */
+.budhero{border-radius:22px;padding:20px;margin-bottom:18px;background:linear-gradient(135deg,rgba(6,214,160,.09),rgba(5,150,105,.05));border:1px solid rgba(6,214,160,.15)}
+.budtitle{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:3px;color:var(--green)}
+.budsub{font-size:.74rem;color:var(--muted);line-height:1.5}
+.rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+.rc{border-radius:16px;padding:14px;border:1px solid var(--border);text-align:center}
+.rcn{background:linear-gradient(135deg,rgba(239,71,111,.1),rgba(239,71,111,.04));border-color:rgba(239,71,111,.16)}
+.rcw{background:linear-gradient(135deg,rgba(255,209,102,.1),rgba(255,209,102,.04));border-color:rgba(255,209,102,.16)}
+.rcs{background:linear-gradient(135deg,rgba(6,214,160,.1),rgba(6,214,160,.04));border-color:rgba(6,214,160,.16)}
+.rcpct{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:1px}
+.rcn .rcpct{color:var(--red)}.rcw .rcpct{color:var(--gold)}.rcs .rcpct{color:var(--green)}
+.rclbl{font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.rcamt{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:3px}
+.rcdesc{font-size:.62rem;color:var(--muted);line-height:1.3}
+.biarea{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--border)}
+.bititle{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:11px}
+.birow{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.biemoji{font-size:1.25rem;min-width:26px}
+.bilabel{flex:1;font-size:.8rem;font-weight:600;min-width:130px}
+.biinput{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:7px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;width:85px;text-align:right}
+.biinput:focus{outline:none;border-color:rgba(6,214,160,.4)}
+.bicat{font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:100px;min-width:44px;text-align:center}
+.bicat.n{background:rgba(239,71,111,.13);color:var(--red)}.bicat.w{background:rgba(255,209,102,.13);color:var(--gold)}.bicat.s{background:rgba(6,214,160,.13);color:var(--green)}
+.budsub2{width:100%;padding:12px;border-radius:13px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--green),#059669);color:white;letter-spacing:1px;transition:all .2s;margin-bottom:12px}
+.bres{background:var(--card);border-radius:16px;padding:16px;border:1px solid var(--border);display:none}
+.brrow{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.brrow:last-of-type{border:none}
+.brval{font-weight:800}.brstatus{font-size:.64rem;font-weight:700;padding:2px 7px;border-radius:100px}
+.sg{background:rgba(6,214,160,.13);color:var(--green)}.so{background:rgba(239,71,111,.13);color:var(--red)}
+.scoredisp{text-align:center;padding:16px 0 3px;font-family:'Syne',sans-serif;font-size:2rem;font-weight:800}
+
+/* ── PARENT DASHBOARD ── */
+.pg-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 0 40px;min-height:60vh;gap:18px}
+.pg-wrap.h{display:none}
+.pdash{display:none;animation:fadeUp .3s ease}
+.pdash.on{display:block}
+.pd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.pd-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800}
+.pd-lock{font-size:.7rem;font-weight:700;color:var(--red);background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.18);border-radius:100px;padding:6px 13px;cursor:pointer}
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:20px}
+.pd-card{border-radius:18px;padding:16px;border:1px solid var(--border)}
+.pd-card.zcard{background:linear-gradient(135deg,rgba(255,111,216,.1),rgba(255,155,94,.05));border-color:rgba(255,111,216,.18)}
+.pd-card.lcard{background:linear-gradient(135deg,rgba(94,231,223,.1),rgba(108,99,255,.05));border-color:rgba(94,231,223,.18)}
+.pdc-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px}
+.pdc-row{display:flex;justify-content:space-between;margin-bottom:5px;font-size:.75rem}
+.pdc-lbl{color:var(--muted);font-weight:600}.pdc-val{font-weight:800}
+.pdc-val.mo{color:var(--gold)}.pdc-val.xc{color:var(--xp)}.pdc-val.gc{color:var(--green)}.pdc-val.sc{color:#fb923c}
+.logarea{background:var(--card);border-radius:18px;padding:16px;margin-bottom:18px;border:1px solid var(--border)}
+.log-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.log-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700}
+.log-clr{font-size:.66rem;font-weight:700;color:var(--muted);cursor:pointer;padding:4px 10px;border:1px solid var(--border);border-radius:100px}
+.logitem{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:.75rem}
+.logitem:last-of-type{border:none}
+.logi-e{font-size:1.1rem}
+.logi-info{flex:1}.logi-name{font-weight:700}.logi-who{color:var(--muted);font-size:.68rem}
+.logi-rew{font-size:.7rem;font-weight:700;color:var(--gold);text-align:right}
+.no-log{font-size:.8rem;color:var(--muted);text-align:center;padding:14px 0}
+.mgr-sec{background:var(--card);border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid var(--border)}
+.mgr-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:12px}
+.mgr-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)}
+.mgr-item:last-of-type{border:none}
+.mgr-e{font-size:1.2rem}.mgr-info{flex:1}
+.mgr-name{font-size:.82rem;font-weight:700}.mgr-meta{font-size:.66rem;color:var(--muted)}
+.mgr-del{font-size:.7rem;font-weight:700;color:var(--red);background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.16);border-radius:100px;padding:4px 10px;cursor:pointer;white-space:nowrap}
+.add-form{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:10px}
+.af-title{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.af-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.af-input{flex:1;min-width:110px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:8px 11px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600}
+.af-input:focus{outline:none;border-color:rgba(255,255,255,.18)}
+.af-sel{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:8px 9px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.8rem}
+.af-sel option{background:#1a1a2a}
+.af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.af-lbl{font-size:.62rem;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
+.af-num{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;text-align:center;width:100%}
+.af-num:focus{outline:none}
+.af-add{width:100%;padding:11px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#f87171,#ef4444);color:white;letter-spacing:1px;transition:all .2s;margin-top:4px}
+.pend-approve{font-size:.7rem;font-weight:700;color:var(--green);background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.18);border-radius:100px;padding:4px 10px;cursor:pointer}
+.ctrl-row{display:flex;gap:10px;flex-wrap:wrap}
+.ctrl-btn{flex:1;min-width:130px;padding:12px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
+.ctrl-month{background:linear-gradient(135deg,var(--gold),#f97316);color:#1a0800}
+.ctrl-day{background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border)}
+.pinchange{background:var(--card);border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid var(--border)}
+.pc-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:10px}
+.pc-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.pc-who{font-size:.72rem;font-weight:700;color:var(--muted);min-width:55px}
+.pc-input{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:8px 10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;width:95px;letter-spacing:3px;text-align:center}
+.pc-input:focus{outline:none}
+.pc-btn{padding:8px 16px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,.08);color:var(--text)}
+.cashout-sec{background:var(--card);border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid rgba(255,209,102,.15)}
+.co-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--gold);margin-bottom:10px}
+.co-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.co-item:last-of-type{border:none}
+.co-name{font-weight:600}.co-amt{font-weight:800;color:var(--gold)}
+
+/* ── CASH-OUT MODAL ── */
+.co-modal{max-width:360px}
+.co-slider-wrap{padding:8px 0 12px}
+.co-amount-display{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;text-align:center;color:var(--gold);margin:8px 0}
+.co-slider{width:100%;-webkit-appearance:none;appearance:none;height:8px;background:rgba(255,209,102,.15);border-radius:100px;outline:none;margin-bottom:8px}
+.co-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#f97316);cursor:pointer;box-shadow:0 2px 12px rgba(255,209,102,.4)}
+.co-range-labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);font-weight:700}
+.co-confirm{width:100%;padding:13px;border-radius:14px;border:none;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--gold),#f97316);color:#1a0800;letter-spacing:.5px;margin-top:8px}
+
+/* ── FLYING MONEY ── */
+.fly-money{position:fixed;pointer-events:none;z-index:9999;font-size:2rem;animation:flyout linear forwards;will-change:transform,opacity}
+@keyframes flyout{0%{transform:translate(-50%,-50%) scale(.5) rotate(var(--r));opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.4) rotate(calc(var(--r) + 360deg));opacity:0}}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.overlay.h{display:none}
+.modal{background:var(--surface);border:1px solid rgba(255,255,255,.09);border-radius:26px;padding:30px 26px;max-width:380px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.7)}to{transform:scale(1)}}
+.micon{font-size:3.5rem;display:block;margin-bottom:9px}
+.mtitle{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;margin-bottom:7px}
+.mmsg{font-size:.86rem;color:var(--muted);line-height:1.5;margin-bottom:5px}
+.mearn{display:flex;gap:9px;justify-content:center;margin:11px 0;flex-wrap:wrap}
+.ep{padding:7px 16px;border-radius:100px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700}
+.epm{background:rgba(255,209,102,.15);border:1px solid rgba(255,209,102,.25);color:var(--gold)}
+.epx{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.25);color:var(--xp)}
+.epb{background:rgba(255,107,107,.15);border:1px solid rgba(239,71,111,.25);color:#ff6b6b;font-size:.8rem}
+.mbtn{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;padding:12px 34px;border-radius:100px;border:none;cursor:pointer;letter-spacing:1px;transition:transform .2s;margin-top:7px}
+.mbtn:active{transform:scale(.95)}
+.mbz{background:linear-gradient(135deg,var(--za),var(--zb));color:#fff;box-shadow:0 4px 18px rgba(255,111,216,.28)}
+.mbl{background:linear-gradient(135deg,var(--la),var(--lb));color:#fff;box-shadow:0 4px 18px rgba(108,99,255,.28)}
+.mbp{background:linear-gradient(135deg,#f87171,#ef4444);color:#fff}
+
+/* confetti */
+.cf{position:fixed;pointer-events:none;z-index:9998;border-radius:2px;animation:cffall linear forwards}
+@keyframes cffall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(900deg)}}
+
+/* Custom confirm dialog */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.h{display:none}
+.confirm-box{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 24px;max-width:320px;width:100%;text-align:center}
+.confirm-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:10px}
+.confirm-msg{font-size:.84rem;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-yes{flex:1;padding:12px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#f87171,#ef4444);color:white}
+.confirm-no{flex:1;padding:12px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,.07);color:var(--muted)}
+
+@media(max-width:600px){.rcards{grid-template-columns:1fr}.gg{grid-template-columns:1fr 1fr}.sb-cards{grid-template-columns:1fr 1fr}.pd-grid{grid-template-columns:1fr}.af-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:370px){.gg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="mesh"><span class="m1"></span><span class="m2"></span><span class="m3"></span></div>
+
+<!-- ══════════ LOGIN SCREEN ══════════ -->
+<div id="login-screen">
+  <div class="ls-logo">GIG SQUAD</div>
+  <div class="ls-sub">Who's hustling today?</div>
+  <div class="ls-who">Choose your profile</div>
+  <div class="profile-cards">
+    <div class="pcard zp" id="pc-zara" onclick="selectProfile('zara')">
+      <span class="pcard-av">🌸</span>
+      <div class="pcard-name">Zara</div>
+      <div class="pcard-role">Age 10</div>
+    </div>
+    <div class="pcard lp" id="pc-lune" onclick="selectProfile('lune')">
+      <span class="pcard-av">✨</span>
+      <div class="pcard-name">Luné</div>
+      <div class="pcard-role">Age 12</div>
+    </div>
+    <div class="pcard pp" id="pc-parent" onclick="selectProfile('parent')">
+      <span class="pcard-av">🔐</span>
+      <div class="pcard-name">Parents</div>
+      <div class="pcard-role">Admin</div>
+    </div>
+  </div>
+  <div class="pin-section h" id="pin-section">
+    <div class="pin-who" id="pin-who-label">Enter PIN</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pdot" id="pd0"></div><div class="pdot" id="pd1"></div><div class="pdot" id="pd2"></div><div class="pdot" id="pd3"></div>
+    </div>
+    <div class="pin-err" id="pin-err"></div>
+    <div class="pin-pad">
+      <button class="pk" onclick="pk('1')">1</button><button class="pk" onclick="pk('2')">2</button><button class="pk" onclick="pk('3')">3</button>
+      <button class="pk" onclick="pk('4')">4</button><button class="pk" onclick="pk('5')">5</button><button class="pk" onclick="pk('6')">6</button>
+      <button class="pk" onclick="pk('7')">7</button><button class="pk" onclick="pk('8')">8</button><button class="pk" onclick="pk('9')">9</button>
+      <button class="pk sm" onclick="pkClr()">CLR</button><button class="pk" onclick="pk('0')">0</button><button class="pk sm" onclick="pkDel()">⌫</button>
+    </div>
+    <div class="pin-hint" id="pin-hint"></div>
+  </div>
+</div>
+
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="main-app" class="h">
+  <div id="main-app-inner">
+    <header>
+      <div class="hdr-name" id="hdr-name">GIG SQUAD</div>
+      <div class="hdr-logout" onclick="logout()">← Switch</div>
+    </header>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page on" id="page-dash">
+      <div class="wallet" id="dash-wallet">
+        <div class="wglow"></div>
+        <div class="wtop">
+          <div><div class="wname" id="w-name">🌸 Zara</div><div class="wage" id="w-age">Age 10</div></div>
+          <div class="wavatar" id="w-avatar">🦊</div>
+        </div>
+        <div class="strbadge">🔥 <span id="w-streak">0-day streak · 1.0×</span></div>
+        <div class="money-row">
+          <div>
+            <div class="wmoney" id="w-money">$0.00</div>
+            <div class="wmoneysub">earned this month</div>
+          </div>
+          <button class="cashout-btn" onclick="openCashout()">💸 Cash Out</button>
+        </div>
+        <div class="plabel"><span id="w-pl">$0 of $100</span><span id="w-pr">$100 left</span></div>
+        <div class="ptrack"><div class="pfill" id="w-mfill" style="width:0%"></div></div>
+        <div class="xp-section">
+          <div class="xp-top-row">
+            <div class="xp-level-badge"><span class="xp-level-num" id="w-lvnum">1</span></div>
+            <div class="xp-title-col">
+              <div class="xp-title" id="w-lvtitle">Rookie 🌱</div>
+              <div class="xp-subtitle" id="w-lvsubtitle">0 / 200 XP to Level 2</div>
+            </div>
+          </div>
+          <div class="xp-bar-wrap">
+            <div class="xp-bar-track"><div class="xp-bar-fill" id="w-xfill" style="width:0%"></div></div>
+            <div class="xp-bar-labels"><span id="w-xp-cur">0 XP</span><span id="w-xp-next">Next: 200 XP</span></div>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip g">✅ <span id="w-done">0 gigs</span></div>
+          <div class="chip y">💰 <span id="w-cashed">$0 cashed out</span></div>
+        </div>
+      </div>
+
+      <div class="xpstore"><div class="xpsttl">⚡ XP Rewards Store <span style="font-size:.66rem;color:var(--muted);font-weight:400">— tap to redeem</span></div><div class="xpgrid" id="w-xpgrid"></div></div>
+
+      <div class="stitle">💸 Paid Gigs <span class="pill">Tap to claim</span></div>
+      <div class="gg" id="w-paid"></div>
+      <div class="stitle">🏠 Core Duties <span class="pill">XP only · Must do</span></div>
+      <div class="gg" id="w-core"></div>
+    </div>
+
+    <!-- GIGS BOARD PAGE -->
+    <div class="page" id="page-board">
+      <div class="bhero"><div class="bhtitle">📋 Gig Board</div><div class="bhsub">Browse all gigs, XP &amp; pay.</div></div>
+      <div class="filter-group">
+        <div class="filter-label">Filter by category</div>
+        <div class="frow" id="cat-filters">
+          <button class="fp on" onclick="setFilter('cat','all',this)">All</button>
+          <button class="fp" onclick="setFilter('cat','physical',this)">💪 Physical</button>
+          <button class="fp" onclick="setFilter('cat','brain',this)">🧠 Brain</button>
+          <button class="fp" onclick="setFilter('cat','creative',this)">🎨 Creative</button>
+          <button class="fp" onclick="setFilter('cat','social',this)">🤝 Social</button>
+          <button class="fp" onclick="setFilter('cat','bonus',this)">⭐ Bonus</button>
+          <button class="fp" onclick="setFilter('cat','core',this)">🏠 Core</button>
+        </div>
+      </div>
+      <div class="filter-group" id="user-filter-group" style="display:none">
+        <div class="filter-label">Filter by who completed</div>
+        <div class="frow">
+          <button class="fp on" onclick="setFilter('user','all',this)">Both</button>
+          <button class="fp" onclick="setFilter('user','zara',this)">🌸 Zara</button>
+          <button class="fp" onclick="setFilter('user','lune',this)">✨ Luné</button>
+        </div>
+      </div>
+      <div class="gg" id="board-grid"></div>
+    </div>
+
+    <!-- SCOREBOARD PAGE -->
+    <div class="page" id="page-score">
+      <div class="sb-hero">
+        <div class="sb-title">🏆 Leaderboard</div>
+        <div class="sb-sub">Sibling showdown — XP never lies</div>
+      </div>
+      <div class="sb-cards" id="sb-cards"></div>
+      <div class="sb-lead">
+        <div class="sb-lead-title">📊 Category Breakdown <span style="font-size:.7rem;color:var(--muted);font-weight:400">gigs completed</span></div>
+        <div id="sb-cats"></div>
+      </div>
+    </div>
+
+    <!-- BUDGET PAGE -->
+    <div class="page" id="page-budget">
+      <div class="budhero"><div class="budtitle">💰 Budget Lab — 50/30/20</div><div class="budsub">Split your earnings the smart way.<br><strong style="color:var(--green)">50% Needs · 30% Wants · 20% Save</strong></div></div>
+      <div class="rcards">
+        <div class="rc rcn"><div class="rcpct">50%</div><div class="rclbl">Needs</div><div class="rcamt" id="bn-amt">$0.00</div><div class="rcdesc">Essentials</div></div>
+        <div class="rc rcw"><div class="rcpct">30%</div><div class="rclbl">Wants</div><div class="rcamt" id="bw-amt">$0.00</div><div class="rcdesc">Fun stuff</div></div>
+        <div class="rc rcs"><div class="rcpct">20%</div><div class="rclbl">Save</div><div class="rcamt" id="bs-amt">$0.00</div><div class="rcdesc">Future you</div></div>
+      </div>
+      <div class="biarea"><div class="bititle">📝 Plan your spending</div><div id="bi-list"></div></div>
+      <button class="budsub2" onclick="submitBudget()">✅ Score My Budget!</button>
+      <div class="bres" id="bres">
+        <div style="font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:10px">📊 Budget Report</div>
+        <div id="bres-rows"></div>
+        <div class="scoredisp" id="bscore"></div>
+        <div style="text-align:center;font-size:.76rem;color:var(--muted);margin-top:3px" id="bverdict"></div>
+      </div>
+    </div>
+
+    <!-- PARENT PAGE -->
+    <div class="page" id="page-parent">
+      <div class="pg-wrap" id="pg-gate">
+        <div style="font-size:3.5rem">🔐</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800">Parent Access</div>
+        <div style="font-size:.82rem;color:var(--muted);text-align:center;max-width:240px;line-height:1.5">Enter your parent PIN</div>
+        <div class="pin-dots"><div class="pdot pp" id="ppd0"></div><div class="pdot pp" id="ppd1"></div><div class="pdot pp" id="ppd2"></div><div class="pdot pp" id="ppd3"></div></div>
+        <div class="pin-err" id="pp-err"></div>
+        <div class="pin-pad" style="max-width:240px;width:100%">
+          <button class="pk" onclick="ppk('1')">1</button><button class="pk" onclick="ppk('2')">2</button><button class="pk" onclick="ppk('3')">3</button>
+          <button class="pk" onclick="ppk('4')">4</button><button class="pk" onclick="ppk('5')">5</button><button class="pk" onclick="ppk('6')">6</button>
+          <button class="pk" onclick="ppk('7')">7</button><button class="pk" onclick="ppk('8')">8</button><button class="pk" onclick="ppk('9')">9</button>
+          <button class="pk sm" onclick="ppkClr()">CLR</button><button class="pk" onclick="ppk('0')">0</button><button class="pk sm" onclick="ppkDel()">⌫</button>
+        </div>
+      </div>
+      <div class="pdash" id="pdash">
+        <div class="pd-hdr"><div class="pd-title">👨‍👩‍👧 Parent Hub</div><div class="pd-lock" onclick="lockParent()">🔒 Lock</div></div>
+        <div class="stitle">📊 This Month</div>
+        <div class="pd-grid">
+          <div class="pd-card zcard"><div class="pdc-name">🌸 Zara</div><div class="pdc-row"><span class="pdc-lbl">Earned</span><span class="pdc-val mo" id="pd-z-earn">$0</span></div><div class="pdc-row"><span class="pdc-lbl">Cashed Out</span><span class="pdc-val mo" id="pd-z-co">$0</span></div><div class="pdc-row"><span class="pdc-lbl">XP</span><span class="pdc-val xc" id="pd-z-xp">0</span></div><div class="pdc-row"><span class="pdc-lbl">Level</span><span class="pdc-val" id="pd-z-lv">1</span></div><div class="pdc-row"><span class="pdc-lbl">Gigs</span><span class="pdc-val gc" id="pd-z-gigs">0</span></div><div class="pdc-row"><span class="pdc-lbl">Streak</span><span class="pdc-val sc" id="pd-z-str">0d 🔥</span></div><div class="pdc-row"><span class="pdc-lbl">Budget</span><span class="pdc-val" id="pd-z-bud">—</span></div></div>
+          <div class="pd-card lcard"><div class="pdc-name">✨ Luné</div><div class="pdc-row"><span class="pdc-lbl">Earned</span><span class="pdc-val mo" id="pd-l-earn">$0</span></div><div class="pdc-row"><span class="pdc-lbl">Cashed Out</span><span class="pdc-val mo" id="pd-l-co">$0</span></div><div class="pdc-row"><span class="pdc-lbl">XP</span><span class="pdc-val xc" id="pd-l-xp">0</span></div><div class="pdc-row"><span class="pdc-lbl">Level</span><span class="pdc-val" id="pd-l-lv">1</span></div><div class="pdc-row"><span class="pdc-lbl">Gigs</span><span class="pdc-val gc" id="pd-l-gigs">0</span></div><div class="pdc-row"><span class="pdc-lbl">Streak</span><span class="pdc-val sc" id="pd-l-str">0d 🔥</span></div><div class="pdc-row"><span class="pdc-lbl">Budget</span><span class="pdc-val" id="pd-l-bud">—</span></div></div>
+        </div>
+        <div class="logarea"><div class="log-hdr"><div class="log-title">📋 Activity Log</div><div class="log-clr" onclick="clearLog()">Clear</div></div><div id="log-list"></div></div>
+        <div class="cashout-sec"><div class="co-title">💸 Pending Cash-Outs</div><div id="co-pending-list"></div></div>
+        <div class="mgr-sec"><div class="mgr-title">✏️ Manage Gigs</div><div class="mgr-list" id="mgr-list"></div>
+          <div class="add-form"><div class="af-title">+ Add New Gig</div>
+            <div class="af-row"><input class="af-input" id="af-e" placeholder="Emoji 🌟" maxlength="4" style="max-width:72px"><input class="af-input" id="af-n" placeholder="Gig name"></div>
+            <div class="af-row"><input class="af-input" id="af-d" placeholder="Short description"></div>
+            <div class="af-grid">
+              <div><div class="af-lbl">Pay ($)</div><input class="af-num" id="af-p" type="number" min="1" max="20" value="5"></div>
+              <div><div class="af-lbl">XP</div><input class="af-num" id="af-x" type="number" min="10" max="200" value="50"></div>
+              <div><div class="af-lbl">Category</div><select class="af-sel" id="af-c"><option value="physical">💪 Physical</option><option value="brain">🧠 Brain</option><option value="creative">🎨 Creative</option><option value="social">🤝 Social</option><option value="bonus">⭐ Bonus</option></select></div>
+            </div>
+            <div class="af-row">
+              <select class="af-sel" id="af-f"><option value="daily">Daily</option><option value="weekly" selected>Weekly</option><option value="monthly">Monthly</option><option value="anytime">Anytime</option></select>
+              <select class="af-sel" id="af-who"><option value="all">Both girls</option><option value="zara">Zara only</option><option value="lune">Luné only</option></select>
+            </div>
+            <button class="af-add" onclick="addGig()">+ Add Gig</button>
+          </div>
+        </div>
+        <div class="mgr-sec" id="pend-sec"><div class="mgr-title">⏳ Awaiting Approval</div><div id="pend-list"></div></div>
+        <div class="mgr-sec"><div class="mgr-title">⚙️ Controls</div>
+          <div class="ctrl-row">
+            <button class="ctrl-btn ctrl-month" onclick="doReset('month')">🔄 New Month</button>
+            <button class="ctrl-btn ctrl-day" onclick="doReset('day')">↩️ Reset Today</button>
+          </div>
+        </div>
+        <div class="pinchange"><div class="pc-title">🔑 Change PINs</div>
+          <div class="pc-row"><span class="pc-who">🌸 Zara</span><input class="pc-input" id="pc-z" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('zara')">Save</button></div>
+          <div class="pc-row"><span class="pc-who">✨ Luné</span><input class="pc-input" id="pc-l" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('lune')">Save</button></div>
+          <div class="pc-row"><span class="pc-who">🔐 Parent</span><input class="pc-input" id="pc-p" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('parent')">Save</button></div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:6px" id="pc-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav h" id="bottom-nav">
+  <button class="bn on" id="bn-dash" onclick="switchTab('dash')"><span class="bni" id="bn-dash-icon">🌸</span><span class="bnl">Home</span></button>
+  <button class="bn" id="bn-board" onclick="switchTab('board')"><span class="bni">📋</span><span class="bnl">Gigs</span></button>
+  <button class="bn" id="bn-score" onclick="switchTab('score')"><span class="bni">🏆</span><span class="bnl">Scores</span></button>
+  <button class="bn" id="bn-budget" onclick="switchTab('budget')"><span class="bni">💰</span><span class="bnl">Budget</span></button>
+  <button class="bn" id="bn-parent" onclick="switchTab('parent')"><span class="bni">🔐</span><span class="bnl">Parents</span></button>
+</nav>
+
+<!-- REWARD MODAL -->
+<div class="overlay h" id="modal-overlay">
+  <div class="modal">
+    <span class="micon" id="m-icon">🎉</span>
+    <div class="mtitle" id="m-title">GIG DONE!</div>
+    <div class="mmsg" id="m-msg"></div>
+    <div class="mearn" id="m-earn"></div>
+    <button class="mbtn" id="m-btn" onclick="closeModal()">Collect! 💰</button>
+  </div>
+</div>
+
+<!-- CASH OUT MODAL -->
+<div class="overlay h" id="co-overlay">
+  <div class="modal co-modal">
+    <span class="micon">💸</span>
+    <div class="mtitle">Cash Out</div>
+    <div class="mmsg" id="co-msg">How much do you want to cash out?</div>
+    <div class="co-slider-wrap">
+      <div class="co-amount-display" id="co-display">$0.00</div>
+      <input class="co-slider" type="range" id="co-slider" min="0" max="100" step="0.50" value="0" oninput="updateCo(this.value)">
+      <div class="co-range-labels"><span>$0</span><span id="co-max-lbl">$100</span></div>
+    </div>
+    <button class="co-confirm" onclick="confirmCashout()">💸 Cash Out Now!</button>
+    <button class="mbtn" style="background:rgba(255,255,255,.07);color:var(--muted);margin-top:8px;width:100%" onclick="closeCo()">Cancel</button>
+  </div>
+</div>
+
+<!-- CUSTOM CONFIRM -->
+<div class="confirm-overlay h" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="conf-title">Are you sure?</div>
+    <div class="confirm-msg" id="conf-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-yes" id="conf-yes">Yes, do it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const DEFAULT_PAID=[
+  {id:'p1',emoji:'🧹',name:'Room Rescue',desc:'Deep-clean your bedroom: vacuum, dust, organise',pay:3,xp:30,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'p2',emoji:'🌿',name:'Garden Warrior',desc:'Water, weed, and tidy the garden',pay:4,xp:35,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'p3',emoji:'🛒',name:'Grocery Unpack',desc:'Unpack all bags, organise fridge and pantry',pay:3,xp:25,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'p4',emoji:'🪟',name:'Window & Mirror Day',desc:'All windows and mirrors sparkling',pay:5,xp:35,tags:['physical'],freq:'monthly',who:'all'},
+  {id:'p5',emoji:'🚗',name:'Car Wash Crew',desc:'Interior and exterior of the car, top to bottom',pay:7,xp:45,tags:['physical'],freq:'monthly',who:'all'},
+  {id:'p6',emoji:'🏋️',name:'Fitness 20',desc:'20-min workout (no screens). Log what you did.',pay:2,xp:40,tags:['physical','bonus'],freq:'daily',who:'all'},
+  {id:'b1',emoji:'💡',name:'Budget Boss',desc:'Plan a family dinner under $20 — list every ingredient & price',pay:8,xp:80,tags:['brain'],freq:'weekly',who:'all'},
+  {id:'b2',emoji:'📰',name:'News Flash',desc:'Research 3 news stories, present at dinner',pay:4,xp:55,tags:['brain'],freq:'daily',who:'all'},
+  {id:'b3',emoji:'🗓️',name:'Family Scheduler',desc:'Plan the family\'s week: meals, activities, appointments',pay:6,xp:65,tags:['brain'],freq:'weekly',who:'all'},
+  {id:'b4',emoji:'🔬',name:'Science Lab',desc:'Research + run one experiment. Write up results.',pay:9,xp:90,tags:['brain','creative'],freq:'weekly',who:'all'},
+  {id:'b5',emoji:'📚',name:'Teach It',desc:'Teach a parent or sibling something you know well',pay:6,xp:70,tags:['brain','social'],freq:'weekly',who:'all'},
+  {id:'b6',emoji:'🧩',name:'Problem Solver',desc:'Spot a family problem and pitch a solution with a plan',pay:10,xp:100,tags:['brain'],freq:'weekly',who:'all'},
+  {id:'c1',emoji:'🍳',name:'Chef in Charge',desc:'Cook a complete meal: plan, list, cook, serve',pay:10,xp:85,tags:['creative','physical'],freq:'weekly',who:'all'},
+  {id:'c2',emoji:'🎨',name:'Art Drop',desc:'Create artwork for display in the home',pay:4,xp:50,tags:['creative'],freq:'weekly',who:'all'},
+  {id:'c3',emoji:'📸',name:'Family Photographer',desc:'Shoot 10 quality photos. Edit 3 to frame-worthy standard.',pay:5,xp:55,tags:['creative'],freq:'weekly',who:'all'},
+  {id:'c4',emoji:'✍️',name:'Story Lab',desc:'Write a 1-page story or poem. Read it to the family.',pay:5,xp:60,tags:['creative','brain'],freq:'weekly',who:'all'},
+  {id:'s1',emoji:'🛍️',name:'Mini Market',desc:'Create and SELL something you made. Document earnings!',pay:15,xp:120,tags:['social','brain','creative'],freq:'monthly',who:'all'},
+  {id:'s2',emoji:'♻️',name:'Neighbourhood Clean',desc:'Fill a bag of litter. Before/after photo required.',pay:5,xp:60,tags:['social','physical'],freq:'monthly',who:'all'},
+  {id:'s3',emoji:'🎁',name:'Random Kindness',desc:'Do something genuinely unexpected and kind',pay:4,xp:65,tags:['social'],freq:'weekly',who:'all'},
+  {id:'s4',emoji:'🌱',name:'Startup Pitch',desc:'3-min business idea: name, product, price, customer',pay:12,xp:110,tags:['brain','social'],freq:'monthly',who:'all'},
+  {id:'x1',emoji:'⭐',name:'Unsolicited Awesome',desc:'Do something helpful nobody asked for — parent must approve',pay:6,xp:80,tags:['bonus'],freq:'anytime',who:'all',needsApproval:true},
+  {id:'x2',emoji:'📖',name:'Read & Report',desc:'Read 30 min then share 3 things you learned',pay:3,xp:45,tags:['bonus','brain'],freq:'daily',who:'all'},
+];
+const CORE_GIGS=[
+  {id:'core1',emoji:'🛏️',name:'Make Your Bed',desc:'Neat, tidy, pillows straight. Every morning.',xp:50,tags:['core'],freq:'daily'},
+  {id:'core2',emoji:'🦷',name:'Brush Teeth',desc:'Morning AND night. Full 2 minutes.',xp:45,tags:['core'],freq:'daily'},
+  {id:'core3',emoji:'🎒',name:'Pack School Bag',desc:'Everything for tomorrow, ready the night before.',xp:40,tags:['core'],freq:'daily'},
+  {id:'core4',emoji:'🍽️',name:'Table Duty',desc:'Set before dinner, clear and wipe after.',xp:45,tags:['core'],freq:'daily'},
+  {id:'core5',emoji:'👕',name:'Laundry Loop',desc:'Collect, sort, and put away your clothes.',xp:55,tags:['core'],freq:'weekly'},
+  {id:'core6',emoji:'🧼',name:'Bathroom Tidy',desc:'Sink, counter, floor — yours to own daily.',xp:50,tags:['core'],freq:'daily'},
+  {id:'core7',emoji:'🍱',name:'Lunch Packed',desc:'Pack your own healthy school lunch.',xp:40,tags:['core'],freq:'daily'},
+];
+const XP_REWARDS=[
+  {id:'r1',emoji:'📱',name:'30 min Screen Time',cost:150},
+  {id:'r2',emoji:'🎮',name:'1hr Gaming',cost:250},
+  {id:'r3',emoji:'🌙',name:'Bedtime +30 min',cost:200},
+  {id:'r4',emoji:'🍕',name:'Choose Dinner',cost:180},
+  {id:'r5',emoji:'🚗',name:'Weekend Outing Pick',cost:350},
+  {id:'r6',emoji:'🎬',name:'Movie Night Pick',cost:220},
+  {id:'r7',emoji:'🧸',name:'Skip One Core Duty',cost:300},
+  {id:'r8',emoji:'🛒',name:'$5 Bonus Cash',cost:400,isMoney:true,moneyVal:5},
+];
+const BIT=[
+  {id:'bi1',emoji:'📚',label:'School supplies',cat:'n'},
+  {id:'bi2',emoji:'👟',label:'Clothing / shoes',cat:'n'},
+  {id:'bi3',emoji:'🎮',label:'Games / entertainment',cat:'w'},
+  {id:'bi4',emoji:'🍿',label:'Snacks and treats',cat:'w'},
+  {id:'bi5',emoji:'🎨',label:'Hobby / craft supplies',cat:'w'},
+  {id:'bi6',emoji:'🏦',label:'Savings jar',cat:'s'},
+  {id:'bi7',emoji:'💝',label:'Charity / giving',cat:'s'},
+  {id:'bi8',emoji:'🎁',label:'Gift for someone',cat:'w'},
+];
+// XP levels: every 150 XP = 1 level, named tiers
+const TIER_NAMES=['Rookie','Rising Star','Go-Getter','Boss Level','Legend'];
+function getLevel(xp){return Math.floor(xp/150)+1}
+function getLevelTitle(xp){const l=getLevel(xp);if(l<=4)return TIER_NAMES[0]+'  🌱';if(l<=8)return TIER_NAMES[1]+' 🌟';if(l<=14)return TIER_NAMES[2]+' 🚀';if(l<=22)return TIER_NAMES[3]+' 👑';return TIER_NAMES[4]+' 💎';}
+function getTierEmoji(xp){const l=getLevel(xp);return l<=4?'🦊':l<=8?'🦁':l<=14?'🐯':l<=22?'🦅':'🔥'}
+function getLuneTierEmoji(xp){const l=getLevel(xp);return l<=4?'🦋':l<=8?'🐬':l<=14?'🦚':l<=22?'🦄':'✨'}
+function xpInLevel(xp){return xp%150}
+function xpToNext(xp){return 150-xpInLevel(xp)}
+const CAP=100;
+const MSGS=['Absolute fire! 🔥','That\'s the spirit! ⚡','Boss move! 👑','Stack that bag! 💰','Entrepreneurial energy! 🚀','CEO behaviour! 🎯','Killing it! ⭐','You\'re unstoppable! 💥'];
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[]}}
+function loadS(){
+  try{
+    const s=localStorage.getItem('gs4');
+    const d=s?JSON.parse(s):{zara:defP(),lune:defP(),customGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}};
+    ['zara','lune'].forEach(w=>{
+      const def=defP();
+      Object.keys(def).forEach(k=>{if(d[w][k]===undefined)d[w][k]=def[k]});
+    });
+    if(!d.pins)d.pins={zara:'1010',lune:'1212',parent:'1234'};
+    if(!d.log)d.log=[];
+    if(!d.customGigs)d.customGigs=[];
+    return d;
+  }catch{return{zara:defP(),lune:defP(),customGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
+}
+function save(){localStorage.setItem('gs4',JSON.stringify(S))}
+let S=loadS();
+let CU=null; // current user: 'zara'|'lune'|'parent'
+let selectedProfile=null;
+let pinBuf='';
+let ppBuf=''; // parent pin in parent tab
+let parentUnlocked=false;
+let boardFilters={cat:'all',user:'all'};
+let confirmCB=null;
+
+function allPaid(){return [...DEFAULT_PAID,...(S.customGigs||[])]}
+function paidForUser(who){return allPaid().filter(g=>!g.who||g.who==='all'||g.who===who)}
+function streakMult(n){if(n>=14)return 2.0;if(n>=10)return 1.75;if(n>=7)return 1.5;if(n>=5)return 1.35;if(n>=3)return 1.2;if(n>=1)return 1.1;return 1.0}
+function multLbl(m){return m===1.0?'1.0×':'🔥'+m.toFixed(2)+'× BONUS'}
+
+// ═══════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════
+function selectProfile(who){
+  selectedProfile=who;
+  ['zara','lune','parent'].forEach(w=>document.getElementById('pc-'+w).classList.remove('selected'));
+  document.getElementById('pc-'+who).classList.add('selected');
+  const ps=document.getElementById('pin-section');ps.classList.remove('h');
+  const lbl=document.getElementById('pin-who-label');
+  lbl.textContent=who==='parent'?'🔐 Parent PIN':who==='zara'?'🌸 Enter your PIN':'✨ Enter your PIN';
+  const hint=document.getElementById('pin-hint');
+  hint.textContent=who==='zara'?'Default PIN: 1010':who==='lune'?'Default PIN: 1212':'Default PIN: 1234';
+  pinBuf='';updatePinDots(false);
+  document.getElementById('pin-err').textContent='';
+}
+function pk(k){if(pinBuf.length>=4)return;pinBuf+=k;updatePinDots(false);if(pinBuf.length===4)setTimeout(checkPinLogin,120);}
+function pkDel(){pinBuf=pinBuf.slice(0,-1);updatePinDots(false);document.getElementById('pin-err').textContent='';}
+function pkClr(){pinBuf='';updatePinDots(false);}
+function updatePinDots(isParent){
+  const buf=isParent?ppBuf:pinBuf;
+  const pre=isParent?'ppd':'pd';
+  const cls=isParent?'pp':selectedProfile==='zara'?'':selectedProfile==='lune'?'lp':'pp';
+  for(let i=0;i<4;i++){const d=document.getElementById(pre+i);if(d){d.className='pdot'+(i<buf.length?' filled':'');if(i<buf.length&&cls)d.classList.add(cls);}}
+}
+function checkPinLogin(){
+  const correct=S.pins[selectedProfile];
+  if(pinBuf===correct){
+    CU=selectedProfile;
+    document.getElementById('login-screen').classList.add('h');
+    document.getElementById('main-app').classList.remove('h');
+    document.getElementById('bottom-nav').classList.remove('h');
+    setupForUser();
+  } else {
+    document.getElementById('pin-err').textContent='Wrong PIN — try again';
+    pinBuf='';updatePinDots(false);
+    setTimeout(()=>{const e=document.getElementById('pin-err');if(e)e.textContent=''},2200);
+  }
+}
+function logout(){
+  CU=null;selectedProfile=null;parentUnlocked=false;
+  document.getElementById('login-screen').classList.remove('h');
+  document.getElementById('main-app').classList.add('h');
+  document.getElementById('bottom-nav').classList.add('h');
+  ['zara','lune','parent'].forEach(w=>{const c=document.getElementById('pc-'+w);if(c)c.classList.remove('selected')});
+  document.getElementById('pin-section').classList.add('h');
+  pinBuf='';updatePinDots(false);
+  document.getElementById('pdash').classList.remove('on');
+  document.getElementById('pg-gate').classList.remove('h');
+}
+function setupForUser(){
+  const isParent=CU==='parent';
+  // Show/hide parent nav
+  document.getElementById('bn-parent').style.display=isParent?'flex':'flex';
+  // Set header
+  if(!isParent){
+    const s=S[CU];
+    document.getElementById('hdr-name').textContent=CU==='zara'?'🌸 Zara':'✨ Luné';
+    // set wallet class
+    const w=document.getElementById('dash-wallet');
+    w.className='wallet '+(CU==='zara'?'zw':'lw');
+    // nav icon
+    document.getElementById('bn-dash-icon').textContent=CU==='zara'?'🌸':'✨';
+    // set nav colors
+    document.getElementById('bn-dash').className='bn on '+(CU==='zara'?'nz':'nl');
+    switchTab('dash');
+    renderDash();
+  } else {
+    document.getElementById('hdr-name').textContent='👨‍👩‍👧 Parent Hub';
+    switchTab('parent');
+    // auto-unlock parent if they logged in as parent
+    parentUnlocked=true;
+    document.getElementById('pg-gate').classList.add('h');
+    document.getElementById('pdash').classList.add('on');
+    renderParentDash();
+  }
+  // show user filter on board only for parent
+  document.getElementById('user-filter-group').style.display=isParent?'block':'none';
+}
+
+// ═══════════════════════════════════════════════
+// RENDER DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDash(){
+  if(!CU||CU==='parent')return;
+  const who=CU, s=S[who];
+  const earned=Math.min(s.earned,CAP), avail=Math.max(0,earned-s.cashedOut);
+  const mult=streakMult(s.streak), pct=Math.min((avail/CAP)*100,100);
+  const xpAvail=Math.max(0,s.xp-s.xpSpent);
+  const lvNum=getLevel(s.xp), lvTitle=getLevelTitle(s.xp);
+  const xpCur=xpInLevel(s.xp), xpNxt=xpToNext(s.xp);
+  const av=who==='zara'?getTierEmoji(s.xp):getLuneTierEmoji(s.xp);
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  set('w-name',who==='zara'?'🌸 Zara':'✨ Luné');
+  set('w-age',who==='zara'?'Age 10 · Hustler in Training':'Age 12 · CEO in the Making');
+  set('w-avatar',av);
+  set('w-streak',`${s.streak}-day streak · ${multLbl(mult)}`);
+  set('w-money',`$${avail.toFixed(2)}`);
+  set('w-pl',`$${avail.toFixed(2)} of $100`);
+  set('w-pr',avail>=CAP?'🏆 Cap hit!':`$${(CAP-avail).toFixed(2)} left`);
+  document.getElementById('w-mfill').style.width=pct+'%';
+  // XP bar
+  set('w-lvnum',lvNum);
+  set('w-lvtitle',lvTitle);
+  set('w-lvsubtitle',`${xpCur} / 150 XP to Level ${lvNum+1}`);
+  document.getElementById('w-xfill').style.width=((xpCur/150)*100)+'%';
+  set('w-xp-cur',`${s.xp} XP total`);
+  set('w-xp-next',`Next lv: ${xpNxt} XP`);
+  set('w-done',`${s.completedMonth.length} gigs`);
+  set('w-cashed',`$${s.cashedOut.toFixed(2)} cashed`);
+  renderXPStore(who,xpAvail);
+  renderGigsForUser(who);
+}
+
+// ═══════════════════════════════════════════════
+// XP STORE
+// ═══════════════════════════════════════════════
+function renderXPStore(who,avail){
+  const el=document.getElementById('w-xpgrid');if(!el)return;el.innerHTML='';
+  XP_REWARDS.forEach(r=>{
+    const claimed=S[who].claimedRewards.includes(r.id),can=avail>=r.cost;
+    const d=document.createElement('div');d.className='xpitem'+(claimed?' claimed':'');
+    d.innerHTML=`<span class="xre">${r.emoji}</span><div class="xrn">${r.name}</div><div class="xrc">${claimed?'✅ Claimed':can?r.cost+' XP':'🔒 '+r.cost+' XP'}</div>`;
+    if(!claimed&&can)d.onclick=()=>claimXP(who,r,avail);
+    el.appendChild(d);
+  });
+}
+function claimXP(who,r,avail){
+  S[who].xpSpent+=r.cost;S[who].claimedRewards.push(r.id);
+  if(r.isMoney)S[who].earned=Math.min(S[who].earned+r.moneyVal,CAP);
+  addLog(who,r.emoji,'Redeemed: '+r.name,0,r.cost);
+  save();renderDash();showModal(r.emoji,'Reward Unlocked!','You claimed: '+r.name,0,r.cost,1,who,true);
+}
+
+// ═══════════════════════════════════════════════
+// GIGS
+// ═══════════════════════════════════════════════
+function renderGigsForUser(who){
+  renderGigGrid('w-paid',paidForUser(who),who,false);
+  renderGigGrid('w-core',CORE_GIGS,who,true);
+}
+function renderGigGrid(cid,gigs,who,isCore){
+  const el=document.getElementById(cid);if(!el)return;el.innerHTML='';
+  const s=S[who];
+  gigs.forEach(g=>{
+    const done=s.completedToday.includes(g.id),pend=s.pending&&s.pending.includes(g.id);
+    const d=document.createElement('div');d.className=`gc${done||pend?' done':''}${isCore?' core':''}`;
+    const tH=g.tags.map(t=>`<span class="gtag t-${t}">${t}</span>`).join('');
+    const rH=isCore?`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`
+      :g.needsApproval?`<div class="gcpay" style="-webkit-text-fill-color:var(--muted);background:none;color:var(--muted)">+$${g.pay}*</div><div class="gcxp">+${g.xp} XP</div>`
+      :`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
+    d.innerHTML=`<div class="gctop"><div class="gce">${g.emoji}</div><div class="gcr">${rH}</div></div><div class="gcn">${g.name}${pend?' ⏳':''}</div><div class="gcd">${g.desc}${g.needsApproval&&!done&&!pend?' <em style="font-size:.68rem;color:var(--gold)">★ Needs parent ✓</em>':''}</div><div class="gcfoot"><div class="gctags">${tH}</div><span class="gcfreq">${g.freq}</span></div>${done||pend?`<div class="dstamp">${pend?'⏳':'✅'}</div>`:''}`;
+    if(!done&&!pend)d.onclick=(e)=>isCore?completeCore(g,who,e):completePaid(g,who,e);
+    el.appendChild(d);
+  });
+}
+function completePaid(gig,who,e){
+  const s=S[who];
+  const avail=Math.max(0,Math.min(s.earned,CAP)-s.cashedOut);
+  if(avail>=CAP){showModal('🏆','Cap Reached!','You\'ve hit the $100 cap! 💪',0,0,1,who,false);return;}
+  if(gig.needsApproval){
+    if(!s.pending)s.pending=[];s.pending.push(gig.id);
+    save();renderGigsForUser(who);
+    showModal(gig.emoji,'Sent for Approval ⏳','Parent needs to check this one. Hang tight!',0,0,1,who,false);return;
+  }
+  const mult=streakMult(s.streak);
+  const maxEarn=CAP-s.earned,actualPay=Math.min(parseFloat((gig.pay*mult).toFixed(2)),maxEarn);
+  const xpGained=Math.round(gig.xp*mult);
+  s.earned=Math.min(s.earned+actualPay,CAP);s.xp+=xpGained;
+  s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
+  updateStreak(s);addLog(who,gig.emoji,gig.name,actualPay,xpGained);
+  save();renderDash();confetti(e.clientX,e.clientY);
+  showModal(gig.emoji,'GIG CRUSHED!',rand(MSGS)+' '+gig.name,actualPay,xpGained,mult,who,false);
+}
+function completeCore(gig,who,e){
+  const s=S[who],mult=streakMult(s.streak),xpGained=Math.round(gig.xp*mult);
+  s.xp+=xpGained;s.completedToday.push(gig.id);
+  updateStreak(s);addLog(who,gig.emoji,gig.name,0,xpGained);
+  save();renderDash();confetti(e.clientX,e.clientY,true);
+  showModal(gig.emoji,'DUTY DONE! ✅',gig.name+' — reliable & responsible.',0,xpGained,mult,who,false);
+}
+function updateStreak(s){
+  const today=new Date().toDateString();if(s.lastDate===today)return;
+  const y=new Date();y.setDate(y.getDate()-1);
+  s.streak=s.lastDate===y.toDateString()?s.streak+1:1;s.lastDate=today;
+}
+
+// ═══════════════════════════════════════════════
+// CASH OUT
+// ═══════════════════════════════════════════════
+function openCashout(){
+  if(!CU||CU==='parent')return;
+  const avail=Math.max(0,Math.min(S[CU].earned,CAP)-S[CU].cashedOut);
+  if(avail<=0){showModal('💸','Nothing to cash out!','Keep completing gigs to earn money first!',0,0,1,CU,false);return;}
+  const slider=document.getElementById('co-slider');
+  slider.max=avail.toFixed(2);slider.value=avail.toFixed(2);
+  document.getElementById('co-max-lbl').textContent='$'+avail.toFixed(2);
+  document.getElementById('co-display').textContent='$'+parseFloat(avail).toFixed(2);
+  document.getElementById('co-msg').textContent=`You have $${avail.toFixed(2)} available. How much to cash out?`;
+  document.getElementById('co-overlay').classList.remove('h');
+}
+function updateCo(v){document.getElementById('co-display').textContent='$'+parseFloat(v).toFixed(2);}
+function closeCo(){document.getElementById('co-overlay').classList.add('h');}
+function confirmCashout(){
+  const amt=parseFloat(document.getElementById('co-slider').value);
+  if(amt<=0){closeCo();return;}
+  S[CU].cashedOut+=amt;
+  if(!S[CU].pendingCashouts)S[CU].pendingCashouts=[];
+  S[CU].pendingCashouts.push({amt,date:new Date().toLocaleDateString(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  addLog(CU,'💸',`Cashed out $${amt.toFixed(2)}`,-amt,0);
+  save();closeCo();renderDash();
+  flyMoney(window.innerWidth/2,window.innerHeight/2,amt);
+  setTimeout(()=>showModal('💸','Cash Out!',`$${amt.toFixed(2)} is yours! Go claim it from Mum or Dad 🎉`,0,0,1,CU,false),800);
+}
+function flyMoney(cx,cy,amt){
+  const symbols=['💵','💴','💶','💷','🪙','💰','💸'];
+  const count=Math.min(8+Math.floor(amt/5),24);
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='fly-money';
+      const angle=Math.random()*2*Math.PI;
+      const dist=120+Math.random()*200;
+      const dx=Math.cos(angle)*dist, dy=Math.sin(angle)*dist-100;
+      const rot=(Math.random()-0.5)*180;
+      el.style.cssText=`left:${cx}px;top:${cy}px;--dx:${dx}px;--dy:${dy}px;--r:${rot}deg;animation-duration:${0.7+Math.random()*0.6}s`;
+      el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),1400);
+    },i*40);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// BOARD
+// ═══════════════════════════════════════════════
+function setFilter(type,val,btn){
+  boardFilters[type]=val;
+  const grp=type==='cat'?'cat-filters':null;
+  if(grp){document.querySelectorAll(`#${grp} .fp`).forEach(b=>b.classList.remove('on'));}
+  else{btn.closest('.frow').querySelectorAll('.fp').forEach(b=>{b.classList.remove('on','onz','onl')});}
+  if(val==='zara')btn.classList.add('onz');
+  else if(val==='lune')btn.classList.add('onl');
+  else btn.classList.add('on');
+  renderBoard();
+}
+function renderBoard(){
+  const el=document.getElementById('board-grid');if(!el)return;el.innerHTML='';
+  const all=[...allPaid(),...CORE_GIGS];
+  let list=all;
+  if(boardFilters.cat!=='all')list=list.filter(g=>g.tags.includes(boardFilters.cat));
+  if(boardFilters.user!=='all'&&boardFilters.user==='zara'){
+    const z=S.zara;list=list.filter(g=>z.completedMonth.includes(g.id));
+  } else if(boardFilters.user==='lune'){
+    const l=S.lune;list=list.filter(g=>l.completedMonth.includes(g.id));
+  }
+  if(CU&&CU!=='parent')list=list.filter(g=>!g.who||g.who==='all'||g.who===CU);
+  list.forEach(g=>{
+    const isC=!!CORE_GIGS.find(c=>c.id===g.id);
+    const zDone=S.zara.completedMonth.includes(g.id),lDone=S.lune.completedMonth.includes(g.id);
+    const d=document.createElement('div');d.className=`gc${isC?' core':''}`;d.style.cursor='default';
+    const tH=g.tags.map(t=>`<span class="gtag t-${t}">${t}</span>`).join('');
+    const rH=isC?`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`:`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
+    const whoTags=CU==='parent'?`<span style="font-size:.6rem;color:var(--muted)">${zDone?'🌸✅':''} ${lDone?'✨✅':''}</span>`:'';
+    d.innerHTML=`<div class="gctop"><div class="gce">${g.emoji}</div><div class="gcr">${rH}</div></div><div class="gcn">${g.name}</div><div class="gcd">${g.desc}</div><div class="gcfoot"><div class="gctags">${tH}</div><span class="gcfreq">${g.freq}</span></div>${whoTags}`;
+    el.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SCOREBOARD
+// ═══════════════════════════════════════════════
+function renderScoreboard(){
+  const el=document.getElementById('sb-cards');if(!el)return;
+  const users=[{who:'zara',cls:'zc',name:'🌸 Zara'},{who:'lune',cls:'lc',name:'✨ Luné'}];
+  el.innerHTML='';
+  const avZ=Math.max(0,Math.min(S.zara.earned,CAP)-S.zara.cashedOut);
+  const avL=Math.max(0,Math.min(S.lune.earned,CAP)-S.lune.cashedOut);
+  users.forEach(u=>{
+    const s=S[u.who],lvNum=getLevel(s.xp),lvTitle=getLevelTitle(s.xp);
+    const av=u.who==='zara'?getTierEmoji(s.xp):getLuneTierEmoji(s.xp);
+    const avail=u.who==='zara'?avZ:avL;
+    const card=document.createElement('div');card.className=`sb-card ${u.cls}`;
+    card.innerHTML=`<div class="glow"></div><div class="sb-av">${av}</div><div class="sb-name">${u.name}</div><div class="sb-level-badge">LVL ${lvNum} · ${lvTitle.replace(/[🌱🌟🚀👑💎]/g,'').trim()}</div>
+      <div class="sb-stat"><span class="sb-sl">XP Total</span><span class="sb-sv" style="color:var(--xp)">${s.xp} XP</span></div>
+      <div class="sb-stat"><span class="sb-sl">Level</span><span class="sb-sv">${lvNum}</span></div>
+      <div class="sb-stat"><span class="sb-sl">💰 Wallet</span><span class="sb-sv" style="color:var(--gold)">$${avail.toFixed(2)}</span></div>
+      <div class="sb-stat"><span class="sb-sl">Gigs Done</span><span class="sb-sv" style="color:var(--green)">${s.completedMonth.length}</span></div>
+      <div class="sb-stat"><span class="sb-sl">🔥 Streak</span><span class="sb-sv" style="color:#fb923c">${s.streak}d</span></div>`;
+    el.appendChild(card);
+  });
+  // Category breakdown
+  const catEl=document.getElementById('sb-cats');if(!catEl)return;catEl.innerHTML='';
+  const cats=[{t:'physical',n:'💪 Physical'},{t:'brain',n:'🧠 Brain'},{t:'creative',n:'🎨 Creative'},{t:'social',n:'🤝 Social'},{t:'bonus',n:'⭐ Bonus'}];
+  const maxBarW=100;
+  cats.forEach(c=>{
+    const zC=allPaid().filter(g=>g.tags.includes(c.t)&&S.zara.completedMonth.includes(g.id)).length;
+    const lC=allPaid().filter(g=>g.tags.includes(c.t)&&S.lune.completedMonth.includes(g.id)).length;
+    const mx=Math.max(zC,lC,1);
+    const row=document.createElement('div');row.className='cat-row';
+    row.innerHTML=`<span class="cat-name">${c.n}</span><div class="cat-bar-wrap"><div class="cat-bar zbar" style="width:${Math.round((zC/mx)*maxBarW)}px"></div><div class="cat-bar lbar" style="width:${Math.round((lC/mx)*maxBarW)}px"></div></div><span class="cat-num" style="color:var(--za)">${zC}</span><span class="cat-num" style="color:var(--la)">${lC}</span>`;
+    catEl.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// BUDGET
+// ═══════════════════════════════════════════════
+function updBudAmt(){
+  const who=CU&&CU!=='parent'?CU:'zara';
+  const e=Math.max(0,Math.min(S[who].earned,CAP)-S[who].cashedOut);
+  document.getElementById('bn-amt').textContent='$'+(e*.5).toFixed(2);
+  document.getElementById('bw-amt').textContent='$'+(e*.3).toFixed(2);
+  document.getElementById('bs-amt').textContent='$'+(e*.2).toFixed(2);
+}
+function renderBudItems(){
+  const el=document.getElementById('bi-list');if(!el)return;el.innerHTML='';
+  BIT.forEach(item=>{
+    const row=document.createElement('div');row.className='birow';
+    const cl={'n':'n','w':'w','s':'s'}[item.cat],lbl={'n':'NEED','w':'WANT','s':'SAVE'}[item.cat];
+    row.innerHTML=`<span class="biemoji">${item.emoji}</span><span class="bilabel">${item.label}</span><input class="biinput" id="inp-${item.id}" type="number" min="0" step="0.5" placeholder="$0"><span class="bicat ${cl}">${lbl}</span>`;
+    el.appendChild(row);
+  });
+}
+function submitBudget(){
+  const who=CU&&CU!=='parent'?CU:'zara';
+  const earned=Math.max(0,Math.min(S[who].earned,CAP)-S[who].cashedOut);
+  const tN=earned*.5,tW=earned*.3,tS=earned*.2;
+  let totN=0,totW=0,totS=0;
+  BIT.forEach(item=>{
+    const v=parseFloat(document.getElementById('inp-'+item.id).value)||0;
+    if(item.cat==='n')totN+=v;if(item.cat==='w')totW+=v;if(item.cat==='s')totS+=v;
+  });
+  const tot=totN+totW+totS;
+  const rowsEl=document.getElementById('bres-rows');rowsEl.innerHTML='';
+  const rows=[{n:'💰 Total Planned',v:tot,t:earned,cat:'t'},{n:'✅ Needs (50%)',v:totN,t:tN,cat:'n'},{n:'🎉 Wants (30%)',v:totW,t:tW,cat:'w'},{n:'🏦 Savings (20%)',v:totS,t:tS,cat:'s'}];
+  let score=100;
+  rows.forEach(r=>{
+    const over=r.v>r.t*1.15,under=r.cat==='s'&&r.v<r.t*.8;
+    if(over)score-=15;if(under)score-=10;
+    const d=document.createElement('div');d.className='brrow';
+    d.innerHTML=`<span>${r.n}</span><div style="display:flex;align-items:center;gap:7px"><span class="brval">$${r.v.toFixed(2)}/$${r.t.toFixed(2)}</span><span class="brstatus ${over||under?'so':'sg'}">${over||under?'⚠️':'✅'}</span></div>`;
+    rowsEl.appendChild(d);
+  });
+  score=Math.max(0,Math.min(100,score));
+  const grades=[{min:90,g:'💎 A+',v:'Financial genius!'},{min:75,g:'🌟 A',v:'Solid — fine-tune your wants.'},{min:60,g:'⭐ B',v:'Good effort! Check the overspend.'},{min:0,g:'📚 C',v:'Use the 50/30/20 guide!'}];
+  const grade=grades.find(g=>score>=g.min);
+  document.getElementById('bscore').textContent=grade.g+' ('+score+'/100)';
+  document.getElementById('bverdict').textContent=grade.v;
+  S[who].budgetScore=grade.g+' '+score+'/100';save();
+  document.getElementById('bres').style.display='block';
+  document.getElementById('bres').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ═══════════════════════════════════════════════
+// PARENT TAB PIN (in-app)
+// ═══════════════════════════════════════════════
+function ppk(k){if(ppBuf.length>=4)return;ppBuf+=k;updatePinDots(true);if(ppBuf.length===4)setTimeout(checkParentPin,120);}
+function ppkDel(){ppBuf=ppBuf.slice(0,-1);updatePinDots(true);document.getElementById('pp-err').textContent='';}
+function ppkClr(){ppBuf='';updatePinDots(true);}
+function checkParentPin(){
+  if(ppBuf===S.pins.parent){
+    parentUnlocked=true;ppBuf='';
+    document.getElementById('pg-gate').classList.add('h');
+    document.getElementById('pdash').classList.add('on');
+    renderParentDash();
+  } else {
+    document.getElementById('pp-err').textContent='Wrong PIN';ppBuf='';updatePinDots(true);
+    setTimeout(()=>{const e=document.getElementById('pp-err');if(e)e.textContent=''},2000);
+  }
+}
+function lockParent(){
+  parentUnlocked=false;ppBuf='';
+  document.getElementById('pdash').classList.remove('on');
+  document.getElementById('pg-gate').classList.remove('h');
+  updatePinDots(true);
+}
+
+// ═══════════════════════════════════════════════
+// PARENT DASHBOARD
+// ═══════════════════════════════════════════════
+function renderParentDash(){
+  ['zara','lune'].forEach(who=>{
+    const s=S[who],av=Math.max(0,Math.min(s.earned,CAP)-s.cashedOut);
+    const pre=who==='zara'?'z':'l';
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+    set(`pd-${pre}-earn`,'$'+av.toFixed(2));
+    set(`pd-${pre}-co`,'$'+s.cashedOut.toFixed(2));
+    set(`pd-${pre}-xp`,s.xp+' XP');
+    set(`pd-${pre}-lv`,'Lv '+getLevel(s.xp));
+    set(`pd-${pre}-gigs`,s.completedMonth.length);
+    set(`pd-${pre}-str`,s.streak+'d 🔥');
+    set(`pd-${pre}-bud`,s.budgetScore||'Not done');
+  });
+  renderLog();renderMgrList();renderPending();renderCoPending();
+}
+function addLog(who,emoji,name,money,xp){
+  if(!S.log)S.log=[];
+  const now=new Date();
+  S.log.unshift({who,emoji,name,money,xp,time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),date:now.toLocaleDateString()});
+  if(S.log.length>100)S.log=S.log.slice(0,100);
+}
+function renderLog(){
+  const el=document.getElementById('log-list');if(!el)return;
+  if(!S.log||!S.log.length){el.innerHTML='<div class="no-log">No activity yet 🚀</div>';return;}
+  el.innerHTML=S.log.slice(0,35).map(l=>`<div class="logitem"><div class="logi-e">${l.emoji}</div><div class="logi-info"><div class="logi-name">${l.name}</div><div class="logi-who">${l.who==='zara'?'🌸 Zara':'✨ Luné'} · ${l.date} ${l.time}</div></div><div class="logi-rew">${l.money>0?'+$'+l.money.toFixed(2):l.money<0?'💸 $'+Math.abs(l.money).toFixed(2):''}${l.xp>0?' +'+l.xp+'XP':''}</div></div>`).join('');
+}
+function clearLog(){doConfirm('Clear Activity Log?','This will delete all activity history.',()=>{S.log=[];save();renderLog();})}
+function renderCoPending(){
+  const el=document.getElementById('co-pending-list');if(!el)return;el.innerHTML='';
+  let any=false;
+  ['zara','lune'].forEach(who=>{
+    const s=S[who];if(!s.pendingCashouts||!s.pendingCashouts.length)return;
+    s.pendingCashouts.forEach((co,i)=>{
+      any=true;
+      const d=document.createElement('div');d.className='co-item';
+      d.innerHTML=`<span class="co-name">${who==='zara'?'🌸 Zara':'✨ Luné'} — ${co.date}</span><div style="display:flex;align-items:center;gap:8px"><span class="co-amt">$${co.amt.toFixed(2)}</span><span class="mgr-del" style="background:rgba(6,214,160,.1);border-color:rgba(6,214,160,.2);color:var(--green)" onclick="confirmCO('${who}',${i})">✅ Paid</span></div>`;
+      el.appendChild(d);
+    });
+  });
+  if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='No pending cash-outs';el.appendChild(d);}
+}
+function confirmCO(who,i){
+  S[who].pendingCashouts.splice(i,1);save();renderCoPending();renderParentDash();
+}
+function renderMgrList(){
+  const el=document.getElementById('mgr-list');if(!el)return;el.innerHTML='';
+  const customs=S.customGigs||[];
+  if(!customs.length){const d=document.createElement('div');d.className='no-log';d.textContent=DEFAULT_PAID.length+' default gigs active. Add custom gigs below.';el.appendChild(d);return;}
+  customs.forEach(g=>{
+    const d=document.createElement('div');d.className='mgr-item';
+    d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name}</div><div class="mgr-meta">$${g.pay} · ${g.xp}XP · ${g.tags.join(',')} · ${g.freq} · ${g.who==='all'?'Both':g.who}</div></div><div class="mgr-del" onclick="deleteGig('${g.id}')">Remove</div>`;
+    el.appendChild(d);
+  });
+}
+function addGig(){
+  const emoji=document.getElementById('af-e').value.trim()||'⭐';
+  const name=document.getElementById('af-n').value.trim();
+  const desc=document.getElementById('af-d').value.trim();
+  const pay=parseFloat(document.getElementById('af-p').value)||5;
+  const xp=parseInt(document.getElementById('af-x').value)||50;
+  const cat=document.getElementById('af-c').value;
+  const freq=document.getElementById('af-f').value;
+  const who=document.getElementById('af-who').value;
+  if(!name||!desc){showModal('⚠️','Missing Info!','Please fill in at least a name and description.',0,0,1,'zara',true);return;}
+  if(!S.customGigs)S.customGigs=[];
+  S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
+  save();renderMgrList();
+  ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  showModal('✅','Gig Added!',`"${name}" is now live${who!=='all'?' for '+who+'!':'!'}`,0,0,1,'zara',true);
+}
+function deleteGig(id){
+  doConfirm('Remove this gig?','This removes the custom gig for both girls.',()=>{
+    S.customGigs=S.customGigs.filter(g=>g.id!==id);save();renderMgrList();
+  });
+}
+function renderPending(){
+  const el=document.getElementById('pend-list');if(!el)return;el.innerHTML='';
+  let any=false;
+  ['zara','lune'].forEach(who=>{
+    const s=S[who];if(!s.pending||!s.pending.length)return;
+    s.pending.forEach(gid=>{
+      const g=allPaid().find(x=>x.id===gid);if(!g)return;any=true;
+      const d=document.createElement('div');d.className='mgr-item';
+      d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name} — ${who==='zara'?'🌸 Zara':'✨ Luné'}</div><div class="mgr-meta">$${g.pay} + ${g.xp} XP waiting</div></div><div style="display:flex;gap:5px"><div class="pend-approve" onclick="approveGig('${who}','${gid}')">✅</div><div class="mgr-del" onclick="denyGig('${who}','${gid}')">✗</div></div>`;
+      el.appendChild(d);
+    });
+  });
+  if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='All clear — nothing pending ✅';el.appendChild(d);}
+}
+function approveGig(who,gid){
+  const s=S[who],g=allPaid().find(x=>x.id===gid);if(!g)return;
+  const mult=streakMult(s.streak);
+  const actualPay=Math.min(parseFloat((g.pay*mult).toFixed(2)),CAP-s.earned);
+  s.earned=Math.min(s.earned+actualPay,CAP);s.xp+=Math.round(g.xp*mult);
+  s.completedToday.push(gid);s.completedMonth.push(gid);
+  s.pending=s.pending.filter(x=>x!==gid);
+  addLog(who,g.emoji,'[Approved] '+g.name,actualPay,Math.round(g.xp*mult));
+  save();renderParentDash();if(CU===who)renderDash();
+}
+function denyGig(who,gid){
+  S[who].pending=S[who].pending.filter(x=>x!==gid);
+  save();renderParentDash();if(CU===who)renderGigsForUser(who);
+}
+function changePin(who){
+  const inputId=who==='zara'?'pc-z':who==='lune'?'pc-l':'pc-p';
+  const val=document.getElementById(inputId).value;
+  if(val.length!==4||isNaN(val)){showMsg('pc-msg','PIN must be 4 digits','var(--red)');return;}
+  S.pins[who]=val;save();
+  document.getElementById(inputId).value='';
+  showMsg('pc-msg','✅ '+(who==='parent'?'Parent':who==='zara'?'Zara':'Luné')+' PIN updated!','var(--green)');
+}
+function showMsg(id,msg,color){const e=document.getElementById(id);if(e){e.textContent=msg;e.style.color=color;setTimeout(()=>{e.textContent=''},3000);}}
+
+// ═══════════════════════════════════════════════
+// RESET (fixed with custom confirm)
+// ═══════════════════════════════════════════════
+function doReset(type){
+  if(type==='month'){
+    doConfirm('Start New Month?','This clears all earnings, gigs & cashouts. XP and streaks carry over!',()=>{
+      ['zara','lune'].forEach(w=>{
+        S[w].earned=0;S[w].completedToday=[];S[w].completedMonth=[];
+        S[w].xpSpent=0;S[w].claimedRewards=[];S[w].pending=[];
+        S[w].budgetScore=null;S[w].cashedOut=0;S[w].pendingCashouts=[];
+      });
+      save();if(CU&&CU!=='parent')renderDash();renderParentDash();
+      showModal('🎉','New Month!','Fresh start! XP levels carry over 🚀',0,0,1,'zara',true);
+    });
+  } else {
+    doConfirm('Reset Today\'s Gigs?','Completed gigs reset for both girls. Earnings & XP stay.',()=>{
+      S.zara.completedToday=[];S.lune.completedToday=[];
+      save();if(CU&&CU!=='parent')renderDash();renderParentDash();
+      showModal('↩️','Today Reset!','Gigs are fresh again!',0,0,1,'zara',true);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CUSTOM CONFIRM DIALOG
+// ═══════════════════════════════════════════════
+function doConfirm(title,msg,cb){
+  confirmCB=cb;
+  document.getElementById('conf-title').textContent=title;
+  document.getElementById('conf-msg').textContent=msg;
+  document.getElementById('confirm-overlay').classList.remove('h');
+  document.getElementById('conf-yes').onclick=()=>{closeConfirm();if(confirmCB)confirmCB();};
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.add('h');confirmCB=null;}
+
+// ═══════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════
+function showModal(icon,title,msg,money,xp,mult,who,isReward){
+  document.getElementById('m-icon').textContent=icon;
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-msg').innerHTML=msg;
+  const earn=document.getElementById('m-earn');earn.innerHTML='';
+  if(money>0){const p=document.createElement('div');p.className='ep epm';p.textContent='+$'+money.toFixed(2);earn.appendChild(p);}
+  if(xp>0){const p=document.createElement('div');p.className='ep epx';p.textContent='+'+xp+' XP';earn.appendChild(p);}
+  if(mult>1.0&&!isReward){const p=document.createElement('div');p.className='ep epb';p.textContent=mult.toFixed(2)+'× streak bonus!';earn.appendChild(p);}
+  const btn=document.getElementById('m-btn');
+  const w=who||CU||'zara';
+  btn.className='mbtn '+(w==='parent'||isReward?'mbz':w==='zara'?'mbz':'mbl');
+  document.getElementById('modal-overlay').classList.remove('h');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.add('h');}
+
+// ═══════════════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════════════
+function confetti(x,y,small=false){
+  const cols=['#FF6FD8','#FFD166','#5EE7DF','#6C63FF','#06D6A0','#EF476F','#A78BFA'];
+  for(let i=0;i<(small?10:22);i++){
+    const p=document.createElement('div');p.className='cf';
+    p.style.cssText=`left:${x+(Math.random()-.5)*100}px;top:${y+(Math.random()-.5)*50}px;background:${cols[i%cols.length]};width:${5+Math.random()*9}px;height:${5+Math.random()*9}px;animation-duration:${.9+Math.random()*1.3}s;animation-delay:${Math.random()*.2}s`;
+    document.body.appendChild(p);setTimeout(()=>p.remove(),2200);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════
+function switchTab(tab){
+  ['dash','board','score','budget','parent'].forEach(t=>{
+    const p=document.getElementById('page-'+t);if(p)p.classList.toggle('on',t===tab);
+    const b=document.getElementById('bn-'+t);if(b)b.classList.toggle('on',t===tab);
+  });
+  if(tab==='board')renderBoard();
+  if(tab==='score')renderScoreboard();
+  if(tab==='budget'){updBudAmt();renderBudItems();}
+  if(tab==='parent'&&parentUnlocked)renderParentDash();
+}
+
+// ═══════════════════════════════════════════════
+// PWA
+// ═══════════════════════════════════════════════
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "GIG SQUAD — Zara & Luné",
+  "short_name": "GIG SQUAD",
+  "description": "Earn, level up, and grow — the family gig system for Zara & Luné",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0d0d14",
+  "theme_color": "#0d0d14",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "screenshots": []
+}
