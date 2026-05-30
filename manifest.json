@@ -2,7 +2,7 @@
   "name": "GIG SQUAD — Zara & Luné",
   "short_name": "GIG SQUAD",
   "description": "Earn, level up, and grow — the family gig system for Zara & Luné",
-  "start_url": "/index.html",
+  "start_url": "/gig-squad/",
   "display": "standalone",
   "background_color": "#0d0d14",
   "theme_color": "#0d0d14",
