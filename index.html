@@ -697,6 +697,14 @@ function loadS(){
     if(!d.pins)d.pins={zara:'1010',lune:'1212',parent:'1234'};
     if(!d.log)d.log=[];
     if(!d.customGigs)d.customGigs=[];
+    // AUTO DAILY RESET — check if completedToday is from a previous date
+    const todayStr=new Date().toDateString();
+    if(d.lastResetDate!==todayStr){
+      d.zara.completedToday=[];
+      d.lune.completedToday=[];
+      d.lastResetDate=todayStr;
+      localStorage.setItem('gs4',JSON.stringify(d));
+    }
     return d;
   }catch{return{zara:defP(),lune:defP(),customGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
 }
@@ -885,14 +893,14 @@ function completePaid(gig,who,e){
   s.earned=Math.min(s.earned+actualPay,CAP);s.xp+=xpGained;
   s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
   updateStreak(s);addLog(who,gig.emoji,gig.name,actualPay,xpGained);
-  save();renderDash();confetti(e.clientX,e.clientY);
+  save();renderDash();if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();confetti(e.clientX,e.clientY);
   showModal(gig.emoji,'GIG CRUSHED!',rand(MSGS)+' '+gig.name,actualPay,xpGained,mult,who,false);
 }
 function completeCore(gig,who,e){
   const s=S[who],mult=streakMult(s.streak),xpGained=Math.round(gig.xp*mult);
   s.xp+=xpGained;s.completedToday.push(gig.id);
   updateStreak(s);addLog(who,gig.emoji,gig.name,0,xpGained);
-  save();renderDash();confetti(e.clientX,e.clientY,true);
+  save();renderDash();if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();confetti(e.clientX,e.clientY,true);
   showModal(gig.emoji,'DUTY DONE! ✅',gig.name+' — reliable & responsible.',0,xpGained,mult,who,false);
 }
 function updateStreak(s){
@@ -973,11 +981,20 @@ function renderBoard(){
   list.forEach(g=>{
     const isC=!!CORE_GIGS.find(c=>c.id===g.id);
     const zDone=S.zara.completedMonth.includes(g.id),lDone=S.lune.completedMonth.includes(g.id);
-    const d=document.createElement('div');d.className=`gc${isC?' core':''}`;d.style.cursor='default';
+    const childDone=CU&&CU!=='parent'&&S[CU].completedToday.includes(g.id);
+    const childPend=CU&&CU!=='parent'&&S[CU].pending&&S[CU].pending.includes(g.id);
+    const d=document.createElement('div');
+    d.className=`gc${isC?' core':''}${childDone||childPend?' done':''}`;
+    d.style.cursor=CU&&CU!=='parent'&&!childDone&&!childPend?'pointer':'default';
     const tH=g.tags.map(t=>`<span class="gtag t-${t}">${t}</span>`).join('');
-    const rH=isC?`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`:`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
+    const rH=isC?`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`
+      :g.needsApproval?`<div class="gcpay" style="-webkit-text-fill-color:var(--muted);background:none;color:var(--muted)">+$${g.pay}*</div><div class="gcxp">+${g.xp} XP</div>`
+      :`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
     const whoTags=CU==='parent'?`<span style="font-size:.6rem;color:var(--muted)">${zDone?'🌸✅':''} ${lDone?'✨✅':''}</span>`:'';
-    d.innerHTML=`<div class="gctop"><div class="gce">${g.emoji}</div><div class="gcr">${rH}</div></div><div class="gcn">${g.name}</div><div class="gcd">${g.desc}</div><div class="gcfoot"><div class="gctags">${tH}</div><span class="gcfreq">${g.freq}</span></div>${whoTags}`;
+    d.innerHTML=`<div class="gctop"><div class="gce">${g.emoji}</div><div class="gcr">${rH}</div></div><div class="gcn">${g.name}${childPend?' ⏳':''}</div><div class="gcd">${g.desc}${g.needsApproval&&!childDone&&!childPend?' <em style="font-size:.68rem;color:var(--gold)">★ Needs parent ✓</em>':''}</div><div class="gcfoot"><div class="gctags">${tH}</div><span class="gcfreq">${g.freq}</span></div>${whoTags}${childDone||childPend?`<div class="dstamp">${childPend?'⏳':'✅'}</div>`:''}`;
+    if(CU&&CU!=='parent'&&!childDone&&!childPend){
+      d.onclick=(e)=>isC?completeCore(g,CU,e):completePaid(g,CU,e);
+    }
     el.appendChild(d);
   });
 }
@@ -1224,6 +1241,7 @@ function doReset(type){
   } else {
     doConfirm('Reset Today\'s Gigs?','Completed gigs reset for both girls. Earnings & XP stay.',()=>{
       S.zara.completedToday=[];S.lune.completedToday=[];
+      S.lastResetDate=new Date().toDateString();
       save();if(CU&&CU!=='parent')renderDash();renderParentDash();
       showModal('↩️','Today Reset!','Gigs are fresh again!',0,0,1,'zara',true);
     });
