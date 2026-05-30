@@ -31,7 +31,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 @keyframes drift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,30px) scale(1.12)}}
 
 /* ── LOGIN SCREEN ── */
-#login-screen{position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 20px 40px;overflow-y:auto}
+#login-screen{position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 20px 60px;overflow-y:scroll;-webkit-overflow-scrolling:touch}
 #login-screen.h{display:none}
 .ls-logo{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,10vw,4rem);font-weight:800;background:linear-gradient(120deg,var(--za),var(--gold),var(--la));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;text-align:center}
 .ls-sub{font-size:.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:36px;text-align:center}
@@ -60,7 +60,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .pdot.filled.pp{background:#f87171;border-color:#f87171}
 .pin-err{font-size:.78rem;color:var(--red);font-weight:700;min-height:18px;text-align:center}
 .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
-.pk{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;padding:15px;border-radius:16px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;text-align:center}
+.pk{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;padding:12px;border-radius:16px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s;text-align:center}
 .pk:active{transform:scale(.92);background:rgba(255,255,255,.1)}
 .pk.sm{font-size:.8rem;color:var(--muted)}
 .pin-hint{font-size:.68rem;color:var(--muted);text-align:center;line-height:1.5}
