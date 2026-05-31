@@ -320,7 +320,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 @keyframes flyout{0%{transform:translate(-50%,-50%) scale(.5) rotate(var(--r));opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.4) rotate(calc(var(--r) + 360deg));opacity:0}}
 
 /* ── MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:950;display:flex;align-items:center;justify-content:center;padding:20px}
 .overlay.h{display:none}
 .modal{background:var(--surface);border:1px solid rgba(255,255,255,.09);border-radius:26px;padding:30px 26px;max-width:380px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{from{transform:scale(.7)}to{transform:scale(1)}}
@@ -343,7 +343,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 @keyframes cffall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(900deg)}}
 
 /* Custom confirm dialog */
-.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
 .confirm-overlay.h{display:none}
 .confirm-box{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 24px;max-width:320px;width:100%;text-align:center}
 .confirm-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:10px}
