@@ -701,7 +701,9 @@ function loadS(){
     const todayStr=new Date().toDateString();
     if(d.lastResetDate!==todayStr){
       d.zara.completedToday=[];
+      d.zara.pending=[];
       d.lune.completedToday=[];
+      d.lune.pending=[];
       d.lastResetDate=todayStr;
       localStorage.setItem('gs4',JSON.stringify(d));
     }
@@ -1235,15 +1237,21 @@ function doReset(type){
         S[w].xpSpent=0;S[w].claimedRewards=[];S[w].pending=[];
         S[w].budgetScore=null;S[w].cashedOut=0;S[w].pendingCashouts=[];
       });
-      save();if(CU&&CU!=='parent')renderDash();renderParentDash();
+      S.lastResetDate=new Date().toDateString();
+      save();
+      if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
+      renderParentDash();renderBoard();
       showModal('🎉','New Month!','Fresh start! XP levels carry over 🚀',0,0,1,'zara',true);
     });
   } else {
     doConfirm('Reset Today\'s Gigs?','Completed gigs reset for both girls. Earnings & XP stay.',()=>{
       S.zara.completedToday=[];S.lune.completedToday=[];
+      S.zara.pending=[];S.lune.pending=[];
       S.lastResetDate=new Date().toDateString();
-      save();if(CU&&CU!=='parent')renderDash();renderParentDash();
-      showModal('↩️','Today Reset!','Gigs are fresh again!',0,0,1,'zara',true);
+      save();
+      if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
+      renderParentDash();renderBoard();
+      showModal('↩️','Today Reset!','Gigs are fresh again for both girls!',0,0,1,'zara',true);
     });
   }
 }
