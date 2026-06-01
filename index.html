@@ -76,6 +76,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 
 /* ── BOTTOM NAV ── */
 .bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(10,10,18,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 calc(8px + var(--safe-bot))}
+.bnav.h{display:none}
 .bn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px;border-radius:12px;cursor:pointer;transition:all .2s;border:none;background:transparent;color:var(--muted)}
 .bn .bni{font-size:1.35rem;line-height:1}
 .bn .bnl{font-size:.56rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
@@ -360,7 +361,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 <div class="mesh"><span class="m1"></span><span class="m2"></span><span class="m3"></span></div>
 
 <!-- ══════════ LOGIN SCREEN ══════════ -->
-<div id="login-screen">
+<div id="login-screen" class="h">
   <div class="ls-logo">GIG SQUAD</div>
   <div class="ls-sub">Who's hustling today?</div>
   <div class="ls-who">Choose your profile</div>
@@ -548,11 +549,13 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
           </div>
         </div>
         <div class="mgr-sec" id="pend-sec"><div class="mgr-title">⏳ Awaiting Approval</div><div id="pend-list"></div></div>
-        <div class="mgr-sec"><div class="mgr-title">⚙️ Controls</div>
-          <div class="ctrl-row">
-            <button class="ctrl-btn ctrl-month" onclick="doReset('month')">🔄 New Month</button>
-            <button class="ctrl-btn ctrl-day" onclick="doReset('day')">↩️ Reset Today</button>
+        <div class="mgr-sec"><div class="mgr-title">↩️ Undo a Completed Gig</div>
+          <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.5">Tap any completed gig to mark it as not done. Removes it from today's completed list and reverses the earnings and XP.</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <button id="undo-btn-zara" onclick="setUndoWho('zara')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(124,58,237,.15);color:var(--lumis);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">🌸 Zara</button>
+            <button id="undo-btn-lune" onclick="setUndoWho('lune')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">✨ Luné</button>
           </div>
+          <div id="undo-list"></div>
         </div>
         <div class="pinchange"><div class="pc-title">🔑 Change PINs</div>
           <div class="pc-row"><span class="pc-who">🌸 Zara</span><input class="pc-input" id="pc-z" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('zara')">Save</button></div>
@@ -1126,7 +1129,7 @@ function renderParentDash(){
     set(`pd-${pre}-str`,s.streak+'d 🔥');
     set(`pd-${pre}-bud`,s.budgetScore||'Not done');
   });
-  renderLog();renderMgrList();renderPending();renderCoPending();
+  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();
 }
 function addLog(who,emoji,name,money,xp){
   if(!S.log)S.log=[];
@@ -1229,30 +1232,90 @@ function showMsg(id,msg,color){const e=document.getElementById(id);if(e){e.textC
 // ═══════════════════════════════════════════════
 // RESET (fixed with custom confirm)
 // ═══════════════════════════════════════════════
+let undoWho='zara';
+function setUndoWho(who){
+  undoWho=who;
+  const zb=document.getElementById('undo-btn-zara');
+  const lb=document.getElementById('undo-btn-lune');
+  if(zb){zb.style.background=who==='zara'?'rgba(124,58,237,.2)':'rgba(255,255,255,.04)';zb.style.color=who==='zara'?'var(--lumis)':'var(--muted)';}
+  if(lb){lb.style.background=who==='lune'?'rgba(124,58,237,.2)':'rgba(255,255,255,.04)';lb.style.color=who==='lune'?'var(--lumis)':'var(--muted)';}
+  renderUndoList();
+}
+function renderUndoList(){
+  const el=document.getElementById('undo-list');if(!el)return;
+  const s=S[undoWho];
+  const allGigs=[...allPaid(),...CORE_GIGS];
+  const done=allGigs.filter(g=>s.completedToday.includes(g.id));
+  if(!done.length){
+    el.innerHTML='<div class="no-log">No gigs completed today for '+(undoWho==='zara'?'Zara':'Luné')+'.</div>';
+    return;
+  }
+  el.innerHTML='';
+  done.forEach(g=>{
+    const isCore=!!CORE_GIGS.find(c=>c.id===g.id);
+    const d=document.createElement('div');
+    d.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border)';
+    d.innerHTML=`<span style="font-size:1.4rem">${g.emoji}</span>
+      <div style="flex:1">
+        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${g.name}</div>
+        <div style="font-size:.7rem;color:var(--muted)">${isCore?'+'+g.xp+' XP only':'+$'+g.pay+' · +'+g.xp+' XP'}</div>
+      </div>
+      <button onclick="undoGig('${g.id}','${undoWho}',${isCore?1:0},${g.pay||0},${g.xp})" style="padding:7px 12px;border-radius:8px;border:1px solid rgba(239,71,111,.3);background:rgba(239,71,111,.1);color:#EF476F;font-size:.75rem;font-weight:700;cursor:pointer">↩️ Undo</button>`;
+    el.appendChild(d);
+  });
+}
+function undoGig(gid,who,isCore,pay,xp){
+  const s=S[who];
+  const allGigs=[...allPaid(),...CORE_GIGS];
+  const g=allGigs.find(x=>x.id===gid);
+  const name=g?g.name:gid;
+  // Remove from completedToday
+  s.completedToday=s.completedToday.filter(id=>id!==gid);
+  // Remove one instance from completedMonth
+  const idx=s.completedMonth.lastIndexOf(gid);
+  if(idx>-1)s.completedMonth.splice(idx,1);
+  // Reverse XP
+  s.xp=Math.max(0,s.xp-xp);
+  // Reverse earnings if paid gig
+  if(!isCore){
+    const mult=streakMult(s.streak);
+    const actualPay=parseFloat((pay*mult).toFixed(2));
+    s.earned=Math.max(0,s.earned-actualPay);
+    addLog(who,'↩️','Undone: '+name,-actualPay,-xp);
+  } else {
+    addLog(who,'↩️','Undone: '+name,0,-xp);
+  }
+  save();
+  renderUndoList();
+  renderParentDash();
+  if(CU===who){renderDash();renderGigsForUser(who);}
+  renderBoard();
+}
+
 function doReset(type){
   if(type==='month'){
-    doConfirm('Start New Month?','This clears all earnings, gigs & cashouts. XP and streaks carry over!',()=>{
-      ['zara','lune'].forEach(w=>{
-        S[w].earned=0;S[w].completedToday=[];S[w].completedMonth=[];
-        S[w].xpSpent=0;S[w].claimedRewards=[];S[w].pending=[];
-        S[w].budgetScore=null;S[w].cashedOut=0;S[w].pendingCashouts=[];
-      });
-      S.lastResetDate=new Date().toDateString();
-      save();
-      if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
-      renderParentDash();renderBoard();
-      showModal('🎉','New Month!','Fresh start! XP levels carry over 🚀',0,0,1,'zara',true);
+    const ok=window.confirm('Start New Month? This clears all earnings and gigs. XP and streaks carry over.');
+    if(!ok)return;
+    ['zara','lune'].forEach(w=>{
+      S[w].earned=0;S[w].completedToday=[];S[w].completedMonth=[];
+      S[w].xpSpent=0;S[w].claimedRewards=[];S[w].pending=[];
+      S[w].budgetScore=null;S[w].cashedOut=0;S[w].pendingCashouts=[];
     });
+    S.lastResetDate=new Date().toDateString();
+    save();
+    if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
+    renderParentDash();renderBoard();
+    alert('New Month started! XP levels carry over.');
   } else {
-    doConfirm('Reset Today\'s Gigs?','Completed gigs reset for both girls. Earnings & XP stay.',()=>{
-      S.zara.completedToday=[];S.lune.completedToday=[];
-      S.zara.pending=[];S.lune.pending=[];
-      S.lastResetDate=new Date().toDateString();
-      save();
-      if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
-      renderParentDash();renderBoard();
-      showModal('↩️','Today Reset!','Gigs are fresh again for both girls!',0,0,1,'zara',true);
-    });
+    const ok=window.confirm('Reset today\'s gigs for both girls? Earnings and XP stay.');
+    if(!ok)return;
+    S.zara.completedToday=[];S.lune.completedToday=[];
+    S.zara.pending=[];S.lune.pending=[];
+    S.lastResetDate=new Date().toDateString();
+    save();
+    if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
+    renderParentDash();renderBoard();
+    alert('Done! Gigs are fresh again for both girls.');
   }
 }
 
@@ -1306,6 +1369,10 @@ function switchTab(tab){
     const p=document.getElementById('page-'+t);if(p)p.classList.toggle('on',t===tab);
     const b=document.getElementById('bn-'+t);if(b)b.classList.toggle('on',t===tab);
   });
+  // Always ensure login screen and overlays are hidden when navigating tabs
+  document.getElementById('login-screen').classList.add('h');
+  document.getElementById('modal-overlay').classList.add('h');
+  document.getElementById('co-overlay').classList.add('h');
   if(tab==='board')renderBoard();
   if(tab==='score')renderScoreboard();
   if(tab==='budget'){updBudAmt();renderBudItems();}
@@ -1315,6 +1382,9 @@ function switchTab(tab){
 // ═══════════════════════════════════════════════
 // PWA
 // ═══════════════════════════════════════════════
+// Show login screen once JS is ready
+document.getElementById('login-screen').classList.remove('h');
+
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js').catch(()=>{});
