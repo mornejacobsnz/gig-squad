@@ -387,6 +387,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .gm-creature-name.zw{background:linear-gradient(120deg,#c4b5fd,#FF6FD8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .gm-creature-name.lw{background:linear-gradient(120deg,#5EE7DF,#6C63FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .gm-stage-badge{font-size:.58rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:3px;display:block}
+.gm-xp-badge{display:inline-flex;align-items:center;gap:3px;margin-top:5px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.25);border-radius:100px;padding:3px 10px;font-size:.62rem;font-weight:700;color:var(--xp);letter-spacing:.5px}
 .gm-mood-indicator{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:5px 11px;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.65);white-space:nowrap;backdrop-filter:blur(8px)}
 .gm-mood-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .mood-thriving .gm-mood-dot{background:#06D6A0;box-shadow:0 0 8px #06D6A0}
@@ -640,7 +641,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         </div>
       </div>
 
-      <div class="xpstore"><div class="xpsttl">⚡ XP Rewards Store <span style="font-size:.66rem;color:var(--muted);font-weight:400">— tap to redeem</span></div><div class="xpgrid" id="w-xpgrid"></div></div>
+      <div class="xpstore"><div class="xpsttl" id="xp-store-title">⚡ XP Rewards Store <span style="font-size:.66rem;color:var(--muted);font-weight:400">— tap to redeem</span></div><div class="xpgrid" id="w-xpgrid"></div></div>
 
       <div class="stitle">💸 Paid Gigs <span class="pill">Tap to claim</span></div>
       <div class="gg" id="w-paid"></div>
@@ -766,7 +767,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.2.0 · Gift No Modal · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.3.0 · XP Visibility · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1000,6 +1001,7 @@ function renderGigaMalZone(who){
       <div class="gm-name-block">
         <div class="gm-creature-name ${gm.color}">${gm.name}</div>
         <span class="gm-stage-badge">Stage ${stage} · ${getStageName(stage)} · ${gm.archetype}</span>
+        <span class="gm-xp-badge" id="gm-xp-badge">⚡ ${Math.max(0,S[who].xp-S[who].xpSpent)} XP available</span>
       </div>
       <div class="gm-mood-indicator mood-${mood}">
         <div class="gm-mood-dot"></div>${moodLabel}
@@ -1247,6 +1249,11 @@ function renderDash(){
 // ═══════════════════════════════════════════════
 function renderXPStore(who,avail){
   const el=document.getElementById('w-xpgrid');if(!el)return;el.innerHTML='';
+  // Update store title with live spendable XP
+  const storeTitle=document.getElementById('xp-store-title');
+  if(storeTitle){
+    storeTitle.innerHTML='⚡ XP Rewards Store &nbsp;<span style="background:linear-gradient(135deg,#7c3aed,var(--xp));color:white;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:100px;font-family:DM Sans,sans-serif">'+avail+' XP to spend</span>';
+  }
 
   // Separate gifts from regular rewards
   const regular=XP_REWARDS.filter(r=>!r.isGigaMalGift);
