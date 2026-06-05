@@ -397,9 +397,9 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 /* Creature wrap */
 .gm-creature-wrap{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;margin-bottom:0}
 /* The image — mix-blend-mode kills the grey Midjourney background */
-.gm-creature-img{width:190px;height:190px;object-fit:contain;object-position:center bottom;mix-blend-mode:lighten;filter:drop-shadow(0 12px 32px rgba(0,0,0,.7));transition:transform .2s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
-.zw .gm-creature-img{filter:drop-shadow(0 12px 32px rgba(120,80,255,.4))}
-.lw .gm-creature-img{filter:drop-shadow(0 12px 32px rgba(60,200,200,.4))}
+.gm-creature-img{width:190px;height:190px;object-fit:contain;object-position:center bottom;mix-blend-mode:multiply;filter:drop-shadow(0 12px 32px rgba(0,0,0,.7));transition:transform .2s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
+.zw .gm-creature-img{filter:drop-shadow(0 16px 40px rgba(80,40,180,.6)) brightness(1.05)}
+.lw .gm-creature-img{filter:drop-shadow(0 16px 40px rgba(40,160,160,.6)) brightness(1.05)}
 /* Shadow on ground */
 .gm-creature-shadow{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:120px;height:18px;background:rgba(0,0,0,.5);border-radius:50%;filter:blur(10px);z-index:1}
 /* Whisper — sits below creature */
@@ -694,7 +694,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v1.3.0 · GigaMal Environment · 2025-06-05</div>
+<div class="build-version" id="build-version">v1.4.0 · Transparent BG · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
