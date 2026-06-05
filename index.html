@@ -816,7 +816,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.6.0 · XP Heal · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.7.0 · Crown Fix · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1434,42 +1434,45 @@ function triggerGigaMalGift(who,r){
     },reactionDelay);
   }
 
-  // Crown moment — crown lands on head THEN full screen takeover
+  // Crown moment — scroll first, then crown lands, then fullscreen
   if(tier==='crown'){
-    // First spawn the crown landing on the creature's head
-    const crownWrap=document.getElementById('gm-creature-wrap');
-    if(crownWrap){
-      const crownRect=crownWrap.getBoundingClientRect();
-      spawnGiftItem('👑','crown',
-        crownRect.left+crownRect.width/2,
-        crownRect.top+30,
-        3600
-      );
-    }
-    // Then after crown lands, trigger full screen
+    // Step 1: scroll to GigaMal (reactionDelay=600ms handles this above)
+    // Step 2: after scroll completes, spawn crown on head
     setTimeout(()=>{
-    const gm=GIGAMALS[who];
-    const overlay=document.getElementById('evo-overlay');
-    if(overlay){
-      const img=document.createElement('img');
-      img.className='evo-creature';img.src=gm.img;img.alt=gm.name;
-      const txt=document.createElement('div');
-      txt.className='evo-text';
-      txt.style.cssText='background:linear-gradient(120deg,'+gm.accentColor+',#FFD166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
-      txt.textContent='You crowned '+gm.name+'.';
-      const sub=document.createElement('div');
-      sub.className='evo-sub';sub.textContent='A moment they will never forget.';
-      const btn=document.createElement('button');
-      btn.className='evo-close';btn.textContent='Continue ✶';
-      btn.onclick=closeEvoOverlay;
-      overlay.innerHTML='';
-      overlay.appendChild(img);overlay.appendChild(txt);overlay.appendChild(sub);overlay.appendChild(btn);
-      overlay.classList.add('active');
-      for(let i=0;i<50;i++)setTimeout(()=>confetti(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.6),i*60);
-    }
-    setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_crown'),1200);
-    renderDash();
-    },1800); // delay for crown landing animation
+      const crownWrap=document.getElementById('gm-creature-wrap');
+      if(crownWrap){
+        const crownRect=crownWrap.getBoundingClientRect();
+        spawnGiftItem('👑','crown',
+          crownRect.left+crownRect.width/2,
+          crownRect.top+20,
+          3200
+        );
+      }
+      // Step 3: after crown lands on head (1.8s), trigger fullscreen
+      setTimeout(()=>{
+        const gm=GIGAMALS[who];
+        const overlay=document.getElementById('evo-overlay');
+        if(!overlay)return;
+        const img=document.createElement('img');
+        img.className='evo-creature';img.src=gm.img;img.alt=gm.name;
+        const txt=document.createElement('div');
+        txt.className='evo-text';
+        txt.style.cssText='background:linear-gradient(120deg,'+gm.accentColor+',#FFD166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
+        txt.textContent='You crowned '+gm.name+'.';
+        const sub=document.createElement('div');
+        sub.className='evo-sub';sub.textContent='A moment they will never forget.';
+        const btn=document.createElement('button');
+        btn.className='evo-close';btn.textContent='Continue ✶';
+        btn.onclick=closeEvoOverlay;
+        overlay.innerHTML='';
+        overlay.appendChild(img);overlay.appendChild(txt);overlay.appendChild(sub);overlay.appendChild(btn);
+        overlay.classList.add('active');
+        for(let i=0;i<50;i++)setTimeout(()=>confetti(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.6),i*60);
+        setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_crown'),1200);
+        // renderDash AFTER overlay is shown — don't wipe it
+        setTimeout(()=>renderDash(),3500);
+      },1800);
+    },reactionDelay+200);
   }
 }
 
