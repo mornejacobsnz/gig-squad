@@ -519,6 +519,44 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 @media(max-width:600px){.rcards{grid-template-columns:1fr}.gg{grid-template-columns:1fr 1fr}.sb-cards{grid-template-columns:1fr 1fr}.pd-grid{grid-template-columns:1fr}.af-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:370px){.gg{grid-template-columns:1fr}}
 
+/* ── PERSISTENT ACCESSORIES ── */
+.gm-accessory{
+  position:absolute;
+  font-size:1.8rem;
+  line-height:1;
+  pointer-events:none;
+  z-index:10;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  animation:accessory-in .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes accessory-in{
+  0%{opacity:0;transform:scale(0) rotate(-20deg)}
+  100%{opacity:1;transform:scale(1) rotate(0deg)}
+}
+/* Slot positions relative to creature wrap */
+.gm-accessory.slot-head{top:-28px;left:50%;transform:translateX(-50%)}
+.gm-accessory.slot-face{top:22%;left:52%;transform:translateX(-50%)}
+.gm-accessory.slot-side{bottom:20%;right:-10px}
+.gm-accessory.slot-hand{bottom:5%;left:-8px}
+
+/* Remove button */
+.gm-accessory-remove{
+  position:absolute;
+  top:8px;right:8px;
+  font-size:.6rem;font-weight:700;
+  background:rgba(239,71,111,.15);
+  border:1px solid rgba(239,71,111,.25);
+  color:#EF476F;
+  border-radius:100px;
+  padding:3px 8px;
+  cursor:pointer;
+  z-index:11;
+  letter-spacing:.5px;
+  transition:all .2s;
+}
+.gm-accessory-remove:active{transform:scale(.95)}
+
 /* ── GIFT FLOATING ITEMS ── */
 .gm-gift-item{
   position:fixed;
@@ -816,7 +854,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.7.0 · Crown Fix · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.8.0 · Accessories · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -918,6 +956,10 @@ const XP_REWARDS=[
   {id:'g1',emoji:'🍬',name:'Sweet Treat',cost:80,isGigaMalGift:true,giftTier:'sweet',desc:'Give your GigaMal a treat'},
   {id:'g2',emoji:'✨',name:'Power Spark',cost:150,isGigaMalGift:true,giftTier:'spark',desc:'Charge up your GigaMal'},
   {id:'g3',emoji:'👑',name:'Crown Moment',cost:300,isGigaMalGift:true,giftTier:'crown',desc:'Your GigaMal biggest moment'},
+  {id:'a1',emoji:'🕶️',name:'Cool Glasses',cost:200,isAccessory:true,slot:'face',desc:'Instant cool factor'},
+  {id:'a2',emoji:'💧',name:'Water Bottle',cost:120,isAccessory:true,slot:'side',desc:'Hydration is key'},
+  {id:'a3',emoji:'🎩',name:'Top Hat',cost:180,isAccessory:true,slot:'head',desc:'Class it up'},
+  {id:'a4',emoji:'🧸',name:'Teddy Bear',cost:160,isAccessory:true,slot:'hand',desc:'Everyone needs a bestie'},
 ];
 const BIT=[
   {id:'bi1',emoji:'📚',label:'School supplies',cat:'n'},
@@ -941,7 +983,7 @@ function rand(a){return a[Math.floor(Math.random()*a.length)]}
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[]}}
+function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null}}
 function loadS(){
   try{
     const s=localStorage.getItem('gs4');
@@ -1077,6 +1119,8 @@ function renderGigaMalZone(who){
     </div>`;
   clearTimeout(gmWhisperTimer);
   setTimeout(()=>showWhisper(who,mood),1800);
+  // Render persistent accessory if equipped
+  setTimeout(()=>renderAccessory(who),50);
 }
 
 function showWhisper(who,mood,type=null){
@@ -1138,6 +1182,74 @@ function gmParticleBurst(cx,cy,who){
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),900);
   }
+}
+
+function renderAccessory(who){
+  // Remove any existing accessory element
+  const existing=document.querySelector('.gm-accessory');
+  if(existing)existing.remove();
+  const removeBtn=document.querySelector('.gm-accessory-remove');
+  if(removeBtn)removeBtn.remove();
+
+  const acc=S[who].accessory;
+  if(!acc)return;
+
+  const wrap=document.getElementById('gm-creature-wrap');
+  if(!wrap)return;
+
+  // Spawn accessory on creature
+  const el=document.createElement('div');
+  el.className='gm-accessory slot-'+acc.slot;
+  el.textContent=acc.emoji;
+  el.title=acc.name;
+  wrap.appendChild(el);
+
+  // Add remove button to zone
+  const zone=document.getElementById('gm-zone');
+  if(zone){
+    const btn=document.createElement('button');
+    btn.className='gm-accessory-remove';
+    btn.textContent='✕ Remove '+acc.name;
+    btn.onclick=()=>removeAccessory(who);
+    zone.appendChild(btn);
+  }
+}
+
+function removeAccessory(who){
+  S[who].accessory=null;
+  save();
+  renderGigaMalZone(who);
+  setTimeout(()=>renderAccessory(who),100);
+}
+
+function equipAccessory(who,r){
+  // Save accessory to state — replaces any existing
+  S[who].accessory={id:r.id,emoji:r.emoji,name:r.name,slot:r.slot};
+  save();
+  // Scroll to GigaMal then animate it on
+  const gmZone=document.getElementById('gm-zone');
+  if(gmZone)gmZone.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{
+    renderGigaMalZone(who);
+    setTimeout(()=>{
+      renderAccessory(who);
+      // Bounce the creature
+      const wrap=document.getElementById('gm-creature-wrap');
+      if(wrap){
+        wrap.classList.remove('reacting');
+        void wrap.offsetWidth;
+        wrap.classList.add('reacting');
+        setTimeout(()=>wrap.classList.remove('reacting'),800);
+      }
+      // Particle burst
+      const wrap2=document.getElementById('gm-creature-wrap');
+      if(wrap2){
+        const rect=wrap2.getBoundingClientRect();
+        gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
+      }
+    },400);
+  },600);
+  renderDash();
 }
 
 function spawnGiftItem(emoji, animClass, cx, cy, duration){
@@ -1351,6 +1463,27 @@ function renderXPStore(who,avail){
       el.appendChild(d);
     });
   }
+
+  // Accessories section
+  const accessories=XP_REWARDS.filter(r=>r.isAccessory);
+  if(accessories.length){
+    const accHeader=document.createElement('div');
+    accHeader.style.cssText='grid-column:1/-1;font-family:Syne,sans-serif;font-size:.72rem;font-weight:700;color:#FFD166;letter-spacing:1px;text-transform:uppercase;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,209,102,.15)';
+    accHeader.textContent='✨ Accessories';
+    el.appendChild(accHeader);
+
+    const current=S[who].accessory;
+    accessories.forEach(r=>{
+      const can=avail>=r.cost;
+      const equipped=current&&current.id===r.id;
+      const d=document.createElement('div');
+      d.className='xpitem'+(equipped?' claimed':'');
+      d.style.cssText=equipped?'border-color:rgba(255,209,102,.4);background:rgba(255,209,102,.08)':can?'border-color:rgba(255,209,102,.2)':'';
+      d.innerHTML='<span class="xre">'+r.emoji+'</span><div class="xrn">'+r.name+'</div><div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">'+r.desc+'</div><div class="xrc" style="color:'+(equipped?'#FFD166':can?'var(--xp)':'rgba(255,255,255,.3)')+'">'+(equipped?'✅ Wearing':can?r.cost+' XP':'🔒 '+r.cost+' XP')+'</div>';
+      if(can&&!equipped)d.onclick=()=>claimXP(who,r,avail);
+      el.appendChild(d);
+    });
+  }
 }
 function claimXP(who,r,avail){
   S[who].xpSpent+=r.cost;
@@ -1361,6 +1494,8 @@ function claimXP(who,r,avail){
   save();
   if(r.isGigaMalGift){
     triggerGigaMalGift(who,r);
+  } else if(r.isAccessory){
+    equipAccessory(who,r);
   } else {
     renderDash();showModal(r.emoji,'Reward Unlocked!','You claimed: '+r.name,0,r.cost,1,who,true);
   }
