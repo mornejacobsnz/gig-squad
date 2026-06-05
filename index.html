@@ -403,10 +403,10 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 /* Shadow on ground */
 .gm-creature-shadow{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:120px;height:18px;background:rgba(0,0,0,.5);border-radius:50%;filter:blur(10px);z-index:1}
 /* Whisper — sits below creature */
-.gm-whisper-zone{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;z-index:6;pointer-events:none}
-.gm-whisper{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:8px 16px;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.9);line-height:1.4;max-width:280px;text-align:center;opacity:0;transform:translateY(6px) scale(.97);transition:all .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(12px)}
+.gm-whisper-zone{display:flex;justify-content:center;padding:10px 16px 0;position:relative;z-index:6;pointer-events:none;min-height:52px}
+.gm-whisper{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:8px 20px;font-size:.76rem;font-weight:600;color:rgba(255,255,255,.85);line-height:1.3;max-width:300px;text-align:center;opacity:0;transform:translateY(-4px) scale(.97);transition:all .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gm-whisper.visible{opacity:1;transform:translateY(0) scale(1)}
-.gm-whisper-name{font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;opacity:.45}
+.gm-whisper-name{display:none}
 /* animations */
 .gm-creature-wrap{animation:gm-idle 3s ease-in-out infinite}
 .mood-waiting .gm-creature-wrap{animation:gm-wait 4s ease-in-out infinite}
@@ -694,7 +694,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v1.5.0 · RemoveBG PNGs · 2025-06-05</div>
+<div class="build-version" id="build-version">v1.6.0 · Whisper Position · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -921,17 +921,16 @@ function renderGigaMalZone(who){
         <div class="gm-mood-dot"></div>${moodLabel}
       </div>
     </div>
+    <div class="gm-whisper-zone">
+      <div class="gm-whisper" id="gm-whisper">
+        <span id="gm-whisper-text"></span>
+      </div>
+    </div>
     <div class="gm-stage">
       <div class="gm-creature-wrap" id="gm-creature-wrap" onclick="gmTap('${who}')">
         <div class="gm-chest-glow"></div>
         <img class="gm-creature-img" id="gm-creature-img" src="${gm.img}" alt="${gm.name}" onerror="this.outerHTML='<div style=\'font-size:6rem;text-align:center;padding:20px\'>⭐</div>'"/>
         <div class="gm-creature-shadow"></div>
-      </div>
-      <div class="gm-whisper-zone">
-        <div class="gm-whisper" id="gm-whisper">
-          <div class="gm-whisper-name">${gm.name}</div>
-          <span id="gm-whisper-text"></span>
-        </div>
       </div>
     </div>`;
   clearTimeout(gmWhisperTimer);
