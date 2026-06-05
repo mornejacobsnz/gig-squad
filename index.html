@@ -519,6 +519,55 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 @media(max-width:600px){.rcards{grid-template-columns:1fr}.gg{grid-template-columns:1fr 1fr}.sb-cards{grid-template-columns:1fr 1fr}.pd-grid{grid-template-columns:1fr}.af-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:370px){.gg{grid-template-columns:1fr}}
 
+/* ── GIFT FLOATING ITEMS ── */
+.gm-gift-item{
+  position:fixed;
+  pointer-events:none;
+  z-index:9997;
+  font-size:2.8rem;
+  line-height:1;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));
+  transform:translate(-50%,-50%);
+}
+/* Sweet treat — floats up and wobbles */
+.gm-gift-item.sweet{
+  animation:gift-sweet 2.2s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes gift-sweet{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(-20deg)}
+  15%{opacity:1;transform:translate(-50%,-120%) scale(1.2) rotate(10deg)}
+  35%{transform:translate(-50%,-140%) scale(1) rotate(-8deg)}
+  55%{transform:translate(-50%,-130%) scale(1.05) rotate(6deg)}
+  75%{transform:translate(-50%,-145%) scale(1) rotate(-4deg);opacity:1}
+  100%{transform:translate(-50%,-180%) scale(.7) rotate(0deg);opacity:0}
+}
+/* Crown — descends from above, lands, glows, stays */
+.gm-gift-item.crown{
+  font-size:3.5rem;
+  animation:gift-crown-drop 3.5s ease forwards;
+}
+@keyframes gift-crown-drop{
+  0%{opacity:0;transform:translate(-50%,-300%) scale(.5) rotate(-15deg)}
+  25%{opacity:1;transform:translate(-50%,-160%) scale(1.3) rotate(5deg)}
+  38%{transform:translate(-50%,-140%) scale(.95) rotate(-3deg)}
+  45%{transform:translate(-50%,-148%) scale(1.05) rotate(2deg)}
+  50%{transform:translate(-50%,-145%) scale(1) rotate(0deg)}
+  80%{transform:translate(-50%,-145%) scale(1) rotate(0deg);opacity:1;filter:drop-shadow(0 0 20px gold) drop-shadow(0 4px 12px rgba(0,0,0,.5))}
+  100%{transform:translate(-50%,-145%) scale(.8) rotate(0deg);opacity:0;filter:drop-shadow(0 0 0px gold)}
+}
+/* Spark bolt — pulses around creature */
+.gm-gift-item.spark{
+  font-size:2.2rem;
+  animation:gift-spark 1.8s ease forwards;
+}
+@keyframes gift-spark{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}
+  50%{transform:translate(-50%,-50%) scale(.9);opacity:.9}
+  70%{transform:translate(-50%,-50%) scale(1.2);opacity:1}
+  100%{transform:translate(-50%,-50%) scale(.5);opacity:0}
+}
+
 /* ── BUILD VERSION TAG ── */
 .build-version{
   position:fixed;
@@ -767,7 +816,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.3.0 · XP Visibility · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.4.0 · Gift Visuals · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1084,6 +1133,16 @@ function gmParticleBurst(cx,cy,who){
   }
 }
 
+function spawnGiftItem(emoji, animClass, cx, cy, duration){
+  const el = document.createElement('div');
+  el.className = 'gm-gift-item ' + animClass;
+  el.textContent = emoji;
+  el.style.left = cx + 'px';
+  el.style.top = cy + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), duration);
+}
+
 function gmReactToGig(who){
   const wrap=document.getElementById('gm-creature-wrap');
   if(!wrap)return;
@@ -1319,10 +1378,13 @@ function triggerGigaMalGift(who,r){
         setTimeout(()=>wrap.classList.remove('reacting'),800);
       }
       const rect=wrap?wrap.getBoundingClientRect():null;
-      if(rect)gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
+      if(rect){
+        gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
+        // Spawn floating candy from creature centre
+        spawnGiftItem('🍬','sweet',rect.left+rect.width/2,rect.top+rect.height/2,2400);
+      }
       setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_sweet'),400);
       renderDash();
-      // No modal — the reaction IS the feedback
     },reactionDelay);
   }
 
@@ -1347,14 +1409,38 @@ function triggerGigaMalGift(who,r){
         chestGlow.style.opacity='1';
         setTimeout(()=>{chestGlow.style.transform='';chestGlow.style.opacity='';},800);
       }
+      // Spawn lightning bolts around creature
+      if(rect){
+        const offsets=[[-30,-20],[30,-10],[0,-40],[25,-50],[-20,-55]];
+        offsets.forEach((o,i)=>{
+          setTimeout(()=>{
+            spawnGiftItem('⚡','spark',
+              rect.left+rect.width/2+o[0],
+              rect.top+rect.height/3+o[1],
+              1900
+            );
+          },i*120);
+        });
+      }
       setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_spark'),500);
       renderDash();
-      // No modal — reaction and whisper are the feedback
     },reactionDelay);
   }
 
-  // Crown moment — full screen takeover
+  // Crown moment — crown lands on head THEN full screen takeover
   if(tier==='crown'){
+    // First spawn the crown landing on the creature's head
+    const crownWrap=document.getElementById('gm-creature-wrap');
+    if(crownWrap){
+      const crownRect=crownWrap.getBoundingClientRect();
+      spawnGiftItem('👑','crown',
+        crownRect.left+crownRect.width/2,
+        crownRect.top+30,
+        3600
+      );
+    }
+    // Then after crown lands, trigger full screen
+    setTimeout(()=>{
     const gm=GIGAMALS[who];
     const overlay=document.getElementById('evo-overlay');
     if(overlay){
@@ -1376,6 +1462,7 @@ function triggerGigaMalGift(who,r){
     }
     setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_crown'),1200);
     renderDash();
+    },1800); // delay for crown landing animation
   }
 }
 
