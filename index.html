@@ -766,7 +766,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.0.0 · GigaMal Gifts · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.1.0 · Gift Scroll Fix · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1297,46 +1297,53 @@ function triggerGigaMalGift(who,r){
   const wrap=document.getElementById('gm-creature-wrap');
   const tier=r.giftTier;
 
+  // Scroll GigaMal into view first, then trigger reaction
+  const gmZone=document.getElementById('gm-zone');
+  if(gmZone)gmZone.scrollIntoView({behavior:'smooth',block:'center'});
+  const reactionDelay=gmZone?600:0;
+
   // Sweet treat — happy bounce + whisper
   if(tier==='sweet'){
-    if(wrap){
-      wrap.classList.remove('reacting');
-      void wrap.offsetWidth;
-      wrap.classList.add('reacting');
-      setTimeout(()=>wrap.classList.remove('reacting'),800);
-    }
-    const rect=wrap?wrap.getBoundingClientRect():null;
-    if(rect)gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
-    setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_sweet'),400);
-    renderDash();
-    showModal(r.emoji,'Gift Given!','Your GigaMal loved that!',0,0,1,who,true);
+    setTimeout(()=>{
+      if(wrap){
+        wrap.classList.remove('reacting');
+        void wrap.offsetWidth;
+        wrap.classList.add('reacting');
+        setTimeout(()=>wrap.classList.remove('reacting'),800);
+      }
+      const rect=wrap?wrap.getBoundingClientRect():null;
+      if(rect)gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
+      setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_sweet'),400);
+      renderDash();
+      showModal(r.emoji,'Gift Given!','Your GigaMal loved that!',0,0,1,who,true);
+    },reactionDelay);
   }
 
   // Power spark — bigger burst + glow flash + whisper
   if(tier==='spark'){
-    if(wrap){
-      wrap.classList.remove('tapped','reacting');
-      void wrap.offsetWidth;
-      wrap.classList.add('reacting');
-      setTimeout(()=>wrap.classList.remove('reacting'),800);
-    }
-    // Multiple particle bursts
-    const rect=wrap?wrap.getBoundingClientRect():null;
-    if(rect){
-      for(let i=0;i<3;i++){
-        setTimeout(()=>gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/3,who),i*200);
+    setTimeout(()=>{
+      if(wrap){
+        wrap.classList.remove('tapped','reacting');
+        void wrap.offsetWidth;
+        wrap.classList.add('reacting');
+        setTimeout(()=>wrap.classList.remove('reacting'),800);
       }
-    }
-    // Flash the chest glow bright
-    const chestGlow=document.querySelector('.gm-chest-glow');
-    if(chestGlow){
-      chestGlow.style.transform='translateX(-50%) scale(3)';
-      chestGlow.style.opacity='1';
-      setTimeout(()=>{chestGlow.style.transform='';chestGlow.style.opacity='';},800);
-    }
-    setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_spark'),500);
-    renderDash();
-    showModal(r.emoji,'Power Surge!','Your GigaMal is charged up!',0,0,1,who,true);
+      const rect=wrap?wrap.getBoundingClientRect():null;
+      if(rect){
+        for(let i=0;i<3;i++){
+          setTimeout(()=>gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/3,who),i*200);
+        }
+      }
+      const chestGlow=document.querySelector('.gm-chest-glow');
+      if(chestGlow){
+        chestGlow.style.transform='translateX(-50%) scale(3)';
+        chestGlow.style.opacity='1';
+        setTimeout(()=>{chestGlow.style.transform='';chestGlow.style.opacity='';},800);
+      }
+      setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_spark'),500);
+      renderDash();
+      showModal(r.emoji,'Power Surge!','Your GigaMal is charged up!',0,0,1,who,true);
+    },reactionDelay);
   }
 
   // Crown moment — full screen takeover
