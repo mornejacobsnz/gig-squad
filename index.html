@@ -398,8 +398,8 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .gm-creature-wrap{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;margin-bottom:0}
 /* The image — mix-blend-mode kills the grey Midjourney background */
 .gm-creature-img{width:190px;height:190px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 12px 32px rgba(0,0,0,.7));transition:transform .2s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
-.zw .gm-creature-img{filter:drop-shadow(0 16px 40px rgba(80,40,180,.6)) brightness(1.05)}
-.lw .gm-creature-img{filter:drop-shadow(0 16px 40px rgba(40,160,160,.6)) brightness(1.05)}
+/* zw filter handled by mood classes */
+/* lw filter handled by mood classes */
 /* Shadow on ground */
 .gm-creature-shadow{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:120px;height:18px;background:rgba(0,0,0,.5);border-radius:50%;filter:blur(10px);z-index:1}
 /* Whisper — sits below creature */
@@ -408,9 +408,81 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .gm-whisper.visible{opacity:1;transform:translateY(0) scale(1)}
 .gm-whisper-name{display:none}
 /* animations */
-.gm-creature-wrap{animation:gm-idle 3s ease-in-out infinite}
-.mood-waiting .gm-creature-wrap{animation:gm-wait 4s ease-in-out infinite}
-.mood-dormant .gm-creature-wrap{animation:gm-dormant 5s ease-in-out infinite}
+/* ── MOOD ANIMATIONS ── */
+/* Thriving — bouncy, energetic, alive */
+.mood-thriving .gm-creature-wrap{animation:gm-thriving 2s ease-in-out infinite}
+@keyframes gm-thriving{
+  0%,100%{transform:translateY(0px) scale(1)}
+  30%{transform:translateY(-14px) scale(1.04)}
+  60%{transform:translateY(-8px) scale(1.02)}
+  80%{transform:translateY(-12px) scale(1.03)}
+}
+/* Waiting — slow gentle rock */
+.mood-waiting .gm-creature-wrap{animation:gm-waiting 4s ease-in-out infinite}
+@keyframes gm-waiting{
+  0%,100%{transform:translateY(0px) rotate(0deg)}
+  25%{transform:translateY(-4px) rotate(-1.5deg)}
+  75%{transform:translateY(-2px) rotate(1.5deg)}
+}
+/* Dormant — barely breathing */
+.mood-dormant .gm-creature-wrap{animation:gm-dormant 6s ease-in-out infinite}
+@keyframes gm-dormant{
+  0%,100%{transform:translateY(0px) scale(1)}
+  50%{transform:translateY(-3px) scale(.99)}
+}
+/* Fallback */
+.gm-creature-wrap{animation:gm-waiting 4s ease-in-out infinite}
+
+/* ── MOOD IMAGE FILTERS ── */
+/* Thriving — full colour, slight brightness boost */
+.mood-thriving .gm-creature-img{
+  filter:drop-shadow(0 16px 40px rgba(120,80,255,.7)) saturate(1.2) brightness(1.1);
+  transition:filter 1s ease;
+}
+/* Waiting — slightly muted */
+.mood-waiting .gm-creature-img{
+  filter:drop-shadow(0 12px 30px rgba(80,60,180,.4)) saturate(0.8) brightness(0.9);
+  transition:filter 1s ease;
+}
+/* Dormant — washed out, dim */
+.mood-dormant .gm-creature-img{
+  filter:drop-shadow(0 8px 20px rgba(40,20,80,.3)) saturate(0.3) brightness(0.65);
+  transition:filter 1.5s ease;
+}
+
+/* ── MOOD ENVIRONMENT INTENSITY ── */
+/* Thriving — sky brighter, horizon glows */
+.mood-thriving .gm-ground-glow{opacity:.35;transition:opacity 1s ease}
+.mood-thriving .gm-horizon{opacity:.4;transition:opacity 1s ease}
+.mood-thriving .gm-sky{filter:brightness(1.2);transition:filter 1s ease}
+/* Waiting — neutral */
+.mood-waiting .gm-ground-glow{opacity:.2;transition:opacity 1s ease}
+.mood-waiting .gm-horizon{opacity:.2;transition:opacity 1s ease}
+/* Dormant — world goes dark */
+.mood-dormant .gm-ground-glow{opacity:.08;transition:opacity 1.5s ease}
+.mood-dormant .gm-horizon{opacity:.08;transition:opacity 1.5s ease}
+.mood-dormant .gm-sky{filter:brightness(0.6);transition:filter 1.5s ease}
+.mood-dormant .gm-ground{filter:brightness(0.5);transition:filter 1.5s ease}
+
+/* ── MOOD SHADOW ── */
+.mood-thriving .gm-creature-shadow{
+  width:130px;opacity:.6;
+  background:rgba(120,80,255,.5);
+  transition:all 1s ease;
+}
+.mood-waiting .gm-creature-shadow{
+  width:100px;opacity:.35;
+  transition:all 1s ease;
+}
+.mood-dormant .gm-creature-shadow{
+  width:70px;opacity:.2;
+  transition:all 1.5s ease;
+}
+
+/* ── MOOD CHEST GLOW OVERRIDES ── */
+.mood-thriving .gm-chest-glow{opacity:1;animation:chest-pulse 1.5s ease-in-out infinite}
+.mood-waiting .gm-chest-glow{opacity:.3;animation:chest-pulse 3s ease-in-out infinite}
+.mood-dormant .gm-chest-glow{opacity:.08;animation:chest-pulse 5s ease-in-out infinite}
 @keyframes gm-idle{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
 @keyframes gm-wait{0%,100%{transform:translateY(0px)}30%{transform:translateY(-4px)}60%{transform:translateY(-2px)}}
 @keyframes gm-dormant{0%,100%{transform:translateY(0px)}50%{transform:translateY(-3px)}}
@@ -418,8 +490,8 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 @keyframes gm-tap{0%{transform:scale(1) rotate(0deg)}30%{transform:scale(1.15) rotate(-5deg)}60%{transform:scale(.95) rotate(3deg)}100%{transform:scale(1) rotate(0deg)}}
 .gm-creature-wrap.reacting{animation:gm-react .6s cubic-bezier(.34,1.56,.64,1) forwards !important}
 @keyframes gm-react{0%{transform:translateY(0) scale(1)}25%{transform:translateY(-20px) scale(1.1)}50%{transform:translateY(-10px) scale(1.05) rotate(-3deg)}75%{transform:translateY(-16px) scale(1.08) rotate(3deg)}100%{transform:translateY(0) scale(1)}}
-.mood-dormant .gm-creature-img{filter:drop-shadow(0 8px 24px rgba(0,0,0,.5)) brightness(.75) saturate(.6)}
-.mood-waiting .gm-creature-img{filter:drop-shadow(0 8px 24px rgba(0,0,0,.5)) brightness(.9)}
+/* dormant filter handled above */
+/* waiting filter handled above */
 .gm-whisper-zone{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:8px;padding-left:12px;min-width:0}
 .gm-whisper{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.85);line-height:1.5;position:relative;max-width:200px;opacity:0;transform:translateY(6px) scale(.97);transition:all .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(8px)}
 .gm-whisper.visible{opacity:1;transform:translateY(0) scale(1)}
@@ -694,7 +766,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v1.6.0 · Whisper Position · 2025-06-05</div>
+<div class="build-version" id="build-version">v1.8.0 · Mood Expressions · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -885,8 +957,11 @@ function getGigaMalMood(who){
   const s=S[who];
   const today=new Date().toDateString();
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-  if(s.streak>=3&&s.completedToday.length>0)return'thriving';
+  // Thriving: any gigs done today — streak doesn't matter
+  if(s.completedToday.length>0)return'thriving';
+  // Waiting: was active today or yesterday but no gigs yet
   if(s.lastDate===today||s.lastDate===yesterday.toDateString())return'waiting';
+  // Dormant: hasn't shown up in 2+ days
   return'dormant';
 }
 
