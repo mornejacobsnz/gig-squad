@@ -522,11 +522,11 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 /* ── PERSISTENT ACCESSORIES ── */
 .gm-accessory{
   position:absolute;
-  font-size:1.8rem;
+  font-size:2.8rem;
   line-height:1;
   pointer-events:none;
   z-index:10;
-  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.6));
   transition:all .4s cubic-bezier(.34,1.56,.64,1);
   animation:accessory-in .5s cubic-bezier(.34,1.56,.64,1) both;
 }
@@ -535,10 +535,10 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   100%{opacity:1;transform:scale(1) rotate(0deg)}
 }
 /* Slot positions relative to creature wrap */
-.gm-accessory.slot-head{top:-28px;left:50%;transform:translateX(-50%)}
-.gm-accessory.slot-face{top:22%;left:52%;transform:translateX(-50%)}
-.gm-accessory.slot-side{bottom:20%;right:-10px}
-.gm-accessory.slot-hand{bottom:5%;left:-8px}
+.gm-accessory.slot-head{top:-38px;left:50%;transform:translateX(-50%)}
+.gm-accessory.slot-face{top:18%;left:50%;transform:translateX(-42%)}
+.gm-accessory.slot-side{bottom:25%;right:-18px}
+.gm-accessory.slot-hand{bottom:8%;left:-16px}
 
 /* Remove button */
 .gm-accessory-remove{
@@ -854,7 +854,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.8.0 · Accessories · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.9.0 · Accessory Fix · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -957,7 +957,7 @@ const XP_REWARDS=[
   {id:'g2',emoji:'✨',name:'Power Spark',cost:150,isGigaMalGift:true,giftTier:'spark',desc:'Charge up your GigaMal'},
   {id:'g3',emoji:'👑',name:'Crown Moment',cost:300,isGigaMalGift:true,giftTier:'crown',desc:'Your GigaMal biggest moment'},
   {id:'a1',emoji:'🕶️',name:'Cool Glasses',cost:200,isAccessory:true,slot:'face',desc:'Instant cool factor'},
-  {id:'a2',emoji:'💧',name:'Water Bottle',cost:120,isAccessory:true,slot:'side',desc:'Hydration is key'},
+  {id:'a2',emoji:'🥤',name:'Water Bottle',cost:120,isAccessory:true,slot:'side',desc:'Hydration is key'},
   {id:'a3',emoji:'🎩',name:'Top Hat',cost:180,isAccessory:true,slot:'head',desc:'Class it up'},
   {id:'a4',emoji:'🧸',name:'Teddy Bear',cost:160,isAccessory:true,slot:'hand',desc:'Everyone needs a bestie'},
 ];
@@ -998,8 +998,9 @@ function loadS(){
     // Self-heal corrupted xpSpent — can never exceed total xp earned
     ['zara','lune'].forEach(w=>{
       if((d[w].xpSpent||0)>d[w].xp){
-        console.log('GigaSquad: healing corrupted xpSpent for',w);
+        console.log('GigaSquad: healing corrupted xpSpent for',w,d[w].xpSpent,'->',0);
         d[w].xpSpent=0;
+        localStorage.setItem('gs4',JSON.stringify(d));
       }
     });
     const todayStr=new Date().toDateString();
@@ -1486,19 +1487,33 @@ function renderXPStore(who,avail){
   }
 }
 function claimXP(who,r,avail){
+  // Accessories: only deduct XP if not already wearing this one
+  if(r.isAccessory){
+    const alreadyWearing=S[who].accessory&&S[who].accessory.id===r.id;
+    if(alreadyWearing){equipAccessory(who,r);return;}
+    // New accessory — deduct XP
+    S[who].xpSpent+=r.cost;
+    addLog(who,r.emoji,'Equipped: '+r.name,0,r.cost);
+    save();
+    equipAccessory(who,r);
+    return;
+  }
+  // Gifts: always deduct XP (repeatable)
+  if(r.isGigaMalGift){
+    S[who].xpSpent+=r.cost;
+    addLog(who,r.emoji,'Gift: '+r.name,0,r.cost);
+    save();
+    triggerGigaMalGift(who,r);
+    return;
+  }
+  // Regular rewards: deduct once
   S[who].xpSpent+=r.cost;
-  // Gifts are NOT added to claimedRewards — they can be given multiple times
-  if(!r.isGigaMalGift)S[who].claimedRewards.push(r.id);
+  S[who].claimedRewards.push(r.id);
   if(r.isMoney)S[who].earned=Math.min(S[who].earned+r.moneyVal,CAP);
   addLog(who,r.emoji,'Redeemed: '+r.name,0,r.cost);
   save();
-  if(r.isGigaMalGift){
-    triggerGigaMalGift(who,r);
-  } else if(r.isAccessory){
-    equipAccessory(who,r);
-  } else {
-    renderDash();showModal(r.emoji,'Reward Unlocked!','You claimed: '+r.name,0,r.cost,1,who,true);
-  }
+  renderDash();
+  showModal(r.emoji,'Reward Unlocked!','You claimed: '+r.name,0,r.cost,1,who,true);
 }
 
 function triggerGigaMalGift(who,r){
