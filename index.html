@@ -535,8 +535,8 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   100%{opacity:1;transform:scale(1) rotate(0deg)}
 }
 /* Slot positions relative to creature wrap */
-.gm-accessory.slot-head{top:-38px;left:50%;transform:translateX(-50%)}
-.gm-accessory.slot-face{top:18%;left:50%;transform:translateX(-42%)}
+.gm-accessory.slot-head{top:-42px;left:50%;transform:translateX(-50%)}
+.gm-accessory.slot-face{top:18%;left:50%;transform:translateX(-42%)} /* unused */
 .gm-accessory.slot-side{bottom:25%;right:-18px}
 .gm-accessory.slot-hand{bottom:8%;left:-16px}
 
@@ -854,7 +854,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.1.0 · Accessory Click Fix · 2025-06-05</div>
+<div class="build-version" id="build-version">v3.2.0 · Bow Replace · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -956,7 +956,7 @@ const XP_REWARDS=[
   {id:'g1',emoji:'🍬',name:'Sweet Treat',cost:80,isGigaMalGift:true,giftTier:'sweet',desc:'Give your GigaMal a treat'},
   {id:'g2',emoji:'✨',name:'Power Spark',cost:150,isGigaMalGift:true,giftTier:'spark',desc:'Charge up your GigaMal'},
   {id:'g3',emoji:'👑',name:'Crown Moment',cost:300,isGigaMalGift:true,giftTier:'crown',desc:'Your GigaMal biggest moment'},
-  {id:'a1',emoji:'🕶️',name:'Cool Glasses',cost:200,isAccessory:true,slot:'face',desc:'Instant cool factor'},
+  {id:'a1',emoji:'🎀',name:'Fancy Bow',cost:200,isAccessory:true,slot:'head',desc:'Top of the class'},
   {id:'a2',emoji:'🥤',name:'Water Bottle',cost:120,isAccessory:true,slot:'side',desc:'Hydration is key'},
   {id:'a3',emoji:'🎩',name:'Top Hat',cost:180,isAccessory:true,slot:'head',desc:'Class it up'},
   {id:'a4',emoji:'🧸',name:'Teddy Bear',cost:160,isAccessory:true,slot:'hand',desc:'Everyone needs a bestie'},
