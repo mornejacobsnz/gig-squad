@@ -816,7 +816,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.5.0 · XP Bug Fix · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.6.0 · XP Heal · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -953,6 +953,13 @@ function loadS(){
     if(!d.pins)d.pins={zara:'1010',lune:'1212',parent:'1234'};
     if(!d.log)d.log=[];
     if(!d.customGigs)d.customGigs=[];
+    // Self-heal corrupted xpSpent — can never exceed total xp earned
+    ['zara','lune'].forEach(w=>{
+      if((d[w].xpSpent||0)>d[w].xp){
+        console.log('GigaSquad: healing corrupted xpSpent for',w);
+        d[w].xpSpent=0;
+      }
+    });
     const todayStr=new Date().toDateString();
     if(d.lastResetDate!==todayStr){
       d.zara.completedToday=[];d.zara.pending=[];
@@ -1050,7 +1057,7 @@ function renderGigaMalZone(who){
       <div class="gm-name-block">
         <div class="gm-creature-name ${gm.color}">${gm.name}</div>
         <span class="gm-stage-badge">Stage ${stage} · ${getStageName(stage)} · ${gm.archetype}</span>
-        <span class="gm-xp-badge" id="gm-xp-badge">⚡ ${Math.max(0,S[who].xp-(S[who].xpSpent||0))} XP available</span>
+        <span class="gm-xp-badge" id="gm-xp-badge">⚡ ${Math.max(0,S[who].xp-Math.min(S[who].xpSpent||0,S[who].xp))} XP available</span>
       </div>
       <div class="gm-mood-indicator mood-${mood}">
         <div class="gm-mood-dot"></div>${moodLabel}
@@ -1280,7 +1287,7 @@ function renderDash(){
   const mult=streakMult(s.streak),pct=Math.min((avail/CAP)*100,100);
   const lvNum=getLevel(s.xp),lvTitle=getLevelTitle(s.xp);
   const xpCur=xpInLevel(s.xp),xpNxt=xpToNext(s.xp);
-  const xpAvail=Math.max(0,s.xp-(s.xpSpent||0));
+  const xpSpentSafe=Math.min(s.xpSpent||0,s.xp);const xpAvail=Math.max(0,s.xp-xpSpentSafe);
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
   set('w-name',who==='zara'?'🌸 Zara':'✨ Luné');
   set('w-age',who==='zara'?'Age 10 · Hustler in Training':'Age 12 · CEO in the Making');
