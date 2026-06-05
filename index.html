@@ -766,7 +766,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.1.0 · Gift Scroll Fix · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.2.0 · Gift No Modal · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1315,7 +1315,7 @@ function triggerGigaMalGift(who,r){
       if(rect)gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
       setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_sweet'),400);
       renderDash();
-      showModal(r.emoji,'Gift Given!','Your GigaMal loved that!',0,0,1,who,true);
+      // No modal — the reaction IS the feedback
     },reactionDelay);
   }
 
@@ -1342,7 +1342,7 @@ function triggerGigaMalGift(who,r){
       }
       setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_spark'),500);
       renderDash();
-      showModal(r.emoji,'Power Surge!','Your GigaMal is charged up!',0,0,1,who,true);
+      // No modal — reaction and whisper are the feedback
     },reactionDelay);
   }
 
