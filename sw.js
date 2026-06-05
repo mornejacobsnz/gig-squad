@@ -1,17 +1,17 @@
 // GIG SQUAD Service Worker v6
 // ─── BUMP THIS NUMBER ON EVERY DEPLOY ───────────
-const CACHE = 'gig-squad-v6';
+const CACHE = 'gig-squad-v7';
 // ────────────────────────────────────────────────
 
 const ASSETS = [
   '/gig-squad/',
   '/gig-squad/index.html',
   '/gig-squad/manifest.json',
-  '/gig-squad/assets/gigamals/rumblix.png',
-  '/gig-squad/assets/gigamals/lumis.png',
-  '/gig-squad/assets/gigamals/fennick.png',
-  '/gig-squad/assets/gigamals/zigby.png',
-  '/gig-squad/assets/gigamals/prism.png',
+  '/gig-squad/assets/gigamals/rumblix-removebg.png',
+  '/gig-squad/assets/gigamals/lumis-removebg.png',
+  '/gig-squad/assets/gigamals/fennick-removebg.png',
+  '/gig-squad/assets/gigamals/zigby-removebg.png',
+  '/gig-squad/assets/gigamals/prism-removebg.png',
   'https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap'
 ];
 
