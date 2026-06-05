@@ -535,9 +535,10 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   100%{opacity:1;transform:scale(1) rotate(0deg)}
 }
 /* Slot positions relative to creature wrap */
-.gm-accessory.slot-head{top:-42px;left:50%;transform:translateX(-50%)}
+.gm-accessory.slot-head{top:8%;left:50%;transform:translateX(-50%)}
+.gm-accessory.slot-hat{top:-8px;left:50%;transform:translateX(-60%) rotate(-12deg)}
 .gm-accessory.slot-face{top:18%;left:50%;transform:translateX(-42%)} /* unused */
-.gm-accessory.slot-side{bottom:25%;right:-18px}
+.gm-accessory.slot-side{bottom:28%;right:-20px}
 .gm-accessory.slot-hand{bottom:8%;left:-16px}
 
 /* Remove button */
@@ -854,7 +855,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.2.0 · Bow Replace · 2025-06-05</div>
+<div class="build-version" id="build-version">v3.4.0 · Own & Swap · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -958,7 +959,7 @@ const XP_REWARDS=[
   {id:'g3',emoji:'👑',name:'Crown Moment',cost:300,isGigaMalGift:true,giftTier:'crown',desc:'Your GigaMal biggest moment'},
   {id:'a1',emoji:'🎀',name:'Fancy Bow',cost:200,isAccessory:true,slot:'head',desc:'Top of the class'},
   {id:'a2',emoji:'🥤',name:'Water Bottle',cost:120,isAccessory:true,slot:'side',desc:'Hydration is key'},
-  {id:'a3',emoji:'🎩',name:'Top Hat',cost:180,isAccessory:true,slot:'head',desc:'Class it up'},
+  {id:'a3',emoji:'🎩',name:'Top Hat',cost:180,isAccessory:true,slot:'hat',desc:'Class it up'},
   {id:'a4',emoji:'🧸',name:'Teddy Bear',cost:160,isAccessory:true,slot:'hand',desc:'Everyone needs a bestie'},
 ];
 const BIT=[
@@ -983,7 +984,7 @@ function rand(a){return a[Math.floor(Math.random()*a.length)]}
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null}}
+function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[]}}
 function loadS(){
   try{
     const s=localStorage.getItem('gs4');
@@ -1485,23 +1486,39 @@ function renderXPStore(who,avail){
     accessories.forEach(r=>{
       const can=avail>=r.cost;
       const equipped=current&&current.id===r.id;
+      // Owned = ever purchased = stored in ownedAccessories array
+      const owned=(S[who].ownedAccessories||[]).includes(r.id);
       const d=document.createElement('div');
+      // Only grey out if currently wearing — not if just purchased before
       d.className='xpitem'+(equipped?' claimed':'');
-      d.style.cssText=equipped?'border-color:rgba(255,209,102,.4);background:rgba(255,209,102,.08)':can?'border-color:rgba(255,209,102,.2)':'';
-      d.innerHTML='<span class="xre">'+r.emoji+'</span><div class="xrn">'+r.name+'</div><div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">'+r.desc+'</div><div class="xrc" style="color:'+(equipped?'#FFD166':can?'var(--xp)':'rgba(255,255,255,.3)')+'">'+(equipped?'✅ Wearing':can?r.cost+' XP':'🔒 '+r.cost+' XP')+'</div>';
-      if(can&&!equipped)d.onclick=()=>claimXP(who,r,avail);
+      d.style.cssText=equipped
+        ?'border-color:rgba(255,209,102,.4);background:rgba(255,209,102,.08)'
+        :owned?'border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.06)'
+        :can?'border-color:rgba(255,209,102,.2)':'';
+      const statusLabel=equipped?'✅ Wearing':owned?'👆 Tap to wear':can?r.cost+' XP':'🔒 '+r.cost+' XP';
+      const statusColor=equipped?'#FFD166':owned?'var(--xp)':can?'var(--xp)':'rgba(255,255,255,.3)';
+      d.innerHTML='<span class="xre">'+r.emoji+'</span><div class="xrn">'+r.name+'</div><div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">'+r.desc+'</div><div class="xrc" style="color:'+statusColor+'">'+statusLabel+'</div>';
+      // Clickable if: owned (free re-equip) OR can afford (first purchase) — but not if already wearing
+      if(!equipped&&(owned||can))d.onclick=()=>claimXP(who,r,avail);
       el.appendChild(d);
     });
   }
 }
 function claimXP(who,r,avail){
-  // Accessories: only deduct XP if not already wearing this one
+  // Accessories: free to re-equip if already owned, costs XP first time
   if(r.isAccessory){
+    if(!S[who].ownedAccessories)S[who].ownedAccessories=[];
+    const alreadyOwned=S[who].ownedAccessories.includes(r.id);
     const alreadyWearing=S[who].accessory&&S[who].accessory.id===r.id;
-    if(alreadyWearing){equipAccessory(who,r);return;}
-    // New accessory — deduct XP
-    S[who].xpSpent+=r.cost;
-    addLog(who,r.emoji,'Equipped: '+r.name,0,r.cost);
+    if(alreadyWearing)return; // already on — do nothing
+    if(!alreadyOwned){
+      // First purchase — deduct XP and mark as owned
+      S[who].xpSpent+=r.cost;
+      S[who].ownedAccessories.push(r.id);
+      addLog(who,r.emoji,'Bought: '+r.name,0,r.cost);
+    } else {
+      addLog(who,r.emoji,'Equipped: '+r.name,0,0);
+    }
     save();
     equipAccessory(who,r);
     return;
