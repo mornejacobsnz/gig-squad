@@ -703,7 +703,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         <div class="money-row">
           <div>
             <div class="wmoney" id="w-money">$0.00</div>
-            <div class="wmoneysub">earned this month</div>
+            <div class="wmoneysub" id="w-moneysub">earned this month</div>
           </div>
           <button class="cashout-btn" onclick="openCashout()">💸 Cash Out</button>
         </div>
@@ -854,7 +854,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v2.9.0 · Accessory Fix · 2025-06-05</div>
+<div class="build-version" id="build-version">v3.1.0 · Accessory Click Fix · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -996,13 +996,18 @@ function loadS(){
     if(!d.log)d.log=[];
     if(!d.customGigs)d.customGigs=[];
     // Self-heal corrupted xpSpent — can never exceed total xp earned
+    const accessoryIds=['a1','a2','a3','a4'];
     ['zara','lune'].forEach(w=>{
       if((d[w].xpSpent||0)>d[w].xp){
-        console.log('GigaSquad: healing corrupted xpSpent for',w,d[w].xpSpent,'->',0);
+        console.log('GigaSquad: healing corrupted xpSpent for',w);
         d[w].xpSpent=0;
-        localStorage.setItem('gs4',JSON.stringify(d));
+      }
+      // Remove accessory IDs from claimedRewards — they should never be there
+      if(d[w].claimedRewards){
+        d[w].claimedRewards=d[w].claimedRewards.filter(id=>!accessoryIds.includes(id));
       }
     });
+    localStorage.setItem('gs4',JSON.stringify(d));
     const todayStr=new Date().toDateString();
     if(d.lastResetDate!==todayStr){
       d.zara.completedToday=[];d.zara.pending=[];
@@ -1406,8 +1411,11 @@ function renderDash(){
   set('w-age',who==='zara'?'Age 10 · Hustler in Training':'Age 12 · CEO in the Making');
   set('w-streak',`${s.streak}-day streak · ${multLbl(mult)}`);
   set('w-money',`$${avail.toFixed(2)}`);
+  // Change subtitle when at cap
+  const moneySubEl=document.getElementById('w-moneysub');
+  if(moneySubEl)moneySubEl.textContent=avail>=CAP?'cap reached · cash out to keep earning':'earned this month';
   set('w-pl',`$${avail.toFixed(2)} of $100`);
-  set('w-pr',avail>=CAP?'🏆 Cap hit!':`$${(CAP-avail).toFixed(2)} left`);
+  set('w-pr',avail>=CAP?'🏆 Cash out to keep earning!':`$${(CAP-avail).toFixed(2)} left`);
   document.getElementById('w-mfill').style.width=pct+'%';
   set('w-lvnum',lvNum);
   set('w-lvtitle',lvTitle);
@@ -1434,12 +1442,12 @@ function renderXPStore(who,avail){
     storeTitle.innerHTML='⚡ XP Rewards Store &nbsp;<span style="background:linear-gradient(135deg,#7c3aed,var(--xp));color:white;font-size:.72rem;font-weight:800;padding:3px 10px;border-radius:100px;font-family:DM Sans,sans-serif">'+avail+' XP to spend</span>';
   }
 
-  // Separate gifts from regular rewards
-  const regular=XP_REWARDS.filter(r=>!r.isGigaMalGift);
+  // Separate into three groups
+  const regular=XP_REWARDS.filter(r=>!r.isGigaMalGift&&!r.isAccessory);
   const gifts=XP_REWARDS.filter(r=>r.isGigaMalGift);
 
-  // Regular rewards
-  regular.forEach(r=>{
+  // Regular rewards — exclude accessories and gifts (handled separately below)
+  regular.filter(r=>!r.isAccessory&&!r.isGigaMalGift).forEach(r=>{
     const claimed=S[who].claimedRewards.includes(r.id),can=avail>=r.cost;
     const d=document.createElement('div');d.className='xpitem'+(claimed?' claimed':'');
     d.innerHTML='<span class="xre">'+r.emoji+'</span><div class="xrn">'+r.name+'</div><div class="xrc">'+(claimed?'✅ Claimed':can?r.cost+' XP':'🔒 '+r.cost+' XP')+'</div>';
@@ -1651,7 +1659,21 @@ function renderGigGrid(cid,gigs,who,isCore){
 function completePaid(gig,who,e){
   const s=S[who];
   const avail=Math.max(0,Math.min(s.earned,CAP)-s.cashedOut);
-  if(avail>=CAP){showModal('🏆','Cap Reached!','You\'ve hit the $100 cap! 💪',0,0,1,who,false);return}
+  // At cap — still earn XP, just no more money
+  if(avail>=CAP){
+    const xpGained=Math.round(gig.xp*mult);
+    s.xp+=xpGained;
+    s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
+    updateStreak(s);
+    addLog(who,gig.emoji,gig.name,0,xpGained);
+    save();
+    gmReactToGig(who);
+    showXpFloat(e.clientX,e.clientY,xpGained);
+    renderDash();
+    confetti(e.clientX,e.clientY);
+    showModal('🏆','Cap Hit — XP Only!','Money cap reached but you still earned XP! Cash out to keep earning. 💪',0,xpGained,mult,who,false);
+    return;
+  }
   if(gig.needsApproval){
     if(!s.pending)s.pending=[];s.pending.push(gig.id);
     save();renderGigsForUser(who);
