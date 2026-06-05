@@ -360,29 +360,54 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 /* ═══════════════════════════════════════════════
    GIGAMAL COMPANION SYSTEM
    ═══════════════════════════════════════════════ */
-.gigamal-zone{position:relative;border-radius:28px;padding:0;margin-bottom:16px;overflow:hidden;min-height:260px;display:flex;flex-direction:column}
-.gigamal-zone.zw{background:linear-gradient(160deg,#1a0a28 0%,#2a1040 50%,#1a1535 100%);border:1px solid rgba(167,139,250,.2)}
-.gigamal-zone.lw{background:linear-gradient(160deg,#0a1a28 0%,#0d2540 50%,#0a1535 100%);border:1px solid rgba(94,231,223,.2)}
-.gm-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
-.gm-orb1{width:200px;height:200px;top:-60px;right:-40px;opacity:.18}
-.gm-orb2{width:150px;height:150px;bottom:-40px;left:-30px;opacity:.12}
-.zw .gm-orb1{background:#a78bfa}.zw .gm-orb2{background:#FF6FD8}
-.lw .gm-orb1{background:#5EE7DF}.lw .gm-orb2{background:#6C63FF}
-.gm-header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 0;position:relative;z-index:2}
+.gigamal-zone{position:relative;border-radius:28px;margin-bottom:16px;overflow:hidden;min-height:320px;display:flex;flex-direction:column}
+/* Two-tone environment */
+.gigamal-zone.zw{background:#1a0a28;border:1px solid rgba(167,139,250,.2)}
+.gigamal-zone.lw{background:#071520;border:1px solid rgba(94,231,223,.2)}
+/* Sky layer — top 55% */
+.gm-sky{position:absolute;top:0;left:0;right:0;height:58%;z-index:0}
+.zw .gm-sky{background:linear-gradient(180deg,#2a1245 0%,#1a0a28 100%)}
+.lw .gm-sky{background:linear-gradient(180deg,#0d2540 0%,#071520 100%)}
+/* Ground layer — bottom 45% */
+.gm-ground{position:absolute;bottom:0;left:0;right:0;height:44%;z-index:0}
+.zw .gm-ground{background:linear-gradient(180deg,#0e0520 0%,#080212 100%)}
+.lw .gm-ground{background:linear-gradient(180deg,#030d18 0%,#010508 100%)}
+/* Ground horizon line */
+.gm-horizon{position:absolute;left:0;right:0;height:2px;top:56%;z-index:1;opacity:.25}
+.zw .gm-horizon{background:linear-gradient(90deg,transparent,#a78bfa,transparent)}
+.lw .gm-horizon{background:linear-gradient(90deg,transparent,#5EE7DF,transparent)}
+/* Ambient glow on ground */
+.gm-ground-glow{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:240px;height:80px;border-radius:50%;filter:blur(40px);opacity:.2;z-index:1}
+.zw .gm-ground-glow{background:#a78bfa}
+.lw .gm-ground-glow{background:#5EE7DF}
+/* Header row — name + mood */
+.gm-header{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 0;position:relative;z-index:5}
 .gm-name-block{flex:1}
-.gm-creature-name{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:2px}
+.gm-creature-name{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;line-height:1;margin-bottom:2px}
 .gm-creature-name.zw{background:linear-gradient(120deg,#c4b5fd,#FF6FD8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .gm-creature-name.lw{background:linear-gradient(120deg,#5EE7DF,#6C63FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.gm-stage-badge{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:2px}
-.gm-mood-indicator{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:6px 12px;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap}
-.gm-mood-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.gm-stage-badge{font-size:.58rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:3px;display:block}
+.gm-mood-indicator{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:5px 11px;font-size:.65rem;font-weight:700;color:rgba(255,255,255,.65);white-space:nowrap;backdrop-filter:blur(8px)}
+.gm-mood-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .mood-thriving .gm-mood-dot{background:#06D6A0;box-shadow:0 0 8px #06D6A0}
-.mood-waiting .gm-mood-dot{background:#FFD166;box-shadow:0 0 8px #FFD166}
-.mood-dormant .gm-mood-dot{background:rgba(255,255,255,.3)}
-.gm-stage{display:flex;align-items:flex-end;justify-content:center;padding:0 20px 20px;position:relative;flex:1;min-height:200px}
-.gm-creature-wrap{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;flex-shrink:0;-webkit-tap-highlight-color:transparent}
-.gm-creature-img{width:160px;height:160px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));transition:transform .2s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
-.gm-creature-shadow{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:100px;height:20px;background:rgba(0,0,0,.4);border-radius:50%;filter:blur(8px);z-index:1;transition:all .3s ease}
+.mood-waiting .gm-mood-dot{background:#FFD166;box-shadow:0 0 6px #FFD166}
+.mood-dormant .gm-mood-dot{background:rgba(255,255,255,.25)}
+/* Centre stage — creature lives here */
+.gm-stage{position:relative;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:1;padding-bottom:24px}
+/* Creature wrap */
+.gm-creature-wrap{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;margin-bottom:0}
+/* The image — mix-blend-mode kills the grey Midjourney background */
+.gm-creature-img{width:190px;height:190px;object-fit:contain;object-position:center bottom;mix-blend-mode:lighten;filter:drop-shadow(0 12px 32px rgba(0,0,0,.7));transition:transform .2s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
+.zw .gm-creature-img{filter:drop-shadow(0 12px 32px rgba(120,80,255,.4))}
+.lw .gm-creature-img{filter:drop-shadow(0 12px 32px rgba(60,200,200,.4))}
+/* Shadow on ground */
+.gm-creature-shadow{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:120px;height:18px;background:rgba(0,0,0,.5);border-radius:50%;filter:blur(10px);z-index:1}
+/* Whisper — sits below creature */
+.gm-whisper-zone{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;z-index:6;pointer-events:none}
+.gm-whisper{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:8px 16px;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.9);line-height:1.4;max-width:280px;text-align:center;opacity:0;transform:translateY(6px) scale(.97);transition:all .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(12px)}
+.gm-whisper.visible{opacity:1;transform:translateY(0) scale(1)}
+.gm-whisper-name{font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;opacity:.45}
+/* animations */
 .gm-creature-wrap{animation:gm-idle 3s ease-in-out infinite}
 .mood-waiting .gm-creature-wrap{animation:gm-wait 4s ease-in-out infinite}
 .mood-dormant .gm-creature-wrap{animation:gm-dormant 5s ease-in-out infinite}
@@ -501,9 +526,10 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 
       <!-- ✦ GIGAMAL COMPANION ZONE ✦ -->
       <div class="gigamal-zone zw" id="gm-zone">
-        <div class="gm-orb gm-orb1"></div>
-        <div class="gm-orb gm-orb2"></div>
-        <div style="display:flex;align-items:center;justify-content:center;height:260px;color:rgba(255,255,255,.2);font-size:.8rem">
+        <div class="gm-sky"></div>
+        <div class="gm-ground"></div>
+        <div class="gm-horizon"></div>
+        <div style="position:relative;z-index:5;display:flex;align-items:center;justify-content:center;height:320px;color:rgba(255,255,255,.2);font-size:.8rem">
           Loading companion...
         </div>
       </div>
@@ -668,7 +694,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v1.2.0 · GigaMal Companion · 2025-06-05</div>
+<div class="build-version" id="build-version">v1.3.0 · GigaMal Environment · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -882,30 +908,32 @@ function renderGigaMalZone(who){
   const moodLabel=mood==='thriving'?'✦ Thriving':mood==='waiting'?'◎ Waiting':'○ Dormant';
   el.className=`gigamal-zone ${gm.color} mood-${mood}`;
   el.innerHTML=`
-    <div class="gm-orb gm-orb1"></div>
-    <div class="gm-orb gm-orb2"></div>
+    <div class="gm-sky"></div>
+    <div class="gm-ground"></div>
+    <div class="gm-horizon"></div>
+    <div class="gm-ground-glow"></div>
     <div class="gm-header">
       <div class="gm-name-block">
         <div class="gm-creature-name ${gm.color}">${gm.name}</div>
-        <div class="gm-stage-badge">Stage ${stage} · ${getStageName(stage)} · ${gm.archetype}</div>
+        <span class="gm-stage-badge">Stage ${stage} · ${getStageName(stage)} · ${gm.archetype}</span>
       </div>
       <div class="gm-mood-indicator mood-${mood}">
         <div class="gm-mood-dot"></div>${moodLabel}
       </div>
     </div>
     <div class="gm-stage">
+      <div class="gm-creature-wrap" id="gm-creature-wrap" onclick="gmTap('${who}')">
+        <div class="gm-chest-glow"></div>
+        <img class="gm-creature-img" id="gm-creature-img" src="${gm.img}" alt="${gm.name}" onerror="this.outerHTML='<div style=\'font-size:6rem;text-align:center;padding:20px\'>⭐</div>'"/>
+        <div class="gm-creature-shadow"></div>
+      </div>
       <div class="gm-whisper-zone">
         <div class="gm-whisper" id="gm-whisper">
           <div class="gm-whisper-name">${gm.name}</div>
           <span id="gm-whisper-text"></span>
         </div>
       </div>
-      <div class="gm-creature-wrap" id="gm-creature-wrap" onclick="gmTap('${who}')">
-        <div class="gm-chest-glow"></div>
-        <img class="gm-creature-img" id="gm-creature-img" src="${gm.img}" alt="${gm.name}" onerror="this.style.fontSize='5rem';this.outerHTML='<div style='font-size:5rem;text-align:center;padding:20px'>⭐</div>'"/>
-        <div class="gm-creature-shadow"></div>
-      </div>
-    </div>`;
+    </div>\`;
   clearTimeout(gmWhisperTimer);
   setTimeout(()=>showWhisper(who,mood),1800);
 }
