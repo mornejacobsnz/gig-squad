@@ -933,7 +933,7 @@ function renderGigaMalZone(who){
           <span id="gm-whisper-text"></span>
         </div>
       </div>
-    </div>\`;
+    </div>`;
   clearTimeout(gmWhisperTimer);
   setTimeout(()=>showWhisper(who,mood),1800);
 }
@@ -983,7 +983,17 @@ function gmParticleBurst(cx,cy,who){
     const angle=(i/8)*Math.PI*2;
     const dist=40+Math.random()*50;
     const size=4+Math.random()*6;
-    el.style.cssText=`left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};--px:${Math.cos(angle)*dist}px;--py:${Math.sin(angle)*dist}px;animation-duration:${0.5+Math.random()*0.3}s`;
+    const px = Math.cos(angle)*dist;
+    const py = Math.sin(angle)*dist;
+    const dur = (0.5+Math.random()*0.3).toFixed(2);
+    el.style.left = cx+'px';
+    el.style.top = cy+'px';
+    el.style.width = size+'px';
+    el.style.height = size+'px';
+    el.style.background = colors[i%colors.length];
+    el.style.setProperty('--px', px+'px');
+    el.style.setProperty('--py', py+'px');
+    el.style.animationDuration = dur+'s';
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),900);
   }
@@ -1014,11 +1024,19 @@ function showEvolutionMoment(who){
   const stage=getGigaMalStage(who);
   const overlay=document.getElementById('evo-overlay');
   if(!overlay)return;
-  overlay.innerHTML=`
-    <img class="evo-creature" src="${gm.img}" alt="${gm.name}"/>
-    <div class="evo-text" style="background:linear-gradient(120deg,${gm.accentColor},#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${gm.name} has Awakened.</div>
-    <div class="evo-sub">Stage ${stage} · ${getStageName(stage)}</div>
-    <button class="evo-close" onclick="closeEvoOverlay()">Continue ✦</button>`;
+  const img=document.createElement('img');
+  img.className='evo-creature';img.src=gm.img;img.alt=gm.name;
+  const txt=document.createElement('div');
+  txt.className='evo-text';
+  txt.style.cssText='background:linear-gradient(120deg,'+gm.accentColor+',#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
+  txt.textContent=gm.name+' has Awakened.';
+  const sub=document.createElement('div');
+  sub.className='evo-sub';sub.textContent='Stage '+stage+' · '+getStageName(stage);
+  const btn=document.createElement('button');
+  btn.className='evo-close';btn.textContent='Continue ✶';
+  btn.onclick=closeEvoOverlay;
+  overlay.innerHTML='';
+  overlay.appendChild(img);overlay.appendChild(txt);overlay.appendChild(sub);overlay.appendChild(btn);
   overlay.classList.add('active');
   for(let i=0;i<40;i++)setTimeout(()=>confetti(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.5),i*80);
 }
