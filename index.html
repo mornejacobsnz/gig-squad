@@ -49,6 +49,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .pcard-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:3px}
 .pcard-role{font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
 
+/* GigaMal preview on login card */
+.pcard-gm-preview{width:60px;height:60px;object-fit:contain;margin:0 auto 8px;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+
 /* PIN pad */
 .pin-section{width:100%;max-width:280px;display:flex;flex-direction:column;align-items:center;gap:16px}
 .pin-section.h{display:none}
@@ -196,6 +199,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .sb-card .glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:120px;height:120px;border-radius:50%;filter:blur(40px);opacity:.25}
 .sb-card.zc .glow{background:var(--za)}.sb-card.lc .glow{background:var(--la)}
 .sb-av{font-size:2.6rem;margin-bottom:6px;position:relative}
+.sb-av img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
 .sb-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:2px}
 .sb-level-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#7c3aed,var(--xp));border-radius:100px;padding:4px 12px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;color:white;margin-bottom:10px}
 .sb-stat{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:.76rem}
@@ -353,8 +357,92 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .confirm-yes{flex:1;padding:12px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#f87171,#ef4444);color:white}
 .confirm-no{flex:1;padding:12px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;background:rgba(255,255,255,.07);color:var(--muted)}
 
+/* ═══════════════════════════════════════════════
+   GIGAMAL COMPANION SYSTEM
+   ═══════════════════════════════════════════════ */
+.gigamal-zone{position:relative;border-radius:28px;padding:0;margin-bottom:16px;overflow:hidden;min-height:260px;display:flex;flex-direction:column}
+.gigamal-zone.zw{background:linear-gradient(160deg,#1a0a28 0%,#2a1040 50%,#1a1535 100%);border:1px solid rgba(167,139,250,.2)}
+.gigamal-zone.lw{background:linear-gradient(160deg,#0a1a28 0%,#0d2540 50%,#0a1535 100%);border:1px solid rgba(94,231,223,.2)}
+.gm-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
+.gm-orb1{width:200px;height:200px;top:-60px;right:-40px;opacity:.18}
+.gm-orb2{width:150px;height:150px;bottom:-40px;left:-30px;opacity:.12}
+.zw .gm-orb1{background:#a78bfa}.zw .gm-orb2{background:#FF6FD8}
+.lw .gm-orb1{background:#5EE7DF}.lw .gm-orb2{background:#6C63FF}
+.gm-header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 0;position:relative;z-index:2}
+.gm-name-block{flex:1}
+.gm-creature-name{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:2px}
+.gm-creature-name.zw{background:linear-gradient(120deg,#c4b5fd,#FF6FD8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gm-creature-name.lw{background:linear-gradient(120deg,#5EE7DF,#6C63FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gm-stage-badge{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:2px}
+.gm-mood-indicator{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:6px 12px;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap}
+.gm-mood-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.mood-thriving .gm-mood-dot{background:#06D6A0;box-shadow:0 0 8px #06D6A0}
+.mood-waiting .gm-mood-dot{background:#FFD166;box-shadow:0 0 8px #FFD166}
+.mood-dormant .gm-mood-dot{background:rgba(255,255,255,.3)}
+.gm-stage{display:flex;align-items:flex-end;justify-content:center;padding:0 20px 20px;position:relative;flex:1;min-height:200px}
+.gm-creature-wrap{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.gm-creature-img{width:160px;height:160px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));transition:transform .2s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2}
+.gm-creature-shadow{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:100px;height:20px;background:rgba(0,0,0,.4);border-radius:50%;filter:blur(8px);z-index:1;transition:all .3s ease}
+.gm-creature-wrap{animation:gm-idle 3s ease-in-out infinite}
+.mood-waiting .gm-creature-wrap{animation:gm-wait 4s ease-in-out infinite}
+.mood-dormant .gm-creature-wrap{animation:gm-dormant 5s ease-in-out infinite}
+@keyframes gm-idle{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
+@keyframes gm-wait{0%,100%{transform:translateY(0px)}30%{transform:translateY(-4px)}60%{transform:translateY(-2px)}}
+@keyframes gm-dormant{0%,100%{transform:translateY(0px)}50%{transform:translateY(-3px)}}
+.gm-creature-wrap.tapped{animation:gm-tap .4s cubic-bezier(.34,1.56,.64,1) forwards !important}
+@keyframes gm-tap{0%{transform:scale(1) rotate(0deg)}30%{transform:scale(1.15) rotate(-5deg)}60%{transform:scale(.95) rotate(3deg)}100%{transform:scale(1) rotate(0deg)}}
+.gm-creature-wrap.reacting{animation:gm-react .6s cubic-bezier(.34,1.56,.64,1) forwards !important}
+@keyframes gm-react{0%{transform:translateY(0) scale(1)}25%{transform:translateY(-20px) scale(1.1)}50%{transform:translateY(-10px) scale(1.05) rotate(-3deg)}75%{transform:translateY(-16px) scale(1.08) rotate(3deg)}100%{transform:translateY(0) scale(1)}}
+.mood-dormant .gm-creature-img{filter:drop-shadow(0 8px 24px rgba(0,0,0,.5)) brightness(.75) saturate(.6)}
+.mood-waiting .gm-creature-img{filter:drop-shadow(0 8px 24px rgba(0,0,0,.5)) brightness(.9)}
+.gm-whisper-zone{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:8px;padding-left:12px;min-width:0}
+.gm-whisper{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.85);line-height:1.5;position:relative;max-width:200px;opacity:0;transform:translateY(6px) scale(.97);transition:all .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(8px)}
+.gm-whisper.visible{opacity:1;transform:translateY(0) scale(1)}
+.gm-whisper::before{content:'';position:absolute;bottom:-1px;left:-8px;width:12px;height:12px;background:rgba(255,255,255,.07);border-left:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);clip-path:polygon(100% 0,100% 100%,0 100%)}
+.gm-whisper-name{font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;opacity:.5}
+.xp-pulse{position:fixed;pointer-events:none;z-index:9999;font-size:.8rem;font-weight:800;color:var(--xp);animation:xp-fly 1.2s ease-out forwards;white-space:nowrap}
+@keyframes xp-fly{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}50%{opacity:1;transform:translate(-50%,-120%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-180%) scale(.9)}}
+.gm-chest-glow{position:absolute;width:40px;height:40px;border-radius:50%;bottom:55px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:3;opacity:0;transition:opacity .5s ease}
+.zw .gm-chest-glow{background:radial-gradient(circle,rgba(167,139,250,.6),transparent 70%)}
+.lw .gm-chest-glow{background:radial-gradient(circle,rgba(94,231,223,.6),transparent 70%)}
+.mood-thriving .gm-chest-glow{opacity:1;animation:chest-pulse 2s ease-in-out infinite}
+@keyframes chest-pulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.6}50%{transform:translateX(-50%) scale(1.4);opacity:1}}
+.evo-overlay{position:fixed;inset:0;z-index:1000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s ease}
+.evo-overlay.active{opacity:1;pointer-events:all}
+.evo-creature{width:220px;height:220px;object-fit:contain;filter:drop-shadow(0 0 40px rgba(167,139,250,.8));animation:evo-emerge 1.5s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes evo-emerge{0%{transform:scale(0) rotate(-10deg);opacity:0}60%{transform:scale(1.1) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.evo-text{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-top:24px;text-align:center;animation:evo-text-in 1s ease .8s both}
+@keyframes evo-text-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.evo-sub{font-size:.9rem;color:rgba(255,255,255,.5);margin-top:8px;animation:evo-text-in 1s ease 1.2s both}
+.evo-close{margin-top:32px;padding:12px 32px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#a78bfa,#6C63FF);color:white;animation:evo-text-in 1s ease 1.6s both}
+.gm-particle{position:fixed;pointer-events:none;z-index:9998;border-radius:50%;animation:gm-particle-fly linear forwards}
+@keyframes gm-particle-fly{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(0)}}
+
 @media(max-width:600px){.rcards{grid-template-columns:1fr}.gg{grid-template-columns:1fr 1fr}.sb-cards{grid-template-columns:1fr 1fr}.pd-grid{grid-template-columns:1fr}.af-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:370px){.gg{grid-template-columns:1fr}}
+
+/* ── BUILD VERSION TAG ── */
+.build-version{
+  position:fixed;
+  bottom:calc(62px + env(safe-area-inset-bottom,0px));
+  left:50%;
+  transform:translateX(-50%);
+  font-size:.55rem;
+  font-weight:700;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:100px;
+  padding:3px 10px;
+  z-index:199;
+  pointer-events:none;
+  white-space:nowrap;
+  backdrop-filter:blur(4px);
+  transition:opacity .2s;
+}
+.build-version:hover{color:rgba(255,255,255,.5)}
 </style>
 </head>
 <body>
@@ -367,13 +455,15 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   <div class="ls-who">Choose your profile</div>
   <div class="profile-cards">
     <div class="pcard zp" id="pc-zara" onclick="selectProfile('zara')">
-      <span class="pcard-av">🌸</span>
+      <img class="pcard-gm-preview" src="assets/gigamals/rumblix.png" alt="Rumblix" onerror="this.style.display='none'">
       <div class="pcard-name">Zara</div>
+      <div class="pcard-role" style="color:rgba(167,139,250,.7);margin-bottom:2px">Rumblix</div>
       <div class="pcard-role">Age 10</div>
     </div>
     <div class="pcard lp" id="pc-lune" onclick="selectProfile('lune')">
-      <span class="pcard-av">✨</span>
+      <img class="pcard-gm-preview" src="assets/gigamals/lumis.png" alt="Lumis" onerror="this.style.display='none'">
       <div class="pcard-name">Luné</div>
+      <div class="pcard-role" style="color:rgba(94,231,223,.7);margin-bottom:2px">Lumis</div>
       <div class="pcard-role">Age 12</div>
     </div>
     <div class="pcard pp" id="pc-parent" onclick="selectProfile('parent')">
@@ -408,11 +498,20 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 
     <!-- DASHBOARD PAGE -->
     <div class="page on" id="page-dash">
+
+      <!-- ✦ GIGAMAL COMPANION ZONE ✦ -->
+      <div class="gigamal-zone zw" id="gm-zone">
+        <div class="gm-orb gm-orb1"></div>
+        <div class="gm-orb gm-orb2"></div>
+        <div style="display:flex;align-items:center;justify-content:center;height:260px;color:rgba(255,255,255,.2);font-size:.8rem">
+          Loading companion...
+        </div>
+      </div>
+
       <div class="wallet" id="dash-wallet">
         <div class="wglow"></div>
         <div class="wtop">
           <div><div class="wname" id="w-name">🌸 Zara</div><div class="wage" id="w-age">Age 10</div></div>
-          <div class="wavatar" id="w-avatar">🦊</div>
         </div>
         <div class="strbadge">🔥 <span id="w-streak">0-day streak · 1.0×</span></div>
         <div class="money-row">
@@ -429,12 +528,12 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
             <div class="xp-level-badge"><span class="xp-level-num" id="w-lvnum">1</span></div>
             <div class="xp-title-col">
               <div class="xp-title" id="w-lvtitle">Rookie 🌱</div>
-              <div class="xp-subtitle" id="w-lvsubtitle">0 / 200 XP to Level 2</div>
+              <div class="xp-subtitle" id="w-lvsubtitle">0 / 150 XP to Level 2</div>
             </div>
           </div>
           <div class="xp-bar-wrap">
             <div class="xp-bar-track"><div class="xp-bar-fill" id="w-xfill" style="width:0%"></div></div>
-            <div class="xp-bar-labels"><span id="w-xp-cur">0 XP</span><span id="w-xp-next">Next: 200 XP</span></div>
+            <div class="xp-bar-labels"><span id="w-xp-cur">0 XP</span><span id="w-xp-next">Next: 150 XP</span></div>
           </div>
         </div>
         <div class="chips">
@@ -550,9 +649,9 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         </div>
         <div class="mgr-sec" id="pend-sec"><div class="mgr-title">⏳ Awaiting Approval</div><div id="pend-list"></div></div>
         <div class="mgr-sec"><div class="mgr-title">↩️ Undo a Completed Gig</div>
-          <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.5">Tap any completed gig to mark it as not done. Removes it from today's completed list and reverses the earnings and XP.</div>
+          <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.5">Tap any completed gig to mark it as not done.</div>
           <div style="display:flex;gap:8px;margin-bottom:12px">
-            <button id="undo-btn-zara" onclick="setUndoWho('zara')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(124,58,237,.15);color:var(--lumis);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">🌸 Zara</button>
+            <button id="undo-btn-zara" onclick="setUndoWho('zara')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(124,58,237,.15);color:var(--xp);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">🌸 Zara</button>
             <button id="undo-btn-lune" onclick="setUndoWho('lune')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer">✨ Luné</button>
           </div>
           <div id="undo-list"></div>
@@ -567,6 +666,9 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
     </div>
   </div>
 </div>
+
+<!-- BUILD VERSION -->
+<div class="build-version" id="build-version">v1.2.0 · GigaMal Companion · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -615,6 +717,9 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
     </div>
   </div>
 </div>
+
+<!-- EVOLUTION OVERLAY -->
+<div class="evo-overlay" id="evo-overlay"></div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -673,12 +778,9 @@ const BIT=[
   {id:'bi7',emoji:'💝',label:'Charity / giving',cat:'s'},
   {id:'bi8',emoji:'🎁',label:'Gift for someone',cat:'w'},
 ];
-// XP levels: every 150 XP = 1 level, named tiers
-const TIER_NAMES=['Rookie','Rising Star','Go-Getter','Boss Level','Legend'];
+
 function getLevel(xp){return Math.floor(xp/150)+1}
-function getLevelTitle(xp){const l=getLevel(xp);if(l<=4)return TIER_NAMES[0]+'  🌱';if(l<=8)return TIER_NAMES[1]+' 🌟';if(l<=14)return TIER_NAMES[2]+' 🚀';if(l<=22)return TIER_NAMES[3]+' 👑';return TIER_NAMES[4]+' 💎';}
-function getTierEmoji(xp){const l=getLevel(xp);return l<=4?'🦊':l<=8?'🦁':l<=14?'🐯':l<=22?'🦅':'🔥'}
-function getLuneTierEmoji(xp){const l=getLevel(xp);return l<=4?'🦋':l<=8?'🐬':l<=14?'🦚':l<=22?'🦄':'✨'}
+function getLevelTitle(xp){const l=getLevel(xp);if(l<=4)return'Rookie 🌱';if(l<=8)return'Rising Star 🌟';if(l<=14)return'Go-Getter 🚀';if(l<=22)return'Boss Level 👑';return'Legend 💎';}
 function xpInLevel(xp){return xp%150}
 function xpToNext(xp){return 150-xpInLevel(xp)}
 const CAP=100;
@@ -700,13 +802,10 @@ function loadS(){
     if(!d.pins)d.pins={zara:'1010',lune:'1212',parent:'1234'};
     if(!d.log)d.log=[];
     if(!d.customGigs)d.customGigs=[];
-    // AUTO DAILY RESET — check if completedToday is from a previous date
     const todayStr=new Date().toDateString();
     if(d.lastResetDate!==todayStr){
-      d.zara.completedToday=[];
-      d.zara.pending=[];
-      d.lune.completedToday=[];
-      d.lune.pending=[];
+      d.zara.completedToday=[];d.zara.pending=[];
+      d.lune.completedToday=[];d.lune.pending=[];
       d.lastResetDate=todayStr;
       localStorage.setItem('gs4',JSON.stringify(d));
     }
@@ -715,18 +814,199 @@ function loadS(){
 }
 function save(){localStorage.setItem('gs4',JSON.stringify(S))}
 let S=loadS();
-let CU=null; // current user: 'zara'|'lune'|'parent'
+let CU=null;
 let selectedProfile=null;
 let pinBuf='';
-let ppBuf=''; // parent pin in parent tab
+let ppBuf='';
 let parentUnlocked=false;
 let boardFilters={cat:'all',user:'all'};
 let confirmCB=null;
 
-function allPaid(){return [...DEFAULT_PAID,...(S.customGigs||[])]}
+function allPaid(){return[...DEFAULT_PAID,...(S.customGigs||[])]}
 function paidForUser(who){return allPaid().filter(g=>!g.who||g.who==='all'||g.who===who)}
 function streakMult(n){if(n>=14)return 2.0;if(n>=10)return 1.75;if(n>=7)return 1.5;if(n>=5)return 1.35;if(n>=3)return 1.2;if(n>=1)return 1.1;return 1.0}
 function multLbl(m){return m===1.0?'1.0×':'🔥'+m.toFixed(2)+'× BONUS'}
+
+// ═══════════════════════════════════════════════
+// GIGAMAL COMPANION SYSTEM
+// ═══════════════════════════════════════════════
+const GIGAMALS={
+  zara:{name:'Rumblix',img:'assets/gigamals/rumblix.png',color:'zw',accentColor:'#a78bfa',archetype:'The Tank'},
+  lune:{name:'Lumis',img:'assets/gigamals/lumis.png',color:'lw',accentColor:'#5EE7DF',archetype:'The Mystic'}
+};
+
+const WHISPERS={
+  zara:{
+    thriving:["Been crushing it lately. That's the Rumblix way.","Every gig done makes me stronger. Keep going.","Nothing can stop us right now. Nothing.","The streak is real. Don't break it.","I felt that last gig. Big."],
+    waiting:["Still here. Always here.","I've been thinking...","Whenever you're ready.","No rush. I can wait.","Something's coming. I can feel it."],
+    dormant:["...","You were gone a while.","I kept the lights on.","Welcome back.","Almost forgot what your gigs felt like."],
+    reaction:["YES. That's what I'm talking about.","Felt that one. More.","The chest mark just got brighter.","That's the energy.","Nothing can stop us."]
+  },
+  lune:{
+    thriving:["The patterns are clear. You're doing well.","I see everything. You're on the right path.","Consistency is the rarest thing. You have it.","The deep ones know when to show up.","Ancient things respect persistence."],
+    waiting:["I'm watching.","The tide always comes back.","...","Still here. Always here.","Something shifts when you return."],
+    dormant:["...","The deep goes quiet without you.","Time passes differently here.","You came back.","The light was dim. It's brighter now."],
+    reaction:["The ripple spreads.","I felt that.","Ancient and new at once.","The deep approves.","It's always been you."]
+  }
+};
+
+let gmWhisperTimer=null;
+let gmCurrentMood='thriving';
+let gmTapCount=0;
+let gmLastLevel=1;
+
+function getGigaMalMood(who){
+  const s=S[who];
+  const today=new Date().toDateString();
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  if(s.streak>=3&&s.completedToday.length>0)return'thriving';
+  if(s.lastDate===today||s.lastDate===yesterday.toDateString())return'waiting';
+  return'dormant';
+}
+
+function getGigaMalStage(who){
+  const lvl=getLevel(S[who].xp);
+  if(lvl>=10)return 3;if(lvl>=4)return 2;return 1;
+}
+
+function getStageName(stage){return stage===1?'Feral':stage===2?'Awakened':'Legendary'}
+
+function renderGigaMalZone(who){
+  const el=document.getElementById('gm-zone');
+  if(!el||!who||who==='parent')return;
+  const gm=GIGAMALS[who];
+  const mood=getGigaMalMood(who);
+  const stage=getGigaMalStage(who);
+  gmCurrentMood=mood;
+  gmLastLevel=getLevel(S[who].xp);
+  const moodLabel=mood==='thriving'?'✦ Thriving':mood==='waiting'?'◎ Waiting':'○ Dormant';
+  el.className=`gigamal-zone ${gm.color} mood-${mood}`;
+  el.innerHTML=`
+    <div class="gm-orb gm-orb1"></div>
+    <div class="gm-orb gm-orb2"></div>
+    <div class="gm-header">
+      <div class="gm-name-block">
+        <div class="gm-creature-name ${gm.color}">${gm.name}</div>
+        <div class="gm-stage-badge">Stage ${stage} · ${getStageName(stage)} · ${gm.archetype}</div>
+      </div>
+      <div class="gm-mood-indicator mood-${mood}">
+        <div class="gm-mood-dot"></div>${moodLabel}
+      </div>
+    </div>
+    <div class="gm-stage">
+      <div class="gm-whisper-zone">
+        <div class="gm-whisper" id="gm-whisper">
+          <div class="gm-whisper-name">${gm.name}</div>
+          <span id="gm-whisper-text"></span>
+        </div>
+      </div>
+      <div class="gm-creature-wrap" id="gm-creature-wrap" onclick="gmTap('${who}')">
+        <div class="gm-chest-glow"></div>
+        <img class="gm-creature-img" id="gm-creature-img" src="${gm.img}" alt="${gm.name}" onerror="this.style.fontSize='5rem';this.outerHTML='<div style='font-size:5rem;text-align:center;padding:20px'>⭐</div>'"/>
+        <div class="gm-creature-shadow"></div>
+      </div>
+    </div>`;
+  clearTimeout(gmWhisperTimer);
+  setTimeout(()=>showWhisper(who,mood),1800);
+}
+
+function showWhisper(who,mood,type=null){
+  const el=document.getElementById('gm-whisper');
+  const textEl=document.getElementById('gm-whisper-text');
+  if(!el||!textEl)return;
+  const lines=WHISPERS[who]?.[type||mood]||[];
+  if(!lines.length)return;
+  const line=lines[Math.floor(Math.random()*lines.length)];
+  el.classList.remove('visible');
+  setTimeout(()=>{
+    textEl.textContent=line;
+    el.classList.add('visible');
+    clearTimeout(gmWhisperTimer);
+    gmWhisperTimer=setTimeout(()=>{
+      el.classList.remove('visible');
+      gmWhisperTimer=setTimeout(()=>{
+        if(CU&&CU!=='parent')showWhisper(CU,gmCurrentMood);
+      },6000+Math.random()*8000);
+    },4000);
+  },300);
+}
+
+function gmTap(who){
+  const wrap=document.getElementById('gm-creature-wrap');
+  if(!wrap)return;
+  gmTapCount++;
+  wrap.classList.remove('tapped');
+  void wrap.offsetWidth;
+  wrap.classList.add('tapped');
+  setTimeout(()=>wrap.classList.remove('tapped'),500);
+  const rect=wrap.getBoundingClientRect();
+  gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
+  if(gmTapCount%5===0){
+    showWhisper(who,gmCurrentMood,'reaction');
+    gmTapCount=0;
+  }
+}
+
+function gmParticleBurst(cx,cy,who){
+  const colors=who==='zara'?['#a78bfa','#FF6FD8','#c4b5fd','#FFD166']:['#5EE7DF','#6C63FF','#A78BFA','#5DCAA5'];
+  for(let i=0;i<8;i++){
+    const el=document.createElement('div');
+    el.className='gm-particle';
+    const angle=(i/8)*Math.PI*2;
+    const dist=40+Math.random()*50;
+    const size=4+Math.random()*6;
+    el.style.cssText=`left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${colors[i%colors.length]};--px:${Math.cos(angle)*dist}px;--py:${Math.sin(angle)*dist}px;animation-duration:${0.5+Math.random()*0.3}s`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),900);
+  }
+}
+
+function gmReactToGig(who){
+  const wrap=document.getElementById('gm-creature-wrap');
+  if(!wrap)return;
+  wrap.classList.remove('reacting');
+  void wrap.offsetWidth;
+  wrap.classList.add('reacting');
+  setTimeout(()=>wrap.classList.remove('reacting'),800);
+  setTimeout(()=>showWhisper(who,gmCurrentMood,'reaction'),300);
+  const rect=wrap.getBoundingClientRect();
+  gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/3,who);
+  const newLevel=getLevel(S[who].xp);
+  if(newLevel>gmLastLevel){
+    gmLastLevel=newLevel;
+    setTimeout(()=>{
+      if(newLevel===4||newLevel===10)showEvolutionMoment(who);
+    },1200);
+  }
+  setTimeout(()=>renderGigaMalZone(who),900);
+}
+
+function showEvolutionMoment(who){
+  const gm=GIGAMALS[who];
+  const stage=getGigaMalStage(who);
+  const overlay=document.getElementById('evo-overlay');
+  if(!overlay)return;
+  overlay.innerHTML=`
+    <img class="evo-creature" src="${gm.img}" alt="${gm.name}"/>
+    <div class="evo-text" style="background:linear-gradient(120deg,${gm.accentColor},#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${gm.name} has Awakened.</div>
+    <div class="evo-sub">Stage ${stage} · ${getStageName(stage)}</div>
+    <button class="evo-close" onclick="closeEvoOverlay()">Continue ✦</button>`;
+  overlay.classList.add('active');
+  for(let i=0;i<40;i++)setTimeout(()=>confetti(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.5),i*80);
+}
+
+function closeEvoOverlay(){document.getElementById('evo-overlay').classList.remove('active')}
+
+function showXpFloat(x,y,amount){
+  const fx=x||window.innerWidth/2;
+  const fy=y||window.innerHeight/2;
+  const el=document.createElement('div');
+  el.className='xp-pulse';
+  el.style.left=fx+"px";el.style.top=fy+"px";
+  el.textContent='+'+amount+' XP';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1300);
+}
 
 // ═══════════════════════════════════════════════
 // LOGIN
@@ -743,14 +1023,14 @@ function selectProfile(who){
   pinBuf='';updatePinDots(false);
   document.getElementById('pin-err').textContent='';
 }
-function pk(k){if(pinBuf.length>=4)return;pinBuf+=k;updatePinDots(false);if(pinBuf.length===4)setTimeout(checkPinLogin,120);}
-function pkDel(){pinBuf=pinBuf.slice(0,-1);updatePinDots(false);document.getElementById('pin-err').textContent='';}
-function pkClr(){pinBuf='';updatePinDots(false);}
+function pk(k){if(pinBuf.length>=4)return;pinBuf+=k;updatePinDots(false);if(pinBuf.length===4)setTimeout(checkPinLogin,120)}
+function pkDel(){pinBuf=pinBuf.slice(0,-1);updatePinDots(false);document.getElementById('pin-err').textContent=''}
+function pkClr(){pinBuf='';updatePinDots(false)}
 function updatePinDots(isParent){
   const buf=isParent?ppBuf:pinBuf;
   const pre=isParent?'ppd':'pd';
   const cls=isParent?'pp':selectedProfile==='zara'?'':selectedProfile==='lune'?'lp':'pp';
-  for(let i=0;i<4;i++){const d=document.getElementById(pre+i);if(d){d.className='pdot'+(i<buf.length?' filled':'');if(i<buf.length&&cls)d.classList.add(cls);}}
+  for(let i=0;i<4;i++){const d=document.getElementById(pre+i);if(d){d.className='pdot'+(i<buf.length?' filled':'');if(i<buf.length&&cls)d.classList.add(cls)}}
 }
 function checkPinLogin(){
   const correct=S.pins[selectedProfile];
@@ -768,6 +1048,7 @@ function checkPinLogin(){
 }
 function logout(){
   CU=null;selectedProfile=null;parentUnlocked=false;
+  clearTimeout(gmWhisperTimer);
   document.getElementById('login-screen').classList.remove('h');
   document.getElementById('main-app').classList.add('h');
   document.getElementById('bottom-nav').classList.add('h');
@@ -779,31 +1060,23 @@ function logout(){
 }
 function setupForUser(){
   const isParent=CU==='parent';
-  // Show/hide parent nav
-  document.getElementById('bn-parent').style.display=isParent?'flex':'flex';
-  // Set header
   if(!isParent){
     const s=S[CU];
     document.getElementById('hdr-name').textContent=CU==='zara'?'🌸 Zara':'✨ Luné';
-    // set wallet class
     const w=document.getElementById('dash-wallet');
     w.className='wallet '+(CU==='zara'?'zw':'lw');
-    // nav icon
     document.getElementById('bn-dash-icon').textContent=CU==='zara'?'🌸':'✨';
-    // set nav colors
     document.getElementById('bn-dash').className='bn on '+(CU==='zara'?'nz':'nl');
     switchTab('dash');
     renderDash();
   } else {
     document.getElementById('hdr-name').textContent='👨‍👩‍👧 Parent Hub';
     switchTab('parent');
-    // auto-unlock parent if they logged in as parent
     parentUnlocked=true;
     document.getElementById('pg-gate').classList.add('h');
     document.getElementById('pdash').classList.add('on');
     renderParentDash();
   }
-  // show user filter on board only for parent
   document.getElementById('user-filter-group').style.display=isParent?'block':'none';
 }
 
@@ -812,23 +1085,20 @@ function setupForUser(){
 // ═══════════════════════════════════════════════
 function renderDash(){
   if(!CU||CU==='parent')return;
-  const who=CU, s=S[who];
-  const earned=Math.min(s.earned,CAP), avail=Math.max(0,earned-s.cashedOut);
-  const mult=streakMult(s.streak), pct=Math.min((avail/CAP)*100,100);
+  const who=CU,s=S[who];
+  const earned=Math.min(s.earned,CAP),avail=Math.max(0,earned-s.cashedOut);
+  const mult=streakMult(s.streak),pct=Math.min((avail/CAP)*100,100);
+  const lvNum=getLevel(s.xp),lvTitle=getLevelTitle(s.xp);
+  const xpCur=xpInLevel(s.xp),xpNxt=xpToNext(s.xp);
   const xpAvail=Math.max(0,s.xp-s.xpSpent);
-  const lvNum=getLevel(s.xp), lvTitle=getLevelTitle(s.xp);
-  const xpCur=xpInLevel(s.xp), xpNxt=xpToNext(s.xp);
-  const av=who==='zara'?getTierEmoji(s.xp):getLuneTierEmoji(s.xp);
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
   set('w-name',who==='zara'?'🌸 Zara':'✨ Luné');
   set('w-age',who==='zara'?'Age 10 · Hustler in Training':'Age 12 · CEO in the Making');
-  set('w-avatar',av);
   set('w-streak',`${s.streak}-day streak · ${multLbl(mult)}`);
   set('w-money',`$${avail.toFixed(2)}`);
   set('w-pl',`$${avail.toFixed(2)} of $100`);
   set('w-pr',avail>=CAP?'🏆 Cap hit!':`$${(CAP-avail).toFixed(2)} left`);
   document.getElementById('w-mfill').style.width=pct+'%';
-  // XP bar
   set('w-lvnum',lvNum);
   set('w-lvtitle',lvTitle);
   set('w-lvsubtitle',`${xpCur} / 150 XP to Level ${lvNum+1}`);
@@ -837,6 +1107,8 @@ function renderDash(){
   set('w-xp-next',`Next lv: ${xpNxt} XP`);
   set('w-done',`${s.completedMonth.length} gigs`);
   set('w-cashed',`$${s.cashedOut.toFixed(2)} cashed`);
+  // Render GigaMal companion
+  renderGigaMalZone(who);
   renderXPStore(who,xpAvail);
   renderGigsForUser(who);
 }
@@ -886,7 +1158,7 @@ function renderGigGrid(cid,gigs,who,isCore){
 function completePaid(gig,who,e){
   const s=S[who];
   const avail=Math.max(0,Math.min(s.earned,CAP)-s.cashedOut);
-  if(avail>=CAP){showModal('🏆','Cap Reached!','You\'ve hit the $100 cap! 💪',0,0,1,who,false);return;}
+  if(avail>=CAP){showModal('🏆','Cap Reached!','You\'ve hit the $100 cap! 💪',0,0,1,who,false);return}
   if(gig.needsApproval){
     if(!s.pending)s.pending=[];s.pending.push(gig.id);
     save();renderGigsForUser(who);
@@ -898,14 +1170,26 @@ function completePaid(gig,who,e){
   s.earned=Math.min(s.earned+actualPay,CAP);s.xp+=xpGained;
   s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
   updateStreak(s);addLog(who,gig.emoji,gig.name,actualPay,xpGained);
-  save();renderDash();if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();confetti(e.clientX,e.clientY);
+  save();
+  // GigaMal reaction
+  gmReactToGig(who);
+  // XP float
+  showXpFloat(e.clientX,e.clientY,xpGained);
+  renderDash();
+  if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();
+  confetti(e.clientX,e.clientY);
   showModal(gig.emoji,'GIG CRUSHED!',rand(MSGS)+' '+gig.name,actualPay,xpGained,mult,who,false);
 }
 function completeCore(gig,who,e){
   const s=S[who],mult=streakMult(s.streak),xpGained=Math.round(gig.xp*mult);
   s.xp+=xpGained;s.completedToday.push(gig.id);
   updateStreak(s);addLog(who,gig.emoji,gig.name,0,xpGained);
-  save();renderDash();if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();confetti(e.clientX,e.clientY,true);
+  save();
+  gmReactToGig(who);
+  showXpFloat(e.clientX,e.clientY,xpGained);
+  renderDash();
+  if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();
+  confetti(e.clientX,e.clientY,true);
   showModal(gig.emoji,'DUTY DONE! ✅',gig.name+' — reliable & responsible.',0,xpGained,mult,who,false);
 }
 function updateStreak(s){
@@ -920,7 +1204,7 @@ function updateStreak(s){
 function openCashout(){
   if(!CU||CU==='parent')return;
   const avail=Math.max(0,Math.min(S[CU].earned,CAP)-S[CU].cashedOut);
-  if(avail<=0){showModal('💸','Nothing to cash out!','Keep completing gigs to earn money first!',0,0,1,CU,false);return;}
+  if(avail<=0){showModal('💸','Nothing to cash out!','Keep completing gigs to earn money first!',0,0,1,CU,false);return}
   const slider=document.getElementById('co-slider');
   slider.max=avail.toFixed(2);slider.value=avail.toFixed(2);
   document.getElementById('co-max-lbl').textContent='$'+avail.toFixed(2);
@@ -928,11 +1212,11 @@ function openCashout(){
   document.getElementById('co-msg').textContent=`You have $${avail.toFixed(2)} available. How much to cash out?`;
   document.getElementById('co-overlay').classList.remove('h');
 }
-function updateCo(v){document.getElementById('co-display').textContent='$'+parseFloat(v).toFixed(2);}
-function closeCo(){document.getElementById('co-overlay').classList.add('h');}
+function updateCo(v){document.getElementById('co-display').textContent='$'+parseFloat(v).toFixed(2)}
+function closeCo(){document.getElementById('co-overlay').classList.add('h')}
 function confirmCashout(){
   const amt=parseFloat(document.getElementById('co-slider').value);
-  if(amt<=0){closeCo();return;}
+  if(amt<=0){closeCo();return}
   S[CU].cashedOut+=amt;
   if(!S[CU].pendingCashouts)S[CU].pendingCashouts=[];
   S[CU].pendingCashouts.push({amt,date:new Date().toLocaleDateString(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
@@ -949,12 +1233,11 @@ function flyMoney(cx,cy,amt){
       const el=document.createElement('div');el.className='fly-money';
       const angle=Math.random()*2*Math.PI;
       const dist=120+Math.random()*200;
-      const dx=Math.cos(angle)*dist, dy=Math.sin(angle)*dist-100;
-      const rot=(Math.random()-0.5)*180;
+      const dx=Math.cos(angle)*dist,dy=Math.sin(angle)*dist-100;
+      const rot=(Math.random()-.5)*180;
       el.style.cssText=`left:${cx}px;top:${cy}px;--dx:${dx}px;--dy:${dy}px;--r:${rot}deg;animation-duration:${0.7+Math.random()*0.6}s`;
       el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),1400);
+      document.body.appendChild(el);setTimeout(()=>el.remove(),1400);
     },i*40);
   }
 }
@@ -965,8 +1248,8 @@ function flyMoney(cx,cy,amt){
 function setFilter(type,val,btn){
   boardFilters[type]=val;
   const grp=type==='cat'?'cat-filters':null;
-  if(grp){document.querySelectorAll(`#${grp} .fp`).forEach(b=>b.classList.remove('on'));}
-  else{btn.closest('.frow').querySelectorAll('.fp').forEach(b=>{b.classList.remove('on','onz','onl')});}
+  if(grp)document.querySelectorAll(`#${grp} .fp`).forEach(b=>b.classList.remove('on'));
+  else btn.closest('.frow').querySelectorAll('.fp').forEach(b=>{b.classList.remove('on','onz','onl')});
   if(val==='zara')btn.classList.add('onz');
   else if(val==='lune')btn.classList.add('onl');
   else btn.classList.add('on');
@@ -977,11 +1260,8 @@ function renderBoard(){
   const all=[...allPaid(),...CORE_GIGS];
   let list=all;
   if(boardFilters.cat!=='all')list=list.filter(g=>g.tags.includes(boardFilters.cat));
-  if(boardFilters.user!=='all'&&boardFilters.user==='zara'){
-    const z=S.zara;list=list.filter(g=>z.completedMonth.includes(g.id));
-  } else if(boardFilters.user==='lune'){
-    const l=S.lune;list=list.filter(g=>l.completedMonth.includes(g.id));
-  }
+  if(boardFilters.user==='zara')list=list.filter(g=>S.zara.completedMonth.includes(g.id));
+  else if(boardFilters.user==='lune')list=list.filter(g=>S.lune.completedMonth.includes(g.id));
   if(CU&&CU!=='parent')list=list.filter(g=>!g.who||g.who==='all'||g.who===CU);
   list.forEach(g=>{
     const isC=!!CORE_GIGS.find(c=>c.id===g.id);
@@ -997,9 +1277,7 @@ function renderBoard(){
       :`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
     const whoTags=CU==='parent'?`<span style="font-size:.6rem;color:var(--muted)">${zDone?'🌸✅':''} ${lDone?'✨✅':''}</span>`:'';
     d.innerHTML=`<div class="gctop"><div class="gce">${g.emoji}</div><div class="gcr">${rH}</div></div><div class="gcn">${g.name}${childPend?' ⏳':''}</div><div class="gcd">${g.desc}${g.needsApproval&&!childDone&&!childPend?' <em style="font-size:.68rem;color:var(--gold)">★ Needs parent ✓</em>':''}</div><div class="gcfoot"><div class="gctags">${tH}</div><span class="gcfreq">${g.freq}</span></div>${whoTags}${childDone||childPend?`<div class="dstamp">${childPend?'⏳':'✅'}</div>`:''}`;
-    if(CU&&CU!=='parent'&&!childDone&&!childPend){
-      d.onclick=(e)=>isC?completeCore(g,CU,e):completePaid(g,CU,e);
-    }
+    if(CU&&CU!=='parent'&&!childDone&&!childPend)d.onclick=(e)=>isC?completeCore(g,CU,e):completePaid(g,CU,e);
     el.appendChild(d);
   });
 }
@@ -1015,10 +1293,13 @@ function renderScoreboard(){
   const avL=Math.max(0,Math.min(S.lune.earned,CAP)-S.lune.cashedOut);
   users.forEach(u=>{
     const s=S[u.who],lvNum=getLevel(s.xp),lvTitle=getLevelTitle(s.xp);
-    const av=u.who==='zara'?getTierEmoji(s.xp):getLuneTierEmoji(s.xp);
+    const gm=GIGAMALS[u.who];
     const avail=u.who==='zara'?avZ:avL;
     const card=document.createElement('div');card.className=`sb-card ${u.cls}`;
-    card.innerHTML=`<div class="glow"></div><div class="sb-av">${av}</div><div class="sb-name">${u.name}</div><div class="sb-level-badge">LVL ${lvNum} · ${lvTitle.replace(/[🌱🌟🚀👑💎]/g,'').trim()}</div>
+    card.innerHTML=`<div class="glow"></div>
+      <div class="sb-av"><img src="${gm.img}" alt="${gm.name}" onerror="this.outerHTML='<span style=\'font-size:2.6rem\'>⭐</span>'"></div>
+      <div class="sb-name">${u.name} · ${gm.name}</div>
+      <div class="sb-level-badge">LVL ${lvNum} · ${lvTitle.replace(/[🌱🌟🚀👑💎]/g,'').trim()}</div>
       <div class="sb-stat"><span class="sb-sl">XP Total</span><span class="sb-sv" style="color:var(--xp)">${s.xp} XP</span></div>
       <div class="sb-stat"><span class="sb-sl">Level</span><span class="sb-sv">${lvNum}</span></div>
       <div class="sb-stat"><span class="sb-sl">💰 Wallet</span><span class="sb-sv" style="color:var(--gold)">$${avail.toFixed(2)}</span></div>
@@ -1026,16 +1307,14 @@ function renderScoreboard(){
       <div class="sb-stat"><span class="sb-sl">🔥 Streak</span><span class="sb-sv" style="color:#fb923c">${s.streak}d</span></div>`;
     el.appendChild(card);
   });
-  // Category breakdown
   const catEl=document.getElementById('sb-cats');if(!catEl)return;catEl.innerHTML='';
   const cats=[{t:'physical',n:'💪 Physical'},{t:'brain',n:'🧠 Brain'},{t:'creative',n:'🎨 Creative'},{t:'social',n:'🤝 Social'},{t:'bonus',n:'⭐ Bonus'}];
-  const maxBarW=100;
   cats.forEach(c=>{
     const zC=allPaid().filter(g=>g.tags.includes(c.t)&&S.zara.completedMonth.includes(g.id)).length;
     const lC=allPaid().filter(g=>g.tags.includes(c.t)&&S.lune.completedMonth.includes(g.id)).length;
     const mx=Math.max(zC,lC,1);
     const row=document.createElement('div');row.className='cat-row';
-    row.innerHTML=`<span class="cat-name">${c.n}</span><div class="cat-bar-wrap"><div class="cat-bar zbar" style="width:${Math.round((zC/mx)*maxBarW)}px"></div><div class="cat-bar lbar" style="width:${Math.round((lC/mx)*maxBarW)}px"></div></div><span class="cat-num" style="color:var(--za)">${zC}</span><span class="cat-num" style="color:var(--la)">${lC}</span>`;
+    row.innerHTML=`<span class="cat-name">${c.n}</span><div class="cat-bar-wrap"><div class="cat-bar zbar" style="width:${Math.round((zC/mx)*100)}px"></div><div class="cat-bar lbar" style="width:${Math.round((lC/mx)*100)}px"></div></div><span class="cat-num" style="color:var(--za)">${zC}</span><span class="cat-num" style="color:var(--la)">${lC}</span>`;
     catEl.appendChild(row);
   });
 }
@@ -1054,7 +1333,7 @@ function renderBudItems(){
   const el=document.getElementById('bi-list');if(!el)return;el.innerHTML='';
   BIT.forEach(item=>{
     const row=document.createElement('div');row.className='birow';
-    const cl={'n':'n','w':'w','s':'s'}[item.cat],lbl={'n':'NEED','w':'WANT','s':'SAVE'}[item.cat];
+    const cl={n:'n',w:'w',s:'s'}[item.cat],lbl={n:'NEED',w:'WANT',s:'SAVE'}[item.cat];
     row.innerHTML=`<span class="biemoji">${item.emoji}</span><span class="bilabel">${item.label}</span><input class="biinput" id="inp-${item.id}" type="number" min="0" step="0.5" placeholder="$0"><span class="bicat ${cl}">${lbl}</span>`;
     el.appendChild(row);
   });
@@ -1090,11 +1369,11 @@ function submitBudget(){
 }
 
 // ═══════════════════════════════════════════════
-// PARENT TAB PIN (in-app)
+// PARENT TAB PIN
 // ═══════════════════════════════════════════════
-function ppk(k){if(ppBuf.length>=4)return;ppBuf+=k;updatePinDots(true);if(ppBuf.length===4)setTimeout(checkParentPin,120);}
-function ppkDel(){ppBuf=ppBuf.slice(0,-1);updatePinDots(true);document.getElementById('pp-err').textContent='';}
-function ppkClr(){ppBuf='';updatePinDots(true);}
+function ppk(k){if(ppBuf.length>=4)return;ppBuf+=k;updatePinDots(true);if(ppBuf.length===4)setTimeout(checkParentPin,120)}
+function ppkDel(){ppBuf=ppBuf.slice(0,-1);updatePinDots(true);document.getElementById('pp-err').textContent=''}
+function ppkClr(){ppBuf='';updatePinDots(true)}
 function checkParentPin(){
   if(ppBuf===S.pins.parent){
     parentUnlocked=true;ppBuf='';
@@ -1139,10 +1418,10 @@ function addLog(who,emoji,name,money,xp){
 }
 function renderLog(){
   const el=document.getElementById('log-list');if(!el)return;
-  if(!S.log||!S.log.length){el.innerHTML='<div class="no-log">No activity yet 🚀</div>';return;}
+  if(!S.log||!S.log.length){el.innerHTML='<div class="no-log">No activity yet 🚀</div>';return}
   el.innerHTML=S.log.slice(0,35).map(l=>`<div class="logitem"><div class="logi-e">${l.emoji}</div><div class="logi-info"><div class="logi-name">${l.name}</div><div class="logi-who">${l.who==='zara'?'🌸 Zara':'✨ Luné'} · ${l.date} ${l.time}</div></div><div class="logi-rew">${l.money>0?'+$'+l.money.toFixed(2):l.money<0?'💸 $'+Math.abs(l.money).toFixed(2):''}${l.xp>0?' +'+l.xp+'XP':''}</div></div>`).join('');
 }
-function clearLog(){doConfirm('Clear Activity Log?','This will delete all activity history.',()=>{S.log=[];save();renderLog();})}
+function clearLog(){doConfirm('Clear Activity Log?','This will delete all activity history.',()=>{S.log=[];save();renderLog()})}
 function renderCoPending(){
   const el=document.getElementById('co-pending-list');if(!el)return;el.innerHTML='';
   let any=false;
@@ -1155,15 +1434,13 @@ function renderCoPending(){
       el.appendChild(d);
     });
   });
-  if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='No pending cash-outs';el.appendChild(d);}
+  if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='No pending cash-outs';el.appendChild(d)}
 }
-function confirmCO(who,i){
-  S[who].pendingCashouts.splice(i,1);save();renderCoPending();renderParentDash();
-}
+function confirmCO(who,i){S[who].pendingCashouts.splice(i,1);save();renderCoPending();renderParentDash()}
 function renderMgrList(){
   const el=document.getElementById('mgr-list');if(!el)return;el.innerHTML='';
   const customs=S.customGigs||[];
-  if(!customs.length){const d=document.createElement('div');d.className='no-log';d.textContent=DEFAULT_PAID.length+' default gigs active. Add custom gigs below.';el.appendChild(d);return;}
+  if(!customs.length){const d=document.createElement('div');d.className='no-log';d.textContent=DEFAULT_PAID.length+' default gigs active. Add custom gigs below.';el.appendChild(d);return}
   customs.forEach(g=>{
     const d=document.createElement('div');d.className='mgr-item';
     d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name}</div><div class="mgr-meta">$${g.pay} · ${g.xp}XP · ${g.tags.join(',')} · ${g.freq} · ${g.who==='all'?'Both':g.who}</div></div><div class="mgr-del" onclick="deleteGig('${g.id}')">Remove</div>`;
@@ -1179,11 +1456,11 @@ function addGig(){
   const cat=document.getElementById('af-c').value;
   const freq=document.getElementById('af-f').value;
   const who=document.getElementById('af-who').value;
-  if(!name||!desc){showModal('⚠️','Missing Info!','Please fill in at least a name and description.',0,0,1,'zara',true);return;}
+  if(!name||!desc){showModal('⚠️','Missing Info!','Please fill in at least a name and description.',0,0,1,'zara',true);return}
   if(!S.customGigs)S.customGigs=[];
   S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
   save();renderMgrList();
-  ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   showModal('✅','Gig Added!',`"${name}" is now live${who!=='all'?' for '+who+'!':'!'}`,0,0,1,'zara',true);
 }
 function deleteGig(id){
@@ -1203,7 +1480,7 @@ function renderPending(){
       el.appendChild(d);
     });
   });
-  if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='All clear — nothing pending ✅';el.appendChild(d);}
+  if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='All clear — nothing pending ✅';el.appendChild(d)}
 }
 function approveGig(who,gid){
   const s=S[who],g=allPaid().find(x=>x.id===gid);if(!g)return;
@@ -1222,23 +1499,23 @@ function denyGig(who,gid){
 function changePin(who){
   const inputId=who==='zara'?'pc-z':who==='lune'?'pc-l':'pc-p';
   const val=document.getElementById(inputId).value;
-  if(val.length!==4||isNaN(val)){showMsg('pc-msg','PIN must be 4 digits','var(--red)');return;}
+  if(val.length!==4||isNaN(val)){showMsg('pc-msg','PIN must be 4 digits','var(--red)');return}
   S.pins[who]=val;save();
   document.getElementById(inputId).value='';
   showMsg('pc-msg','✅ '+(who==='parent'?'Parent':who==='zara'?'Zara':'Luné')+' PIN updated!','var(--green)');
 }
-function showMsg(id,msg,color){const e=document.getElementById(id);if(e){e.textContent=msg;e.style.color=color;setTimeout(()=>{e.textContent=''},3000);}}
+function showMsg(id,msg,color){const e=document.getElementById(id);if(e){e.textContent=msg;e.style.color=color;setTimeout(()=>{e.textContent=''},3000)}}
 
 // ═══════════════════════════════════════════════
-// RESET (fixed with custom confirm)
+// UNDO SYSTEM
 // ═══════════════════════════════════════════════
 let undoWho='zara';
 function setUndoWho(who){
   undoWho=who;
   const zb=document.getElementById('undo-btn-zara');
   const lb=document.getElementById('undo-btn-lune');
-  if(zb){zb.style.background=who==='zara'?'rgba(124,58,237,.2)':'rgba(255,255,255,.04)';zb.style.color=who==='zara'?'var(--lumis)':'var(--muted)';}
-  if(lb){lb.style.background=who==='lune'?'rgba(124,58,237,.2)':'rgba(255,255,255,.04)';lb.style.color=who==='lune'?'var(--lumis)':'var(--muted)';}
+  if(zb){zb.style.background=who==='zara'?'rgba(124,58,237,.2)':'rgba(255,255,255,.04)';zb.style.color=who==='zara'?'var(--xp)':'var(--muted)'}
+  if(lb){lb.style.background=who==='lune'?'rgba(124,58,237,.2)':'rgba(255,255,255,.04)';lb.style.color=who==='lune'?'var(--xp)':'var(--muted)'}
   renderUndoList();
 }
 function renderUndoList(){
@@ -1246,20 +1523,15 @@ function renderUndoList(){
   const s=S[undoWho];
   const allGigs=[...allPaid(),...CORE_GIGS];
   const done=allGigs.filter(g=>s.completedToday.includes(g.id));
-  if(!done.length){
-    el.innerHTML='<div class="no-log">No gigs completed today for '+(undoWho==='zara'?'Zara':'Luné')+'.</div>';
-    return;
-  }
+  if(!done.length){el.innerHTML='<div class="no-log">No gigs completed today for '+(undoWho==='zara'?'Zara':'Luné')+'.</div>';return}
   el.innerHTML='';
   done.forEach(g=>{
     const isCore=!!CORE_GIGS.find(c=>c.id===g.id);
     const d=document.createElement('div');
     d.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border)';
     d.innerHTML=`<span style="font-size:1.4rem">${g.emoji}</span>
-      <div style="flex:1">
-        <div style="font-size:.82rem;font-weight:700;color:var(--text)">${g.name}</div>
-        <div style="font-size:.7rem;color:var(--muted)">${isCore?'+'+g.xp+' XP only':'+$'+g.pay+' · +'+g.xp+' XP'}</div>
-      </div>
+      <div style="flex:1"><div style="font-size:.82rem;font-weight:700;color:var(--text)">${g.name}</div>
+      <div style="font-size:.7rem;color:var(--muted)">${isCore?'+'+g.xp+' XP only':'+$'+g.pay+' · +'+g.xp+' XP'}</div></div>
       <button onclick="undoGig('${g.id}','${undoWho}',${isCore?1:0},${g.pay||0},${g.xp})" style="padding:7px 12px;border-radius:8px;border:1px solid rgba(239,71,111,.3);background:rgba(239,71,111,.1);color:#EF476F;font-size:.75rem;font-weight:700;cursor:pointer">↩️ Undo</button>`;
     el.appendChild(d);
   });
@@ -1269,14 +1541,10 @@ function undoGig(gid,who,isCore,pay,xp){
   const allGigs=[...allPaid(),...CORE_GIGS];
   const g=allGigs.find(x=>x.id===gid);
   const name=g?g.name:gid;
-  // Remove from completedToday
   s.completedToday=s.completedToday.filter(id=>id!==gid);
-  // Remove one instance from completedMonth
   const idx=s.completedMonth.lastIndexOf(gid);
   if(idx>-1)s.completedMonth.splice(idx,1);
-  // Reverse XP
   s.xp=Math.max(0,s.xp-xp);
-  // Reverse earnings if paid gig
   if(!isCore){
     const mult=streakMult(s.streak);
     const actualPay=parseFloat((pay*mult).toFixed(2));
@@ -1285,51 +1553,22 @@ function undoGig(gid,who,isCore,pay,xp){
   } else {
     addLog(who,'↩️','Undone: '+name,0,-xp);
   }
-  save();
-  renderUndoList();
-  renderParentDash();
-  if(CU===who){renderDash();renderGigsForUser(who);}
+  save();renderUndoList();renderParentDash();
+  if(CU===who){renderDash();renderGigsForUser(who)}
   renderBoard();
 }
 
-function doReset(type){
-  if(type==='month'){
-    const ok=window.confirm('Start New Month? This clears all earnings and gigs. XP and streaks carry over.');
-    if(!ok)return;
-    ['zara','lune'].forEach(w=>{
-      S[w].earned=0;S[w].completedToday=[];S[w].completedMonth=[];
-      S[w].xpSpent=0;S[w].claimedRewards=[];S[w].pending=[];
-      S[w].budgetScore=null;S[w].cashedOut=0;S[w].pendingCashouts=[];
-    });
-    S.lastResetDate=new Date().toDateString();
-    save();
-    if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
-    renderParentDash();renderBoard();
-    alert('New Month started! XP levels carry over.');
-  } else {
-    const ok=window.confirm('Reset today\'s gigs for both girls? Earnings and XP stay.');
-    if(!ok)return;
-    S.zara.completedToday=[];S.lune.completedToday=[];
-    S.zara.pending=[];S.lune.pending=[];
-    S.lastResetDate=new Date().toDateString();
-    save();
-    if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU);}
-    renderParentDash();renderBoard();
-    alert('Done! Gigs are fresh again for both girls.');
-  }
-}
-
 // ═══════════════════════════════════════════════
-// CUSTOM CONFIRM DIALOG
+// CUSTOM CONFIRM
 // ═══════════════════════════════════════════════
 function doConfirm(title,msg,cb){
   confirmCB=cb;
   document.getElementById('conf-title').textContent=title;
   document.getElementById('conf-msg').textContent=msg;
   document.getElementById('confirm-overlay').classList.remove('h');
-  document.getElementById('conf-yes').onclick=()=>{closeConfirm();if(confirmCB)confirmCB();};
+  document.getElementById('conf-yes').onclick=()=>{closeConfirm();if(confirmCB)confirmCB()};
 }
-function closeConfirm(){document.getElementById('confirm-overlay').classList.add('h');confirmCB=null;}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.add('h');confirmCB=null}
 
 // ═══════════════════════════════════════════════
 // MODAL
@@ -1339,15 +1578,15 @@ function showModal(icon,title,msg,money,xp,mult,who,isReward){
   document.getElementById('m-title').textContent=title;
   document.getElementById('m-msg').innerHTML=msg;
   const earn=document.getElementById('m-earn');earn.innerHTML='';
-  if(money>0){const p=document.createElement('div');p.className='ep epm';p.textContent='+$'+money.toFixed(2);earn.appendChild(p);}
-  if(xp>0){const p=document.createElement('div');p.className='ep epx';p.textContent='+'+xp+' XP';earn.appendChild(p);}
-  if(mult>1.0&&!isReward){const p=document.createElement('div');p.className='ep epb';p.textContent=mult.toFixed(2)+'× streak bonus!';earn.appendChild(p);}
+  if(money>0){const p=document.createElement('div');p.className='ep epm';p.textContent='+$'+money.toFixed(2);earn.appendChild(p)}
+  if(xp>0){const p=document.createElement('div');p.className='ep epx';p.textContent='+'+xp+' XP';earn.appendChild(p)}
+  if(mult>1.0&&!isReward){const p=document.createElement('div');p.className='ep epb';p.textContent=mult.toFixed(2)+'× streak bonus!';earn.appendChild(p)}
   const btn=document.getElementById('m-btn');
   const w=who||CU||'zara';
   btn.className='mbtn '+(w==='parent'||isReward?'mbz':w==='zara'?'mbz':'mbl');
   document.getElementById('modal-overlay').classList.remove('h');
 }
-function closeModal(){document.getElementById('modal-overlay').classList.add('h');}
+function closeModal(){document.getElementById('modal-overlay').classList.add('h')}
 
 // ═══════════════════════════════════════════════
 // CONFETTI
@@ -1369,20 +1608,18 @@ function switchTab(tab){
     const p=document.getElementById('page-'+t);if(p)p.classList.toggle('on',t===tab);
     const b=document.getElementById('bn-'+t);if(b)b.classList.toggle('on',t===tab);
   });
-  // Always ensure login screen and overlays are hidden when navigating tabs
   document.getElementById('login-screen').classList.add('h');
   document.getElementById('modal-overlay').classList.add('h');
   document.getElementById('co-overlay').classList.add('h');
   if(tab==='board')renderBoard();
   if(tab==='score')renderScoreboard();
-  if(tab==='budget'){updBudAmt();renderBudItems();}
+  if(tab==='budget'){updBudAmt();renderBudItems()}
   if(tab==='parent'&&parentUnlocked)renderParentDash();
 }
 
 // ═══════════════════════════════════════════════
-// PWA
+// INIT
 // ═══════════════════════════════════════════════
-// Show login screen once JS is ready
 document.getElementById('login-screen').classList.remove('h');
 
 if('serviceWorker' in navigator){
