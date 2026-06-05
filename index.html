@@ -766,7 +766,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v1.9.0 · Whisper Wrap · 2025-06-05</div>
+<div class="build-version" id="build-version">v2.0.0 · GigaMal Gifts · 2025-06-05</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -865,6 +865,9 @@ const XP_REWARDS=[
   {id:'r6',emoji:'🎬',name:'Movie Night Pick',cost:220},
   {id:'r7',emoji:'🧸',name:'Skip One Core Duty',cost:300},
   {id:'r8',emoji:'🛒',name:'$5 Bonus Cash',cost:400,isMoney:true,moneyVal:5},
+  {id:'g1',emoji:'🍬',name:'Sweet Treat',cost:80,isGigaMalGift:true,giftTier:'sweet',desc:'Give your GigaMal a treat'},
+  {id:'g2',emoji:'✨',name:'Power Spark',cost:150,isGigaMalGift:true,giftTier:'spark',desc:'Charge up your GigaMal'},
+  {id:'g3',emoji:'👑',name:'Crown Moment',cost:300,isGigaMalGift:true,giftTier:'crown',desc:'Your GigaMal biggest moment'},
 ];
 const BIT=[
   {id:'bi1',emoji:'📚',label:'School supplies',cat:'n'},
@@ -938,13 +941,19 @@ const WHISPERS={
     thriving:["Been crushing it lately. That's the Rumblix way.","Every gig done makes me stronger. Keep going.","Nothing can stop us right now. Nothing.","The streak is real. Don't break it.","I felt that last gig. Big."],
     waiting:["Still here. Always here.","I've been thinking...","Whenever you're ready.","No rush. I can wait.","Something's coming. I can feel it."],
     dormant:["...","You were gone a while.","I kept the lights on.","Welcome back.","Almost forgot what your gigs felt like."],
-    reaction:["YES. That's what I'm talking about.","Felt that one. More.","The chest mark just got brighter.","That's the energy.","Nothing can stop us."]
+    reaction:["YES. That's what I'm talking about.","Felt that one. More.","The chest mark just got brighter.","That's the energy.","Nothing can stop us."],
+    gift_sweet:["You got me something? That's new.","I felt that. Thanks.","You didn't have to. But I'm glad you did."],
+    gift_spark:["Something just shifted. That was you.","The chest mark is burning bright.","I can feel that energy. Let's go."],
+    gift_crown:["This is the moment. Right here.","You just made history. No, really.","The crown fits. It always did."]
   },
   lune:{
     thriving:["The patterns are clear. You're doing well.","I see everything. You're on the right path.","Consistency is the rarest thing. You have it.","The deep ones know when to show up.","Ancient things respect persistence."],
     waiting:["I'm watching.","The tide always comes back.","...","Still here. Always here.","Something shifts when you return."],
     dormant:["...","The deep goes quiet without you.","Time passes differently here.","You came back.","The light was dim. It's brighter now."],
-    reaction:["The ripple spreads.","I felt that.","Ancient and new at once.","The deep approves.","It's always been you."]
+    reaction:["The ripple spreads.","I felt that.","Ancient and new at once.","The deep approves.","It's always been you."],
+    gift_sweet:["Something warm just arrived.","I see what you did there.","The deep remembers kindness."],
+    gift_spark:["The light just changed. That was you.","Ancient energy, renewed.","I felt that all the way down."],
+    gift_crown:["This was always yours to give.","The ancient ones are watching. They approve.","Something just changed between us. Forever."]
   }
 };
 
@@ -1238,19 +1247,122 @@ function renderDash(){
 // ═══════════════════════════════════════════════
 function renderXPStore(who,avail){
   const el=document.getElementById('w-xpgrid');if(!el)return;el.innerHTML='';
-  XP_REWARDS.forEach(r=>{
+
+  // Separate gifts from regular rewards
+  const regular=XP_REWARDS.filter(r=>!r.isGigaMalGift);
+  const gifts=XP_REWARDS.filter(r=>r.isGigaMalGift);
+
+  // Regular rewards
+  regular.forEach(r=>{
     const claimed=S[who].claimedRewards.includes(r.id),can=avail>=r.cost;
     const d=document.createElement('div');d.className='xpitem'+(claimed?' claimed':'');
-    d.innerHTML=`<span class="xre">${r.emoji}</span><div class="xrn">${r.name}</div><div class="xrc">${claimed?'✅ Claimed':can?r.cost+' XP':'🔒 '+r.cost+' XP'}</div>`;
+    d.innerHTML='<span class="xre">'+r.emoji+'</span><div class="xrn">'+r.name+'</div><div class="xrc">'+(claimed?'✅ Claimed':can?r.cost+' XP':'🔒 '+r.cost+' XP')+'</div>';
     if(!claimed&&can)d.onclick=()=>claimXP(who,r,avail);
     el.appendChild(d);
   });
+
+  // GigaMal gifts section
+  if(gifts.length){
+    const header=document.createElement('div');
+    header.style.cssText='grid-column:1/-1;font-family:Syne,sans-serif;font-size:.72rem;font-weight:700;color:var(--xp);letter-spacing:1px;text-transform:uppercase;margin-top:8px;padding-top:8px;border-top:1px solid rgba(167,139,250,.15)';
+    header.textContent='🎁 GigaMal Gifts';
+    el.appendChild(header);
+
+    gifts.forEach(r=>{
+      const can=avail>=r.cost;
+      const d=document.createElement('div');
+      d.className='xpitem';
+      d.style.cssText=can?'border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.1)':'';
+      d.innerHTML='<span class="xre">'+r.emoji+'</span><div class="xrn">'+r.name+'</div><div style="font-size:.6rem;color:var(--muted);margin-bottom:3px">'+r.desc+'</div><div class="xrc">'+(can?r.cost+' XP':'🔒 '+r.cost+' XP')+'</div>';
+      if(can)d.onclick=()=>claimXP(who,r,avail);
+      el.appendChild(d);
+    });
+  }
 }
 function claimXP(who,r,avail){
-  S[who].xpSpent+=r.cost;S[who].claimedRewards.push(r.id);
+  S[who].xpSpent+=r.cost;
+  // Gifts are NOT added to claimedRewards — they can be given multiple times
+  if(!r.isGigaMalGift)S[who].claimedRewards.push(r.id);
   if(r.isMoney)S[who].earned=Math.min(S[who].earned+r.moneyVal,CAP);
   addLog(who,r.emoji,'Redeemed: '+r.name,0,r.cost);
-  save();renderDash();showModal(r.emoji,'Reward Unlocked!','You claimed: '+r.name,0,r.cost,1,who,true);
+  save();
+  if(r.isGigaMalGift){
+    triggerGigaMalGift(who,r);
+  } else {
+    renderDash();showModal(r.emoji,'Reward Unlocked!','You claimed: '+r.name,0,r.cost,1,who,true);
+  }
+}
+
+function triggerGigaMalGift(who,r){
+  const wrap=document.getElementById('gm-creature-wrap');
+  const tier=r.giftTier;
+
+  // Sweet treat — happy bounce + whisper
+  if(tier==='sweet'){
+    if(wrap){
+      wrap.classList.remove('reacting');
+      void wrap.offsetWidth;
+      wrap.classList.add('reacting');
+      setTimeout(()=>wrap.classList.remove('reacting'),800);
+    }
+    const rect=wrap?wrap.getBoundingClientRect():null;
+    if(rect)gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/2,who);
+    setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_sweet'),400);
+    renderDash();
+    showModal(r.emoji,'Gift Given!','Your GigaMal loved that!',0,0,1,who,true);
+  }
+
+  // Power spark — bigger burst + glow flash + whisper
+  if(tier==='spark'){
+    if(wrap){
+      wrap.classList.remove('tapped','reacting');
+      void wrap.offsetWidth;
+      wrap.classList.add('reacting');
+      setTimeout(()=>wrap.classList.remove('reacting'),800);
+    }
+    // Multiple particle bursts
+    const rect=wrap?wrap.getBoundingClientRect():null;
+    if(rect){
+      for(let i=0;i<3;i++){
+        setTimeout(()=>gmParticleBurst(rect.left+rect.width/2,rect.top+rect.height/3,who),i*200);
+      }
+    }
+    // Flash the chest glow bright
+    const chestGlow=document.querySelector('.gm-chest-glow');
+    if(chestGlow){
+      chestGlow.style.transform='translateX(-50%) scale(3)';
+      chestGlow.style.opacity='1';
+      setTimeout(()=>{chestGlow.style.transform='';chestGlow.style.opacity='';},800);
+    }
+    setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_spark'),500);
+    renderDash();
+    showModal(r.emoji,'Power Surge!','Your GigaMal is charged up!',0,0,1,who,true);
+  }
+
+  // Crown moment — full screen takeover
+  if(tier==='crown'){
+    const gm=GIGAMALS[who];
+    const overlay=document.getElementById('evo-overlay');
+    if(overlay){
+      const img=document.createElement('img');
+      img.className='evo-creature';img.src=gm.img;img.alt=gm.name;
+      const txt=document.createElement('div');
+      txt.className='evo-text';
+      txt.style.cssText='background:linear-gradient(120deg,'+gm.accentColor+',#FFD166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text';
+      txt.textContent='You crowned '+gm.name+'.';
+      const sub=document.createElement('div');
+      sub.className='evo-sub';sub.textContent='A moment they will never forget.';
+      const btn=document.createElement('button');
+      btn.className='evo-close';btn.textContent='Continue ✶';
+      btn.onclick=closeEvoOverlay;
+      overlay.innerHTML='';
+      overlay.appendChild(img);overlay.appendChild(txt);overlay.appendChild(sub);overlay.appendChild(btn);
+      overlay.classList.add('active');
+      for(let i=0;i<50;i++)setTimeout(()=>confetti(Math.random()*window.innerWidth,Math.random()*window.innerHeight*.6),i*60);
+    }
+    setTimeout(()=>showWhisper(who,gmCurrentMood,'gift_crown'),1200);
+    renderDash();
+  }
 }
 
 // ═══════════════════════════════════════════════
