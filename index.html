@@ -10,7 +10,6 @@
 <link rel="manifest" href="manifest.json">
 <title>GIG SQUAD</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
   --bg:#0d0d14;--surface:#14141f;--card:#1a1a2a;--border:rgba(255,255,255,.07);
@@ -77,26 +76,6 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .hdr-name{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800}
 .hdr-logout{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:100px;padding:7px 14px;cursor:pointer;transition:all .2s}
 .hdr-logout:active{background:rgba(255,255,255,.08)}
-
-/* ── HOUSEHOLD SETUP ── */
-#household-screen{position:fixed;inset:0;z-index:950;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;overflow-y:auto}
-#household-screen.h{display:none}
-.hs-logo{font-family:'Syne',sans-serif;font-size:clamp(2rem,8vw,3rem);font-weight:800;background:linear-gradient(120deg,var(--za),var(--gold),var(--la));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
-.hs-sub{font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:32px}
-.hs-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px 22px;width:100%;max-width:340px;margin-bottom:14px}
-.hs-ttl{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px}
-.hs-desc{font-size:.74rem;color:var(--muted);margin-bottom:16px;line-height:1.5}
-.hs-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .2s}
-.hs-btn:active{transform:scale(.97)}
-.hs-btn:disabled{opacity:.5;cursor:default;pointer-events:none}
-.hs-btn.create{background:linear-gradient(135deg,var(--za),var(--zb));color:white}
-.hs-btn.join{background:rgba(94,231,223,.1);border:1px solid rgba(94,231,223,.2);color:var(--la)}
-.hs-input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);font-size:1.2rem;font-weight:700;text-align:center;letter-spacing:6px;text-transform:uppercase;margin-bottom:12px;outline:none;font-family:'Syne',sans-serif}
-.hs-input:focus{border-color:var(--la);box-shadow:0 0 0 2px rgba(94,231,223,.15)}
-.hs-msg{font-size:.74rem;color:var(--red);min-height:16px;margin-bottom:8px}
-/* ── CODE PILL ── */
-.hdr-code{font-size:.6rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;background:rgba(94,231,223,.1);border:1px solid rgba(94,231,223,.2);color:var(--la);border-radius:100px;padding:5px 10px;cursor:pointer;transition:all .2s;white-space:nowrap}
-.hdr-code:active{background:rgba(94,231,223,.2);transform:scale(.96)}
 
 /* ── BOTTOM NAV ── */
 .bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(10,10,18,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 calc(8px + var(--safe-bot))}
@@ -429,6 +408,24 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .gm-whisper{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:10px 20px;font-size:.76rem;font-weight:600;color:rgba(255,255,255,.85);line-height:1.5;max-width:88%;text-align:center;opacity:0;transform:translateY(-4px) scale(.97);transition:all .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(12px);white-space:normal;word-wrap:break-word}
 .gm-whisper.visible{opacity:1;transform:translateY(0) scale(1)}
 .gm-whisper-name{display:none}
+
+/* ── GM CHAT ── */
+.gm-talk-btn{display:block;margin:10px auto 0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:7px 20px;color:rgba(255,255,255,.65);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.gm-talk-btn:active{background:rgba(255,255,255,.14);transform:scale(.95)}
+#gm-chat-sheet{position:fixed;inset:0;z-index:800;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+#gm-chat-sheet.open{opacity:1;pointer-events:all}
+.gm-chat-drawer{background:var(--surface);border-radius:24px 24px 0 0;border-top:1px solid var(--border);padding:20px 20px calc(16px + var(--safe-bot));transform:translateY(100%);transition:transform .32s cubic-bezier(.34,1.2,.64,1)}
+#gm-chat-sheet.open .gm-chat-drawer{transform:translateY(0)}
+.gm-chat-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.gm-chat-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800}
+.gm-chat-close{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gm-chat-reply{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:.84rem;line-height:1.6;color:rgba(255,255,255,.85);min-height:52px;margin-bottom:12px;transition:opacity .2s}
+.gm-chat-reply.loading{opacity:.5}
+.gm-chat-row{display:flex;gap:10px}
+.gm-chat-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;outline:none;transition:border-color .15s}
+.gm-chat-input:focus{border-color:rgba(255,255,255,.22)}
+.gm-chat-send{padding:11px 18px;border-radius:14px;border:none;background:var(--xp);color:#fff;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.gm-chat-send:disabled{opacity:.45;cursor:default}
 /* animations */
 /* ── MOOD ANIMATIONS ── */
 /* Thriving — bouncy, energetic, alive */
@@ -695,35 +692,12 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   </div>
 </div>
 
-<!-- ══════════ HOUSEHOLD SETUP ══════════ -->
-<div id="household-screen" class="h">
-  <div style="position:relative;z-index:1;width:100%;max-width:340px">
-    <div class="hs-logo">GIG SQUAD</div>
-    <div class="hs-sub">Family Sync Setup</div>
-    <div class="hs-card">
-      <div class="hs-ttl">🏠 New Household</div>
-      <div class="hs-desc">First time here? Create a household and share the code with your family.</div>
-      <button class="hs-btn create" onclick="createHousehold()">Create New Household</button>
-    </div>
-    <div class="hs-card">
-      <div class="hs-ttl">🔗 Join Household</div>
-      <div class="hs-desc">Got a code? Enter it below to sync with your family's progress.</div>
-      <input class="hs-input" id="hs-code-input" maxlength="6" placeholder="ABC123" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-      <div class="hs-msg" id="hs-msg"></div>
-      <button class="hs-btn join" onclick="joinHousehold()">Join Household</button>
-    </div>
-  </div>
-</div>
-
 <!-- ══════════ MAIN APP ══════════ -->
 <div id="main-app" class="h">
   <div id="main-app-inner">
     <header>
       <div class="hdr-name" id="hdr-name">GIG SQUAD</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="hdr-code h" id="hdr-code" onclick="copyHouseholdCode()" title="Tap to copy invite link"></span>
-        <div class="hdr-logout" onclick="logout()">← Switch</div>
-      </div>
+      <div class="hdr-logout" onclick="logout()">← Switch</div>
     </header>
 
     <!-- DASHBOARD PAGE -->
@@ -1026,114 +1000,6 @@ const MSGS=['Absolute fire! 🔥','That\'s the spirit! ⚡','Boss move! 👑','S
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
 
 // ═══════════════════════════════════════════════
-// ═══════════════════════════════════════════════
-// SUPABASE SYNC
-// ═══════════════════════════════════════════════
-const GSB_URL='https://safwdttgeiffzkregbjv.supabase.co';
-const GSB_KEY='sb_publishable_PqbNtnw3sZW-NFyxyDAkEg_lapn-E3w';
-const gsb=supabase.createClient(GSB_URL,GSB_KEY);
-let gsHousehold=null;
-try{gsHousehold=JSON.parse(localStorage.getItem('gs_household')||'null')}catch{}
-let sbChannel=null;
-let lastSaveTs=0;
-
-async function saveToSupabase(){
-  if(!gsHousehold)return;
-  try{
-    lastSaveTs=Date.now();
-    await gsb.from('gs_household_state').upsert({household_id:gsHousehold.id,state:S,updated_at:new Date().toISOString()});
-  }catch(e){console.warn('GS sync:',e)}
-}
-
-function subscribeToHousehold(){
-  if(!gsHousehold||sbChannel)return;
-  sbChannel=gsb.channel('gs_hh_'+gsHousehold.id)
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'gs_household_state',filter:'household_id=eq.'+gsHousehold.id},(payload)=>{
-      if(Date.now()-lastSaveTs<2000)return;
-      const r=payload.new&&payload.new.state;
-      if(!r||!r.zara||!r.lune)return;
-      S=r;localStorage.setItem('gs4',JSON.stringify(S));
-      renderScoreboard();
-      if(CU&&CU!=='parent'){renderDash();renderGigsForUser(CU)}
-      const bp=document.getElementById('page-board');
-      if(bp&&bp.classList.contains('on'))renderBoard();
-    })
-    .subscribe();
-}
-
-function updateHdrCode(){
-  const el=document.getElementById('hdr-code');if(!el)return;
-  if(gsHousehold){el.textContent='🔗 '+gsHousehold.code;el.classList.remove('h')}
-  else el.classList.add('h');
-}
-
-function copyHouseholdCode(){
-  if(!gsHousehold)return;
-  const url=location.origin+location.pathname+'?hh='+gsHousehold.code;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>{
-      const el=document.getElementById('hdr-code');
-      if(!el)return;const t=el.textContent;
-      el.textContent='✅ Copied!';setTimeout(()=>{if(el)el.textContent=t},2000);
-    }).catch(()=>{});
-  }
-}
-
-async function createHousehold(){
-  const btn=document.querySelector('.hs-btn.create');
-  if(btn){btn.disabled=true;btn.textContent='Creating…'}
-  try{
-    const code=(Math.random().toString(36).slice(2,8)).toUpperCase();
-    const{data,error}=await gsb.from('gs_households').insert({code}).select().single();
-    if(error)throw error;
-    gsHousehold={id:data.id,code:data.code};
-    localStorage.setItem('gs_household',JSON.stringify(gsHousehold));
-    await saveToSupabase();
-    hideHouseholdSetup();
-    subscribeToHousehold();
-    updateHdrCode();
-  }catch(e){
-    if(btn){btn.disabled=false;btn.textContent='Create New Household'}
-    showHsMsg('Error creating. Check your connection.');
-    console.warn('GS create household:',e);
-  }
-}
-
-async function joinHousehold(){
-  const code=(document.getElementById('hs-code-input').value||'').trim().toUpperCase();
-  if(code.length!==6){showHsMsg('Enter a 6-character code.');return}
-  const btn=document.querySelector('.hs-btn.join');
-  if(btn){btn.disabled=true;btn.textContent='Joining…'}
-  try{
-    const{data:hh,error:hhErr}=await gsb.from('gs_households').select('id,code').eq('code',code).single();
-    if(hhErr||!hh){showHsMsg('Household not found. Check the code.');if(btn){btn.disabled=false;btn.textContent='Join Household'}return}
-    const{data:st}=await gsb.from('gs_household_state').select('state').eq('household_id',hh.id).single();
-    if(st&&st.state&&st.state.zara){S=st.state;localStorage.setItem('gs4',JSON.stringify(S))}
-    gsHousehold={id:hh.id,code:hh.code};
-    localStorage.setItem('gs_household',JSON.stringify(gsHousehold));
-    hideHouseholdSetup();
-    subscribeToHousehold();
-    updateHdrCode();
-  }catch(e){
-    if(btn){btn.disabled=false;btn.textContent='Join Household'}
-    showHsMsg('Error joining. Try again.');
-    console.warn('GS join household:',e);
-  }
-}
-
-function showHsMsg(msg){const e=document.getElementById('hs-msg');if(e){e.textContent=msg;setTimeout(()=>{if(e)e.textContent=''},3500)}}
-
-function showHouseholdSetup(){
-  document.getElementById('household-screen').classList.remove('h');
-  document.getElementById('login-screen').classList.add('h');
-}
-
-function hideHouseholdSetup(){
-  document.getElementById('household-screen').classList.add('h');
-  document.getElementById('login-screen').classList.remove('h');
-}
-
-// ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
 function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[]}}
@@ -1168,16 +1034,10 @@ function loadS(){
       d.lastResetDate=todayStr;
       localStorage.setItem('gs4',JSON.stringify(d));
     }
-    const monthStr=new Date().toISOString().slice(0,7);
-    if(d.lastMonthReset!==monthStr){
-      d.zara.completedMonth=[];d.lune.completedMonth=[];
-      d.lastMonthReset=monthStr;
-      localStorage.setItem('gs4',JSON.stringify(d));
-    }
     return d;
   }catch{return{zara:defP(),lune:defP(),customGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
 }
-function save(){localStorage.setItem('gs4',JSON.stringify(S));saveToSupabase()}
+function save(){localStorage.setItem('gs4',JSON.stringify(S))}
 let S=loadS();
 let CU=null;
 let selectedProfile=null;
@@ -1281,6 +1141,7 @@ function renderGigaMalZone(who){
         <img class="gm-creature-img" id="gm-creature-img" src="${gm.img}" alt="${gm.name}" onerror="this.outerHTML='<div style=\'font-size:6rem;text-align:center;padding:20px\'>⭐</div>'"/>
         <div class="gm-creature-shadow"></div>
       </div>
+      <button class="gm-talk-btn" onclick="openGmChat('${who}')">💬 Talk to ${gm.name}</button>
     </div>`;
   clearTimeout(gmWhisperTimer);
   setTimeout(()=>showWhisper(who,mood),1800);
@@ -2291,6 +2152,92 @@ function confetti(x,y,small=false){
 }
 
 // ═══════════════════════════════════════════════
+// GIGAMAL CHAT
+// ═══════════════════════════════════════════════
+const GIGAMAL_WORKER_URL = 'https://gigamal-chat.mornejacobsnz.workers.dev';
+let gmChatWho = null;
+
+(function injectChatSheet() {
+  const sheet = document.createElement('div');
+  sheet.id = 'gm-chat-sheet';
+  sheet.innerHTML = `<div class="gm-chat-drawer">
+    <div class="gm-chat-hdr">
+      <div class="gm-chat-title" id="gm-chat-title">Chat</div>
+      <button class="gm-chat-close" onclick="closeGmChat()">✕</button>
+    </div>
+    <div class="gm-chat-reply" id="gm-chat-reply">What's on your mind?</div>
+    <div class="gm-chat-row">
+      <input class="gm-chat-input" id="gm-chat-input" placeholder="Say something..." maxlength="200" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendGmMessage()">
+      <button class="gm-chat-send" id="gm-chat-send" onclick="sendGmMessage()">Send</button>
+    </div>
+  </div>`;
+  sheet.addEventListener('click', e => { if (e.target === sheet) closeGmChat(); });
+  document.body.appendChild(sheet);
+})();
+
+function openGmChat(who) {
+  gmChatWho = who;
+  const gm = GIGAMALS[who];
+  document.getElementById('gm-chat-title').textContent = `💬 ${gm.name}`;
+  document.getElementById('gm-chat-reply').textContent = 'What\'s on your mind?';
+  document.getElementById('gm-chat-reply').className = 'gm-chat-reply';
+  document.getElementById('gm-chat-input').value = '';
+  document.getElementById('gm-chat-send').disabled = false;
+  document.getElementById('gm-chat-sheet').classList.add('open');
+  setTimeout(() => document.getElementById('gm-chat-input').focus(), 350);
+}
+
+function closeGmChat() {
+  document.getElementById('gm-chat-sheet').classList.remove('open');
+  gmChatWho = null;
+}
+
+async function sendGmMessage() {
+  if (!gmChatWho) return;
+  const input = document.getElementById('gm-chat-input');
+  const replyEl = document.getElementById('gm-chat-reply');
+  const sendBtn = document.getElementById('gm-chat-send');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const character = GIGAMALS[gmChatWho].name.toLowerCase();
+  input.value = '';
+  input.disabled = true;
+  sendBtn.disabled = true;
+  replyEl.className = 'gm-chat-reply loading';
+  replyEl.textContent = '...';
+
+  try {
+    const res = await fetch(GIGAMAL_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ character, message: msg }),
+    });
+    if (!res.ok) throw new Error('Worker error');
+    const data = await res.json();
+    const reply = data.reply || '...';
+    replyEl.className = 'gm-chat-reply';
+    replyEl.textContent = reply;
+    // Mirror into the main whisper bubble briefly
+    const whisperEl = document.getElementById('gm-whisper');
+    const whisperText = document.getElementById('gm-whisper-text');
+    if (whisperEl && whisperText) {
+      whisperText.textContent = reply;
+      whisperEl.classList.add('visible');
+      clearTimeout(gmWhisperTimer);
+      gmWhisperTimer = setTimeout(() => whisperEl.classList.remove('visible'), 5000);
+    }
+  } catch {
+    replyEl.className = 'gm-chat-reply';
+    replyEl.textContent = 'Hmm, something went wrong. Try again!';
+  } finally {
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+// ═══════════════════════════════════════════════
 // TAB SWITCHING
 // ═══════════════════════════════════════════════
 function switchTab(tab){
@@ -2310,21 +2257,7 @@ function switchTab(tab){
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
-(function(){
-  const urlHH=new URLSearchParams(location.search).get('hh');
-  if(urlHH&&!gsHousehold){
-    // Pre-fill code from invite link
-    showHouseholdSetup();
-    const inp=document.getElementById('hs-code-input');
-    if(inp)inp.value=urlHH.toUpperCase();
-  } else if(!gsHousehold){
-    showHouseholdSetup();
-  } else {
-    document.getElementById('login-screen').classList.remove('h');
-    subscribeToHousehold();
-    updateHdrCode();
-  }
-})();
+document.getElementById('login-screen').classList.remove('h');
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
