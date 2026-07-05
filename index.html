@@ -293,6 +293,11 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .af-num{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;text-align:center;width:100%}
 .af-num:focus{outline:none}
 .af-add{width:100%;padding:11px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#f87171,#ef4444);color:white;letter-spacing:1px;transition:all .2s;margin-top:4px}
+.af-type-btn{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s}
+.af-type-active.gig-active{background:rgba(255,209,102,.12);border-color:rgba(255,209,102,.4);color:var(--gold)}
+.af-type-active.core-active{background:rgba(94,231,223,.1);border-color:rgba(94,231,223,.3);color:var(--la)}
+.af-budget-hint{font-size:.7rem;color:var(--muted);background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.12);border-radius:10px;padding:9px 12px;line-height:1.6;margin-bottom:8px;display:none}
+.af-suggest-btn{display:inline-block;margin-left:4px;padding:2px 9px;border-radius:6px;border:1px solid rgba(6,214,160,.3);background:rgba(6,214,160,.1);color:var(--green);font-size:.67rem;font-weight:700;cursor:pointer;vertical-align:middle}
 .pend-approve{font-size:.7rem;font-weight:700;color:var(--green);background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.18);border-radius:100px;padding:4px 10px;cursor:pointer}
 .ctrl-row{display:flex;gap:10px;flex-wrap:wrap}
 .ctrl-btn{flex:1;min-width:130px;padding:12px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
@@ -837,19 +842,24 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         <div class="logarea"><div class="log-hdr"><div class="log-title">📋 Activity Log</div><div class="log-clr" onclick="clearLog()">Clear</div></div><div id="log-list"></div></div>
         <div class="cashout-sec"><div class="co-title">💸 Pending Cash-Outs</div><div id="co-pending-list"></div></div>
         <div class="mgr-sec"><div class="mgr-title">✏️ Manage Gigs</div><div class="mgr-list" id="mgr-list"></div>
-          <div class="add-form"><div class="af-title">+ Add New Gig</div>
-            <div class="af-row"><input class="af-input" id="af-e" placeholder="Emoji 🌟" maxlength="4" style="max-width:72px"><input class="af-input" id="af-n" placeholder="Gig name"></div>
+          <div class="add-form"><div class="af-title">+ Add New Chore</div>
+            <div class="af-row" style="gap:6px;margin-bottom:10px">
+              <button id="af-type-gig" class="af-type-btn af-type-active gig-active" onclick="setChoreType('gig')">💰 Gig</button>
+              <button id="af-type-core" class="af-type-btn" onclick="setChoreType('core')">🏠 Core Duty</button>
+            </div>
+            <div class="af-row"><input class="af-input" id="af-e" placeholder="Emoji 🌟" maxlength="4" style="max-width:72px"><input class="af-input" id="af-n" placeholder="Chore name"></div>
             <div class="af-row"><input class="af-input" id="af-d" placeholder="Short description"></div>
             <div class="af-grid">
-              <div><div class="af-lbl">Pay ($)</div><input class="af-num" id="af-p" type="number" min="1" max="20" value="5"></div>
+              <div id="af-pay-wrap"><div class="af-lbl">Pay ($)</div><input class="af-num" id="af-p" type="number" min="1" max="20" value="5" oninput="updateBudgetHint()"></div>
               <div><div class="af-lbl">XP</div><input class="af-num" id="af-x" type="number" min="10" max="200" value="50"></div>
               <div><div class="af-lbl">Category</div><select class="af-sel" id="af-c"><option value="physical">💪 Physical</option><option value="brain">🧠 Brain</option><option value="creative">🎨 Creative</option><option value="social">🤝 Social</option><option value="bonus">⭐ Bonus</option></select></div>
             </div>
+            <div id="af-budget-hint" class="af-budget-hint"></div>
             <div class="af-row">
-              <select class="af-sel" id="af-f"><option value="daily">Daily</option><option value="weekly" selected>Weekly</option><option value="monthly">Monthly</option><option value="anytime">Anytime</option></select>
+              <select class="af-sel" id="af-f" onchange="updateBudgetHint()"><option value="daily">Daily</option><option value="weekly" selected>Weekly</option><option value="monthly">Monthly</option><option value="anytime">Anytime</option></select>
               <select class="af-sel" id="af-who"><option value="all">Both girls</option><option value="zara">Zara only</option><option value="lune">Luné only</option></select>
             </div>
-            <button class="af-add" onclick="addGig()">+ Add Gig</button>
+            <button class="af-add" id="af-add-btn" onclick="addGig()">+ Add Gig</button>
           </div>
         </div>
         <div class="mgr-sec" id="pend-sec"><div class="mgr-title">⏳ Awaiting Approval</div><div id="pend-list"></div></div>
@@ -1006,7 +1016,7 @@ function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedTod
 function loadS(){
   try{
     const s=localStorage.getItem('gs4');
-    const d=s?JSON.parse(s):{zara:defP(),lune:defP(),customGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}};
+    const d=s?JSON.parse(s):{zara:defP(),lune:defP(),customGigs:[],customCoreGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}};
     ['zara','lune'].forEach(w=>{
       const def=defP();
       Object.keys(def).forEach(k=>{if(d[w][k]===undefined)d[w][k]=def[k]});
@@ -1035,7 +1045,7 @@ function loadS(){
       localStorage.setItem('gs4',JSON.stringify(d));
     }
     return d;
-  }catch{return{zara:defP(),lune:defP(),customGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
+  }catch{return{zara:defP(),lune:defP(),customGigs:[],customCoreGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
 }
 function save(){localStorage.setItem('gs4',JSON.stringify(S))}
 let S=loadS();
@@ -1048,6 +1058,7 @@ let boardFilters={cat:'all',user:'all'};
 let confirmCB=null;
 
 function allPaid(){return[...DEFAULT_PAID,...(S.customGigs||[])]}
+function allCore(){return[...CORE_GIGS,...(S.customCoreGigs||[])]}
 function paidForUser(who){return allPaid().filter(g=>!g.who||g.who==='all'||g.who===who)}
 function streakMult(n){if(n>=14)return 2.0;if(n>=10)return 1.75;if(n>=7)return 1.5;if(n>=5)return 1.35;if(n>=3)return 1.2;if(n>=1)return 1.1;return 1.0}
 function multLbl(m){return m===1.0?'1.0×':'🔥'+m.toFixed(2)+'× BONUS'}
@@ -1675,7 +1686,7 @@ function triggerGigaMalGift(who,r){
 // ═══════════════════════════════════════════════
 function renderGigsForUser(who){
   renderGigGrid('w-paid',paidForUser(who),who,false);
-  renderGigGrid('w-core',CORE_GIGS,who,true);
+  renderGigGrid('w-core',allCore(),who,true);
 }
 function renderGigGrid(cid,gigs,who,isCore){
   const el=document.getElementById(cid);if(!el)return;el.innerHTML='';
@@ -1991,23 +2002,67 @@ function confirmCO(who,i){S[who].pendingCashouts.splice(i,1);save();renderCoPend
 function renderMgrList(){
   const el=document.getElementById('mgr-list');if(!el)return;el.innerHTML='';
   const customs=S.customGigs||[];
-  if(!customs.length){const d=document.createElement('div');d.className='no-log';d.textContent=DEFAULT_PAID.length+' default gigs active. Add custom gigs below.';el.appendChild(d);return}
+  const customCores=S.customCoreGigs||[];
+  if(!customs.length&&!customCores.length){const d=document.createElement('div');d.className='no-log';d.textContent=DEFAULT_PAID.length+' default gigs active. Add custom chores below.';el.appendChild(d);return}
+  customCores.forEach(g=>{
+    const d=document.createElement('div');d.className='mgr-item';
+    d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name} <span style="font-size:.6rem;color:var(--la);font-weight:700;text-transform:uppercase;letter-spacing:1px">Core</span></div><div class="mgr-meta">${g.xp}XP · ${g.tags.join(',')} · ${g.freq} · ${g.who==='all'?'Both':g.who}</div></div><div class="mgr-del" onclick="deleteCoreGig('${g.id}')">Remove</div>`;
+    el.appendChild(d);
+  });
   customs.forEach(g=>{
     const d=document.createElement('div');d.className='mgr-item';
     d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name}</div><div class="mgr-meta">$${g.pay} · ${g.xp}XP · ${g.tags.join(',')} · ${g.freq} · ${g.who==='all'?'Both':g.who}</div></div><div class="mgr-del" onclick="deleteGig('${g.id}')">Remove</div>`;
     el.appendChild(d);
   });
 }
+let choreType='gig';
+function setChoreType(type){
+  choreType=type;
+  const gigBtn=document.getElementById('af-type-gig');
+  const coreBtn=document.getElementById('af-type-core');
+  if(gigBtn){gigBtn.className='af-type-btn'+(type==='gig'?' af-type-active gig-active':'')}
+  if(coreBtn){coreBtn.className='af-type-btn'+(type==='core'?' af-type-active core-active':'')}
+  const payWrap=document.getElementById('af-pay-wrap');
+  const hint=document.getElementById('af-budget-hint');
+  const addBtn=document.getElementById('af-add-btn');
+  if(payWrap)payWrap.style.display=type==='gig'?'':'none';
+  if(hint)hint.style.display=type==='gig'?'block':'none';
+  if(addBtn)addBtn.textContent=type==='gig'?'+ Add Gig':'+ Add Core Duty';
+  if(type==='gig')updateBudgetHint();
+}
+function freqOccurrences(freq){return{daily:20,weekly:4,monthly:1,anytime:2}[freq]||2}
+function theoreticalMonthlyMax(){return allPaid().reduce((sum,g)=>sum+(g.pay||0)*freqOccurrences(g.freq||'weekly'),0)}
+function updateBudgetHint(){
+  const hint=document.getElementById('af-budget-hint');
+  if(!hint||choreType!=='gig')return;
+  const freq=(document.getElementById('af-f')||{}).value||'weekly';
+  const currentMax=theoreticalMonthlyMax();
+  const remaining=Math.max(0,CAP-currentMax);
+  const occ=freqOccurrences(freq);
+  const suggested=remaining>0?Math.max(1,Math.min(20,Math.round(remaining/occ))):1;
+  hint.style.display='block';
+  hint.innerHTML=`📊 Existing gigs: up to <strong>$${Math.round(currentMax)}/mo</strong> if all completed.&nbsp;`+
+    `<span style="color:var(--green)">~$${Math.round(remaining)} headroom.</span><br>`+
+    `Suggested for <em>${freq}</em> gig: <span class="af-suggest-btn" onclick="document.getElementById('af-p').value=${suggested};updateBudgetHint()">✦ Use $${suggested}</span>`;
+}
 function addGig(){
   const emoji=document.getElementById('af-e').value.trim()||'⭐';
   const name=document.getElementById('af-n').value.trim();
   const desc=document.getElementById('af-d').value.trim();
-  const pay=parseFloat(document.getElementById('af-p').value)||5;
   const xp=parseInt(document.getElementById('af-x').value)||50;
   const cat=document.getElementById('af-c').value;
   const freq=document.getElementById('af-f').value;
   const who=document.getElementById('af-who').value;
   if(!name||!desc){showModal('⚠️','Missing Info!','Please fill in at least a name and description.',0,0,1,'zara',true);return}
+  if(choreType==='core'){
+    if(!S.customCoreGigs)S.customCoreGigs=[];
+    S.customCoreGigs.push({id:'customcore_'+Date.now(),emoji,name,desc,xp,tags:[cat],freq,who});
+    save();renderMgrList();
+    ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+    showModal('✅','Core Duty Added!',`"${name}" is now in the Core Duties${who!=='all'?' for '+who:''}!`,0,0,1,'zara',true);
+    return;
+  }
+  const pay=parseFloat(document.getElementById('af-p').value)||5;
   if(!S.customGigs)S.customGigs=[];
   S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
   save();renderMgrList();
@@ -2017,6 +2072,11 @@ function addGig(){
 function deleteGig(id){
   doConfirm('Remove this gig?','This removes the custom gig for both girls.',()=>{
     S.customGigs=S.customGigs.filter(g=>g.id!==id);save();renderMgrList();
+  });
+}
+function deleteCoreGig(id){
+  doConfirm('Remove this core duty?','This removes the custom core duty.',()=>{
+    S.customCoreGigs=S.customCoreGigs.filter(g=>g.id!==id);save();renderMgrList();
   });
 }
 function renderPending(){
@@ -2251,7 +2311,7 @@ function switchTab(tab){
   if(tab==='board')renderBoard();
   if(tab==='score')renderScoreboard();
   if(tab==='budget'){updBudAmt();renderBudItems()}
-  if(tab==='parent'&&parentUnlocked)renderParentDash();
+  if(tab==='parent'&&parentUnlocked){renderParentDash();setTimeout(updateBudgetHint,50)}
 }
 
 // ═══════════════════════════════════════════════
