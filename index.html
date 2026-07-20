@@ -811,6 +811,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         <div class="chips">
           <div class="chip g">✅ <span id="w-done">0 gigs</span></div>
           <div class="chip y">💰 <span id="w-cashed">$0 cashed out</span></div>
+          <div class="chip" id="w-core-chip" style="background:rgba(108,99,255,.12);color:var(--xp);border:1px solid rgba(108,99,255,.2)">🔒 <span id="w-core-days">0/25 days</span></div>
         </div>
       </div>
 
@@ -818,7 +819,8 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 
       <div class="stitle">💸 Paid Gigs <span class="pill">Tap to claim</span></div>
       <div class="gg" id="w-paid"></div>
-      <div class="stitle">🏠 Core Duties <span class="pill">XP only · Must do</span></div>
+      <div class="stitle">🏠 Core Duties <span class="pill" id="core-pill">XP only · Must do</span></div>
+      <div id="core-unlock-progress"></div>
       <div class="gg" id="w-core"></div>
     </div>
 
@@ -955,7 +957,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.6.0 · Sync + Edit + Habit Tax · 2026-07-21</div>
+<div class="build-version" id="build-version">v3.6.1 · Habit Tax Progress Indicators · 2026-07-21</div>
 
 <!-- FAMILY ONBOARDING OVERLAY -->
 <div class="family-onboard h" id="family-onboard">
@@ -1577,7 +1579,7 @@ function renderDash(){
   // Change subtitle when at cap
   const moneySubEl=document.getElementById('w-moneysub');
   if(moneySubEl)moneySubEl.textContent=avail>=getBudget()?'cap reached · cash out to keep earning':'earned this month';
-  set('w-pl',`$${avail.toFixed(2)} of $100`);
+  set('w-pl',`$${avail.toFixed(2)} of $${getBudget()}`);
   set('w-pr',avail>=getBudget()?'🏆 Cash out to keep earning!':`$${(getBudget()-avail).toFixed(2)} left`);
   document.getElementById('w-mfill').style.width=pct+'%';
   set('w-lvnum',lvNum);
@@ -1588,6 +1590,18 @@ function renderDash(){
   set('w-xp-next',`Next lv: ${xpNxt} XP`);
   set('w-done',`${s.completedMonth.length} gigs`);
   set('w-cashed',`$${s.cashedOut.toFixed(2)} cashed`);
+  const coreChip=document.getElementById('w-core-chip');
+  const coreDaysEl=document.getElementById('w-core-days');
+  if(isCoreUnlocked(who)){
+    if(coreChip)coreChip.style.cssText='background:rgba(6,214,160,.12);color:var(--green);border:1px solid rgba(6,214,160,.25)';
+    if(coreDaysEl)coreDaysEl.textContent='Core pay unlocked!';
+    if(coreChip)coreChip.firstChild.textContent='💰 ';
+  }else{
+    const cd=s.coreDaysTotal||0;
+    if(coreChip)coreChip.style.cssText='background:rgba(108,99,255,.12);color:var(--xp);border:1px solid rgba(108,99,255,.2)';
+    if(coreDaysEl)coreDaysEl.textContent=`${cd}/25 habit days`;
+    if(coreChip)coreChip.firstChild.textContent='🔒 ';
+  }
   // Render GigaMal companion
   renderGigaMalZone(who);
   renderXPStore(who,xpAvail);
@@ -1819,6 +1833,25 @@ function triggerGigaMalGift(who,r){
 function renderGigsForUser(who){
   renderGigGrid('w-paid',paidForUser(who),who,false);
   renderGigGrid('w-core',allCore(),who,true);
+  renderCoreUnlockProgress(who);
+}
+function renderCoreUnlockProgress(who){
+  const days=S[who]?S[who].coreDaysTotal||0:0;
+  const unlocked=isCoreUnlocked(who);
+  const pillEl=document.getElementById('core-pill');
+  const progEl=document.getElementById('core-unlock-progress');
+  if(pillEl){
+    if(unlocked){pillEl.textContent='💰 Funding unlocked!';pillEl.style.cssText='background:rgba(6,214,160,.18);color:var(--green);border-radius:20px;padding:2px 8px;font-size:.68rem'}
+    else{pillEl.textContent='XP only · Must do';pillEl.style.cssText=''}
+  }
+  if(!progEl)return;
+  if(unlocked){
+    progEl.innerHTML='<div style="font-size:.73rem;color:var(--green);text-align:center;padding:4px 4px 10px;font-weight:600">🎉 Core duties now earn money — keep it up!</div>';
+  }else{
+    const pct=Math.min((days/CORE_UNLOCK_DAYS)*100,100);
+    const rem=CORE_UNLOCK_DAYS-days;
+    progEl.innerHTML=`<div style="padding:6px 4px 12px"><div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:5px"><span>🔒 Unlock core pay — ${days}/${CORE_UNLOCK_DAYS} habit days</span><span style="color:var(--la);font-weight:700">${rem} to go</span></div><div class="core-lock-bar"><div class="core-lock-fill" style="width:${pct}%"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:4px">Do at least 1 core duty per day · Unlocks $1/$1/$0.50 per task</div></div>`;
+  }
 }
 function renderGigGrid(cid,gigs,who,isCore){
   const el=document.getElementById(cid);if(!el)return;el.innerHTML='';
@@ -1827,9 +1860,23 @@ function renderGigGrid(cid,gigs,who,isCore){
     const done=s.completedToday.includes(g.id),pend=s.pending&&s.pending.includes(g.id);
     const d=document.createElement('div');d.className=`gc${done||pend?' done':''}${isCore?' core':''}`;
     const tH=g.tags.map(t=>`<span class="gtag t-${t}">${t}</span>`).join('');
-    const rH=isCore?`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`
-      :g.needsApproval?`<div class="gcpay" style="-webkit-text-fill-color:var(--muted);background:none;color:var(--muted)">+$${g.pay}*</div><div class="gcxp">+${g.xp} XP</div>`
-      :`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
+    let rH;
+    if(isCore){
+      if(g.unlockedPay&&who&&who!=='parent'){
+        if(isCoreUnlocked(who)){
+          rH=`<div class="gcpay" style="font-size:.7rem;padding:2px 7px">+$${g.unlockedPay}</div><div class="gcxp">+${g.xp}XP</div>`;
+        }else{
+          const cd=S[who].coreDaysTotal||0;
+          rH=`<div class="gccl" style="font-size:.6rem;letter-spacing:.5px">🔒 ${cd}/${CORE_UNLOCK_DAYS}d</div><div class="gcxp">+${g.xp}XP</div>`;
+        }
+      }else{
+        rH=`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`;
+      }
+    }else if(g.needsApproval){
+      rH=`<div class="gcpay" style="-webkit-text-fill-color:var(--muted);background:none;color:var(--muted)">+$${g.pay}*</div><div class="gcxp">+${g.xp} XP</div>`;
+    }else{
+      rH=`<div class="gcpay">+$${g.pay}</div><div class="gcxp">+${g.xp} XP</div>`;
+    }
     d.innerHTML=`<div class="gctop"><div class="gce">${g.emoji}</div><div class="gcr">${rH}</div></div><div class="gcn">${g.name}${pend?' ⏳':''}</div><div class="gcd">${g.desc}${g.needsApproval&&!done&&!pend?' <em style="font-size:.68rem;color:var(--gold)">★ Needs parent ✓</em>':''}</div><div class="gcfoot"><div class="gctags">${tH}</div><span class="gcfreq">${g.freq}</span></div>${done||pend?`<div class="dstamp">${pend?'⏳':'✅'}</div>`:''}`;
     if(!done&&!pend)d.onclick=(e)=>isCore?completeCore(g,who,e):completePaid(g,who,e);
     el.appendChild(d);
