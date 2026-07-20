@@ -298,6 +298,24 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .af-type-active.core-active{background:rgba(94,231,223,.1);border-color:rgba(94,231,223,.3);color:var(--la)}
 .af-budget-hint{font-size:.7rem;color:var(--muted);background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.12);border-radius:10px;padding:9px 12px;line-height:1.6;margin-bottom:8px;display:none}
 .af-suggest-btn{display:inline-block;margin-left:4px;padding:2px 9px;border-radius:6px;border:1px solid rgba(6,214,160,.3);background:rgba(6,214,160,.1);color:var(--green);font-size:.67rem;font-weight:700;cursor:pointer;vertical-align:middle}
+.bud-sec{background:var(--card);border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid rgba(255,209,102,.2)}
+.bud-sec-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--gold);margin-bottom:12px}
+.bud-set-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.bud-set-lbl{font-size:.78rem;color:var(--muted);font-weight:600;flex:1;min-width:120px}
+.bud-input{background:rgba(255,255,255,.07);border:1px solid rgba(255,209,102,.3);border-radius:10px;color:var(--gold);font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;padding:8px 12px;width:90px;text-align:center}
+.bud-input:focus{outline:none;border-color:rgba(255,209,102,.6)}
+.bud-save-btn{padding:8px 18px;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;background:rgba(255,209,102,.15);color:var(--gold)}
+.bud-health{margin-top:4px}
+.bud-health-row{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:4px}
+.bud-bar{height:8px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:8px}
+.bud-fill{height:100%;border-radius:4px;transition:width .4s,background .4s}
+.bud-child-row{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;margin-bottom:3px}
+.bud-child-lbl{color:var(--muted);font-weight:600}
+.bud-child-val{font-weight:700}
+.bud-warn{font-size:.7rem;padding:7px 10px;border-radius:9px;margin-top:8px;line-height:1.5}
+.bud-warn.over{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171}
+.bud-warn.near{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.2);color:#fb923c}
+.bud-warn.ok{background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.12);color:var(--green)}
 .pend-approve{font-size:.7rem;font-weight:700;color:var(--green);background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.18);border-radius:100px;padding:4px 10px;cursor:pointer}
 .ctrl-row{display:flex;gap:10px;flex-wrap:wrap}
 .ctrl-btn{flex:1;min-width:130px;padding:12px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s}
@@ -841,6 +859,15 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         </div>
         <div class="logarea"><div class="log-hdr"><div class="log-title">📋 Activity Log</div><div class="log-clr" onclick="clearLog()">Clear</div></div><div id="log-list"></div></div>
         <div class="cashout-sec"><div class="co-title">💸 Pending Cash-Outs</div><div id="co-pending-list"></div></div>
+        <div class="bud-sec">
+          <div class="bud-sec-title">💰 Monthly Budget</div>
+          <div class="bud-set-row">
+            <span class="bud-set-lbl">Per child per month</span>
+            <input class="bud-input" id="bud-input" type="number" min="10" max="500" step="5" value="100">
+            <button class="bud-save-btn" onclick="saveBudget()">Save</button>
+          </div>
+          <div class="bud-health" id="bud-health"></div>
+        </div>
         <div class="mgr-sec"><div class="mgr-title">✏️ Manage Gigs</div><div class="mgr-list" id="mgr-list"></div>
           <div class="add-form"><div class="af-title">+ Add New Chore</div>
             <div class="af-row" style="gap:6px;margin-bottom:10px">
@@ -857,7 +884,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
             <div id="af-budget-hint" class="af-budget-hint"></div>
             <div class="af-row">
               <select class="af-sel" id="af-f" onchange="updateBudgetHint()"><option value="daily">Daily</option><option value="weekly" selected>Weekly</option><option value="monthly">Monthly</option><option value="anytime">Anytime</option></select>
-              <select class="af-sel" id="af-who"><option value="all">Both girls</option><option value="zara">Zara only</option><option value="lune">Luné only</option></select>
+              <select class="af-sel" id="af-who" onchange="updateBudgetHint()"><option value="all">Both girls</option><option value="zara">Zara only</option><option value="lune">Luné only</option></select>
             </div>
             <button class="af-add" id="af-add-btn" onclick="addGig()">+ Add Gig</button>
           </div>
@@ -883,7 +910,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.4.0 · Own & Swap · 2025-06-05</div>
+<div class="build-version" id="build-version">v3.5.0 · Budget Control · 2026-07-20</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1005,7 +1032,7 @@ function getLevel(xp){return Math.floor(xp/150)+1}
 function getLevelTitle(xp){const l=getLevel(xp);if(l<=4)return'Rookie 🌱';if(l<=8)return'Rising Star 🌟';if(l<=14)return'Go-Getter 🚀';if(l<=22)return'Boss Level 👑';return'Legend 💎';}
 function xpInLevel(xp){return xp%150}
 function xpToNext(xp){return 150-xpInLevel(xp)}
-const CAP=100;
+function getBudget(){return+(S.monthlyBudget||100)}
 const MSGS=['Absolute fire! 🔥','That\'s the spirit! ⚡','Boss move! 👑','Stack that bag! 💰','Entrepreneurial energy! 🚀','CEO behaviour! 🎯','Killing it! ⭐','You\'re unstoppable! 💥'];
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
 
@@ -1024,6 +1051,7 @@ function loadS(){
     if(!d.pins)d.pins={zara:'1010',lune:'1212',parent:'1234'};
     if(!d.log)d.log=[];
     if(!d.customGigs)d.customGigs=[];
+    if(d.monthlyBudget===undefined)d.monthlyBudget=100;
     // Self-heal corrupted xpSpent — can never exceed total xp earned
     const accessoryIds=['a1','a2','a3','a4'];
     ['zara','lune'].forEach(w=>{
@@ -1432,8 +1460,8 @@ function setupForUser(){
 function renderDash(){
   if(!CU||CU==='parent')return;
   const who=CU,s=S[who];
-  const earned=Math.min(s.earned,CAP),avail=Math.max(0,earned-s.cashedOut);
-  const mult=streakMult(s.streak),pct=Math.min((avail/CAP)*100,100);
+  const earned=Math.min(s.earned,getBudget()),avail=Math.max(0,earned-s.cashedOut);
+  const mult=streakMult(s.streak),pct=Math.min((avail/getBudget())*100,100);
   const lvNum=getLevel(s.xp),lvTitle=getLevelTitle(s.xp);
   const xpCur=xpInLevel(s.xp),xpNxt=xpToNext(s.xp);
   const xpSpentSafe=Math.min(s.xpSpent||0,s.xp);const xpAvail=Math.max(0,s.xp-xpSpentSafe);
@@ -1444,9 +1472,9 @@ function renderDash(){
   set('w-money',`$${avail.toFixed(2)}`);
   // Change subtitle when at cap
   const moneySubEl=document.getElementById('w-moneysub');
-  if(moneySubEl)moneySubEl.textContent=avail>=CAP?'cap reached · cash out to keep earning':'earned this month';
+  if(moneySubEl)moneySubEl.textContent=avail>=getBudget()?'cap reached · cash out to keep earning':'earned this month';
   set('w-pl',`$${avail.toFixed(2)} of $100`);
-  set('w-pr',avail>=CAP?'🏆 Cash out to keep earning!':`$${(CAP-avail).toFixed(2)} left`);
+  set('w-pr',avail>=getBudget()?'🏆 Cash out to keep earning!':`$${(getBudget()-avail).toFixed(2)} left`);
   document.getElementById('w-mfill').style.width=pct+'%';
   set('w-lvnum',lvNum);
   set('w-lvtitle',lvTitle);
@@ -1564,7 +1592,7 @@ function claimXP(who,r,avail){
   // Regular rewards: deduct once
   S[who].xpSpent+=r.cost;
   S[who].claimedRewards.push(r.id);
-  if(r.isMoney)S[who].earned=Math.min(S[who].earned+r.moneyVal,CAP);
+  if(r.isMoney)S[who].earned=Math.min(S[who].earned+r.moneyVal,getBudget());
   addLog(who,r.emoji,'Redeemed: '+r.name,0,r.cost);
   save();
   renderDash();
@@ -1705,9 +1733,9 @@ function renderGigGrid(cid,gigs,who,isCore){
 }
 function completePaid(gig,who,e){
   const s=S[who];
-  const avail=Math.max(0,Math.min(s.earned,CAP)-s.cashedOut);
+  const avail=Math.max(0,Math.min(s.earned,getBudget())-s.cashedOut);
   // At cap — still earn XP, just no more money
-  if(avail>=CAP){
+  if(avail>=getBudget()){
     const xpGained=Math.round(gig.xp*mult);
     s.xp+=xpGained;
     s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
@@ -1727,9 +1755,9 @@ function completePaid(gig,who,e){
     showModal(gig.emoji,'Sent for Approval ⏳','Parent needs to check this one. Hang tight!',0,0,1,who,false);return;
   }
   const mult=streakMult(s.streak);
-  const maxEarn=CAP-s.earned,actualPay=Math.min(parseFloat((gig.pay*mult).toFixed(2)),maxEarn);
+  const maxEarn=getBudget()-s.earned,actualPay=Math.min(parseFloat((gig.pay*mult).toFixed(2)),maxEarn);
   const xpGained=Math.round(gig.xp*mult);
-  s.earned=Math.min(s.earned+actualPay,CAP);s.xp+=xpGained;
+  s.earned=Math.min(s.earned+actualPay,getBudget());s.xp+=xpGained;
   s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
   updateStreak(s);addLog(who,gig.emoji,gig.name,actualPay,xpGained);
   save();
@@ -1765,7 +1793,7 @@ function updateStreak(s){
 // ═══════════════════════════════════════════════
 function openCashout(){
   if(!CU||CU==='parent')return;
-  const avail=Math.max(0,Math.min(S[CU].earned,CAP)-S[CU].cashedOut);
+  const avail=Math.max(0,Math.min(S[CU].earned,getBudget())-S[CU].cashedOut);
   if(avail<=0){showModal('💸','Nothing to cash out!','Keep completing gigs to earn money first!',0,0,1,CU,false);return}
   const slider=document.getElementById('co-slider');
   slider.max=avail.toFixed(2);slider.value=avail.toFixed(2);
@@ -1851,8 +1879,8 @@ function renderScoreboard(){
   const el=document.getElementById('sb-cards');if(!el)return;
   const users=[{who:'zara',cls:'zc',name:'🌸 Zara'},{who:'lune',cls:'lc',name:'✨ Luné'}];
   el.innerHTML='';
-  const avZ=Math.max(0,Math.min(S.zara.earned,CAP)-S.zara.cashedOut);
-  const avL=Math.max(0,Math.min(S.lune.earned,CAP)-S.lune.cashedOut);
+  const avZ=Math.max(0,Math.min(S.zara.earned,getBudget())-S.zara.cashedOut);
+  const avL=Math.max(0,Math.min(S.lune.earned,getBudget())-S.lune.cashedOut);
   users.forEach(u=>{
     const s=S[u.who],lvNum=getLevel(s.xp),lvTitle=getLevelTitle(s.xp);
     const gm=GIGAMALS[u.who];
@@ -1886,7 +1914,7 @@ function renderScoreboard(){
 // ═══════════════════════════════════════════════
 function updBudAmt(){
   const who=CU&&CU!=='parent'?CU:'zara';
-  const e=Math.max(0,Math.min(S[who].earned,CAP)-S[who].cashedOut);
+  const e=Math.max(0,Math.min(S[who].earned,getBudget())-S[who].cashedOut);
   document.getElementById('bn-amt').textContent='$'+(e*.5).toFixed(2);
   document.getElementById('bw-amt').textContent='$'+(e*.3).toFixed(2);
   document.getElementById('bs-amt').textContent='$'+(e*.2).toFixed(2);
@@ -1902,7 +1930,7 @@ function renderBudItems(){
 }
 function submitBudget(){
   const who=CU&&CU!=='parent'?CU:'zara';
-  const earned=Math.max(0,Math.min(S[who].earned,CAP)-S[who].cashedOut);
+  const earned=Math.max(0,Math.min(S[who].earned,getBudget())-S[who].cashedOut);
   const tN=earned*.5,tW=earned*.3,tS=earned*.2;
   let totN=0,totW=0,totS=0;
   BIT.forEach(item=>{
@@ -1959,7 +1987,7 @@ function lockParent(){
 // ═══════════════════════════════════════════════
 function renderParentDash(){
   ['zara','lune'].forEach(who=>{
-    const s=S[who],av=Math.max(0,Math.min(s.earned,CAP)-s.cashedOut);
+    const s=S[who],av=Math.max(0,Math.min(s.earned,getBudget())-s.cashedOut);
     const pre=who==='zara'?'z':'l';
     const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
     set(`pd-${pre}-earn`,'$'+av.toFixed(2));
@@ -1970,7 +1998,7 @@ function renderParentDash(){
     set(`pd-${pre}-str`,s.streak+'d 🔥');
     set(`pd-${pre}-bud`,s.budgetScore||'Not done');
   });
-  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();
+  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();renderBudgetHealth();
 }
 function addLog(who,emoji,name,money,xp){
   if(!S.log)S.log=[];
@@ -2031,19 +2059,61 @@ function setChoreType(type){
   if(type==='gig')updateBudgetHint();
 }
 function freqOccurrences(freq){return{daily:20,weekly:4,monthly:1,anytime:2}[freq]||2}
-function theoreticalMonthlyMax(){return allPaid().reduce((sum,g)=>sum+(g.pay||0)*freqOccurrences(g.freq||'weekly'),0)}
+function theoreticalMonthlyMax(who){
+  const gigs=who?allPaid().filter(g=>!g.who||g.who==='all'||g.who===who):allPaid();
+  return gigs.reduce((sum,g)=>sum+(g.pay||0)*freqOccurrences(g.freq||'weekly'),0);
+}
+function saveBudget(){
+  const val=parseInt(document.getElementById('bud-input').value)||100;
+  S.monthlyBudget=Math.max(10,Math.min(500,val));
+  save();renderBudgetHealth();updateBudgetHint();
+  const msg=document.createElement('div');
+  msg.style.cssText='font-size:.7rem;color:var(--green);margin-top:6px';
+  msg.textContent='✅ Budget saved!';
+  const inp=document.getElementById('bud-input');
+  if(inp&&inp.parentNode){const old=inp.parentNode.querySelector('.bud-saved-msg');if(old)old.remove();msg.className='bud-saved-msg';inp.parentNode.appendChild(msg);setTimeout(()=>msg.remove(),2000)}
+}
+function renderBudgetHealth(){
+  const el=document.getElementById('bud-health');if(!el)return;
+  const budget=getBudget();
+  const inp=document.getElementById('bud-input');if(inp)inp.value=budget;
+  const mZ=theoreticalMonthlyMax('zara'),mL=theoreticalMonthlyMax('lune');
+  const pctZ=Math.min((mZ/budget)*100,100),pctL=Math.min((mL/budget)*100,100);
+  const colour=p=>p>=100?'#ef4444':p>=80?'#fb923c':'#06d6a0';
+  const warn=p=>p>=100?'over':p>=80?'near':'ok';
+  const maxPct=Math.max(pctZ,pctL);
+  let warnHtml='';
+  if(maxPct>=100)warnHtml=`<div class="bud-warn over">⚠️ Gigs exceed budget — if all completed, kids could earn more than $${budget}/mo each. Reduce pay on some gigs or raise the budget.</div>`;
+  else if(maxPct>=80)warnHtml=`<div class="bud-warn near">🟡 Nearing budget limit. Consider lowering pay on frequent gigs to keep headroom.</div>`;
+  else warnHtml=`<div class="bud-warn ok">✅ Budget looks healthy — plenty of headroom for both kids.</div>`;
+  el.innerHTML=`
+    <div class="bud-child-row"><span class="bud-child-lbl">🌸 Zara — if all gigs done</span><span class="bud-child-val" style="color:${colour(pctZ)}">$${Math.round(mZ)} / $${budget}</span></div>
+    <div class="bud-bar"><div class="bud-fill" style="width:${pctZ}%;background:${colour(pctZ)}"></div></div>
+    <div class="bud-child-row"><span class="bud-child-lbl">✨ Luné — if all gigs done</span><span class="bud-child-val" style="color:${colour(pctL)}">$${Math.round(mL)} / $${budget}</span></div>
+    <div class="bud-bar"><div class="bud-fill" style="width:${pctL}%;background:${colour(pctL)}"></div></div>
+    ${warnHtml}`;
+}
 function updateBudgetHint(){
   const hint=document.getElementById('af-budget-hint');
   if(!hint||choreType!=='gig')return;
   const freq=(document.getElementById('af-f')||{}).value||'weekly';
-  const currentMax=theoreticalMonthlyMax();
-  const remaining=Math.max(0,CAP-currentMax);
+  const who=(document.getElementById('af-who')||{}).value||'all';
+  const budget=getBudget();
+  const currentMax=theoreticalMonthlyMax(who==='all'?null:who);
+  const remaining=Math.max(0,budget-currentMax);
   const occ=freqOccurrences(freq);
   const suggested=remaining>0?Math.max(1,Math.min(20,Math.round(remaining/occ))):1;
+  const isOver=currentMax>=budget;
   hint.style.display='block';
-  hint.innerHTML=`📊 Existing gigs: up to <strong>$${Math.round(currentMax)}/mo</strong> if all completed.&nbsp;`+
-    `<span style="color:var(--green)">~$${Math.round(remaining)} headroom.</span><br>`+
-    `Suggested for <em>${freq}</em> gig: <span class="af-suggest-btn" onclick="document.getElementById('af-p').value=${suggested};updateBudgetHint()">✦ Use $${suggested}</span>`;
+  if(isOver){
+    hint.style.borderColor='rgba(239,68,68,.2)';hint.style.background='rgba(239,68,68,.06)';
+    hint.innerHTML=`⚠️ Existing gigs already hit the <strong>$${budget}/mo</strong> budget cap. Lower pay on existing gigs or raise the budget before adding paid gigs.`;
+  }else{
+    hint.style.borderColor='rgba(6,214,160,.12)';hint.style.background='rgba(6,214,160,.06)';
+    hint.innerHTML=`📊 Existing gigs: up to <strong>$${Math.round(currentMax)}/mo</strong> if all completed.&nbsp;`+
+      `<span style="color:var(--green)">~$${Math.round(remaining)} headroom.</span><br>`+
+      `Suggested for <em>${freq}</em> gig: <span class="af-suggest-btn" onclick="document.getElementById('af-p').value=${suggested};updateBudgetHint()">✦ Use $${suggested}</span>`;
+  }
 }
 function addGig(){
   const emoji=document.getElementById('af-e').value.trim()||'⭐';
@@ -2063,15 +2133,26 @@ function addGig(){
     return;
   }
   const pay=parseFloat(document.getElementById('af-p').value)||5;
-  if(!S.customGigs)S.customGigs=[];
-  S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
-  save();renderMgrList();
-  ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
-  showModal('✅','Gig Added!',`"${name}" is now live${who!=='all'?' for '+who+'!':'!'}`,0,0,1,'zara',true);
+  const budget=getBudget();
+  const currentMax=theoreticalMonthlyMax(who==='all'?null:who);
+  const addedMax=pay*freqOccurrences(freq);
+  const newTotal=currentMax+addedMax;
+  const doAdd=()=>{
+    if(!S.customGigs)S.customGigs=[];
+    S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
+    save();renderMgrList();renderBudgetHealth();updateBudgetHint();
+    ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+    showModal('✅','Gig Added!',`"${name}" is now live${who!=='all'?' for '+who+'!':'!'}`,0,0,1,'zara',true);
+  };
+  if(newTotal>budget){
+    doConfirm(`Over Budget!`,`This gig could add $${Math.round(addedMax)}/mo, pushing the total to $${Math.round(newTotal)}/mo — over the $${budget}/mo budget. Add anyway?`,doAdd);
+  }else{
+    doAdd();
+  }
 }
 function deleteGig(id){
   doConfirm('Remove this gig?','This removes the custom gig for both girls.',()=>{
-    S.customGigs=S.customGigs.filter(g=>g.id!==id);save();renderMgrList();
+    S.customGigs=S.customGigs.filter(g=>g.id!==id);save();renderMgrList();renderBudgetHealth();updateBudgetHint();
   });
 }
 function deleteCoreGig(id){
@@ -2096,8 +2177,8 @@ function renderPending(){
 function approveGig(who,gid){
   const s=S[who],g=allPaid().find(x=>x.id===gid);if(!g)return;
   const mult=streakMult(s.streak);
-  const actualPay=Math.min(parseFloat((g.pay*mult).toFixed(2)),CAP-s.earned);
-  s.earned=Math.min(s.earned+actualPay,CAP);s.xp+=Math.round(g.xp*mult);
+  const actualPay=Math.min(parseFloat((g.pay*mult).toFixed(2)),getBudget()-s.earned);
+  s.earned=Math.min(s.earned+actualPay,getBudget());s.xp+=Math.round(g.xp*mult);
   s.completedToday.push(gid);s.completedMonth.push(gid);
   s.pending=s.pending.filter(x=>x!==gid);
   addLog(who,g.emoji,'[Approved] '+g.name,actualPay,Math.round(g.xp*mult));
