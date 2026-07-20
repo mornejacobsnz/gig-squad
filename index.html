@@ -963,7 +963,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.6.2 · Custom Month Start + Auto-Reset · 2026-07-21</div>
+<div class="build-version" id="build-version">v3.6.3 · Proportional Habit Tax + Sync Timestamps · 2026-07-21</div>
 
 <!-- FAMILY ONBOARDING OVERLAY -->
 <div class="family-onboard h" id="family-onboard">
@@ -1164,13 +1164,28 @@ function periodLabel(){
   const fmt=d=>d.toLocaleDateString([],{month:'short',day:'numeric'});
   return`${fmt(start)} – ${fmt(end)}`;
 }
+function daysRemainingInPeriod(startDay){
+  const end=getPeriodEnd(startDay||getMonthStartDay());
+  const today=new Date();today.setHours(0,0,0,0);
+  return Math.max(1,Math.ceil((end-today)/(86400000))+1);
+}
+function daysInPeriod(startDay){
+  const sd=startDay||getMonthStartDay();
+  const start=new Date(getPeriodStart(sd));start.setHours(0,0,0,0);
+  const end=getPeriodEnd(sd);end.setHours(0,0,0,0);
+  return Math.max(1,Math.ceil((end-start)/86400000)+1);
+}
+function calcUnlockThreshold(isFirstPeriod,startDay){
+  const days=isFirstPeriod?daysRemainingInPeriod(startDay):daysInPeriod(startDay);
+  return Math.max(3,Math.ceil(days*0.8));
+}
 const MSGS=['Absolute fire! 🔥','That\'s the spirit! ⚡','Boss move! 👑','Stack that bag! 💰','Entrepreneurial energy! 🚀','CEO behaviour! 🎯','Killing it! ⭐','You\'re unstoppable! 💥'];
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
 
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[],coreDaysTotal:0,lastCoreDay:''}}
+function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[],coreDaysTotal:0,lastCoreDay:'',coreDaysThisPeriod:0}}
 function loadS(){
   try{
     const s=localStorage.getItem('gs4');
@@ -1185,6 +1200,7 @@ function loadS(){
     if(d.monthlyBudget===undefined)d.monthlyBudget=100;
     if(!d.gigOverrides)d.gigOverrides={};
     if(d.monthStartDay===undefined)d.monthStartDay=1;
+    if(d.corePeriodUnlockThreshold===undefined)d.corePeriodUnlockThreshold=calcUnlockThreshold(!d.lastMonthReset,d.monthStartDay);
     // Self-heal corrupted xpSpent — can never exceed total xp earned
     const accessoryIds=['a1','a2','a3','a4'];
     ['zara','lune'].forEach(w=>{
@@ -1215,8 +1231,11 @@ function loadS(){
           d[w].pendingCashouts.push({amt:uncashed,date:'Period end',time:'Auto',auto:true});
         }
         d[w].earned=0;d[w].cashedOut=0;d[w].completedMonth=[];
+        d[w].coreDaysThisPeriod=0;
       });
       d.lastMonthReset=periodStart;
+      // Recalculate unlock threshold for full new period (never first-period proportional after initial setup)
+      d.corePeriodUnlockThreshold=calcUnlockThreshold(false,d.monthStartDay);
       localStorage.setItem('gs4',JSON.stringify(d));
     }
     return d;
@@ -1640,9 +1659,9 @@ function renderDash(){
     if(coreDaysEl)coreDaysEl.textContent='Core pay unlocked!';
     if(coreChip)coreChip.firstChild.textContent='💰 ';
   }else{
-    const cd=s.coreDaysTotal||0;
+    const cd=s.coreDaysThisPeriod||0,th=getCoreThreshold();
     if(coreChip)coreChip.style.cssText='background:rgba(108,99,255,.12);color:var(--xp);border:1px solid rgba(108,99,255,.2)';
-    if(coreDaysEl)coreDaysEl.textContent=`${cd}/25 habit days`;
+    if(coreDaysEl)coreDaysEl.textContent=`${cd}/${th} days this period`;
     if(coreChip)coreChip.firstChild.textContent='🔒 ';
   }
   // Render GigaMal companion
@@ -1879,7 +1898,8 @@ function renderGigsForUser(who){
   renderCoreUnlockProgress(who);
 }
 function renderCoreUnlockProgress(who){
-  const days=S[who]?S[who].coreDaysTotal||0:0;
+  const days=S[who]?S[who].coreDaysThisPeriod||0:0;
+  const th=getCoreThreshold();
   const unlocked=isCoreUnlocked(who);
   const pillEl=document.getElementById('core-pill');
   const progEl=document.getElementById('core-unlock-progress');
@@ -1889,11 +1909,12 @@ function renderCoreUnlockProgress(who){
   }
   if(!progEl)return;
   if(unlocked){
-    progEl.innerHTML='<div style="font-size:.73rem;color:var(--green);text-align:center;padding:4px 4px 10px;font-weight:600">🎉 Core duties now earn money — keep it up!</div>';
+    progEl.innerHTML='<div style="font-size:.73rem;color:var(--green);text-align:center;padding:4px 4px 10px;font-weight:600">🎉 Core duties earn money this period — keep the streak alive!</div>';
   }else{
-    const pct=Math.min((days/CORE_UNLOCK_DAYS)*100,100);
-    const rem=CORE_UNLOCK_DAYS-days;
-    progEl.innerHTML=`<div style="padding:6px 4px 12px"><div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:5px"><span>🔒 Unlock core pay — ${days}/${CORE_UNLOCK_DAYS} habit days</span><span style="color:var(--la);font-weight:700">${rem} to go</span></div><div class="core-lock-bar"><div class="core-lock-fill" style="width:${pct}%"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:4px">Do at least 1 core duty per day · Unlocks $1/$1/$0.50 per task</div></div>`;
+    const pct=Math.min((days/th)*100,100),rem=th-days;
+    const dRemain=daysRemainingInPeriod();
+    const feasible=rem<=dRemain;
+    progEl.innerHTML=`<div style="padding:6px 4px 12px"><div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-bottom:5px"><span>🔒 Unlock core pay — ${days}/${th} days this period</span><span style="color:${feasible?'var(--la)':'#fb923c'};font-weight:700">${rem} to go${feasible?'':' ⚡'}</span></div><div class="core-lock-bar"><div class="core-lock-fill" style="width:${pct}%"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:4px">1 core duty/day unlocks $1/$1/$0.50 · Resets each period · ${dRemain} days left this period</div></div>`;
   }
 }
 function renderGigGrid(cid,gigs,who,isCore){
@@ -1909,8 +1930,8 @@ function renderGigGrid(cid,gigs,who,isCore){
         if(isCoreUnlocked(who)){
           rH=`<div class="gcpay" style="font-size:.7rem;padding:2px 7px">+$${g.unlockedPay}</div><div class="gcxp">+${g.xp}XP</div>`;
         }else{
-          const cd=S[who].coreDaysTotal||0;
-          rH=`<div class="gccl" style="font-size:.6rem;letter-spacing:.5px">🔒 ${cd}/${CORE_UNLOCK_DAYS}d</div><div class="gcxp">+${g.xp}XP</div>`;
+          const cd=S[who].coreDaysThisPeriod||0,th=getCoreThreshold();
+          rH=`<div class="gccl" style="font-size:.6rem;letter-spacing:.5px">🔒 ${cd}/${th}d</div><div class="gcxp">+${g.xp}XP</div>`;
         }
       }else{
         rH=`<div class="gccl">MUST DO</div><div class="gcxp">+${g.xp} XP</div>`;
@@ -1964,11 +1985,15 @@ function completePaid(gig,who,e){
   confetti(e.clientX,e.clientY);
   showModal(gig.emoji,'GIG CRUSHED!',rand(MSGS)+' '+gig.name,actualPay,xpGained,mult,who,false);
 }
-const CORE_UNLOCK_DAYS=25;
-function isCoreUnlocked(who){return(S[who].coreDaysTotal||0)>=CORE_UNLOCK_DAYS}
+function getCoreThreshold(){return S.corePeriodUnlockThreshold||calcUnlockThreshold(!S.lastMonthReset,S.monthStartDay)}
+function isCoreUnlocked(who){return(S[who].coreDaysThisPeriod||0)>=getCoreThreshold()}
 function trackCoreDay(who){
   const today=new Date().toDateString();
-  if(S[who].lastCoreDay!==today){S[who].lastCoreDay=today;S[who].coreDaysTotal=(S[who].coreDaysTotal||0)+1}
+  if(S[who].lastCoreDay!==today){
+    S[who].lastCoreDay=today;
+    S[who].coreDaysTotal=(S[who].coreDaysTotal||0)+1;
+    S[who].coreDaysThisPeriod=(S[who].coreDaysThisPeriod||0)+1;
+  }
 }
 function completeCore(gig,who,e){
   const s=S[who],mult=streakMult(s.streak),xpGained=Math.round(gig.xp*mult);
@@ -2758,14 +2783,21 @@ function mergeStateLocal(local,remote){
   merged.log=allLogs.filter(e=>{const k=`${e.ts||e.time}-${e.who}-${e.name}`;if(seen.has(k))return false;seen.add(k);return true}).slice(0,100);
   return merged;
 }
-function startPolling(){if(syncTimer)clearInterval(syncTimer);syncTimer=setInterval(syncFromServer,30000);syncFromServer()}
-function setSyncSt(s){syncSt=s;updateSyncBadge()}
+function startPolling(){if(syncTimer)clearInterval(syncTimer);syncTimer=setInterval(()=>{syncFromServer();updateSyncBadge()},30000);syncFromServer()}
+let lastSyncedTime=null;
+function setSyncSt(s){syncSt=s;if(s==='synced')lastSyncedTime=new Date();updateSyncBadge()}
 function updateSyncBadge(){
   const el=document.getElementById('sync-badge');if(!el)return;
   if(!FAMILY_CODE){el.style.display='none';return}
   el.style.display='';
-  const labels={syncing:'⟳ Syncing',synced:'☁️ Synced',error:'⚠️ Sync error',offline:'📵 Offline',idle:'☁️'};
-  el.textContent=labels[syncSt]||'☁️';
+  let timeStr='';
+  if(lastSyncedTime&&syncSt==='synced'){
+    const secs=Math.round((Date.now()-lastSyncedTime)/1000);
+    timeStr=secs<5?' just now':secs<60?` ${secs}s ago`:` ${Math.round(secs/60)}m ago`;
+  }
+  const labels={syncing:'⟳',synced:'☁️',error:'⚠️',offline:'📵',idle:'☁️'};
+  el.textContent=(labels[syncSt]||'☁️')+timeStr;
+  el.title=FAMILY_CODE+' · '+(syncSt==='synced'?'Saved to cloud'+(timeStr?timeStr:''):syncSt);
 }
 function renderFamilySection(){
   const el=document.getElementById('family-section');if(!el)return;

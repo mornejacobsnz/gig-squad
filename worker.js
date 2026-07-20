@@ -25,6 +25,7 @@ function mergeStates(server, client) {
       cashedOut: Math.max(s.cashedOut || 0, c.cashedOut || 0),
       streak: Math.max(s.streak || 0, c.streak || 0),
       coreDaysTotal: Math.max(s.coreDaysTotal || 0, c.coreDaysTotal || 0),
+      coreDaysThisPeriod: Math.max(s.coreDaysThisPeriod || 0, c.coreDaysThisPeriod || 0),
       completedToday: [...new Set([...(s.completedToday || []), ...(c.completedToday || [])])],
       completedMonth: [...new Set([...(s.completedMonth || []), ...(c.completedMonth || [])])],
       claimedRewards: [...new Set([...(s.claimedRewards || []), ...(c.claimedRewards || [])])],
@@ -42,6 +43,9 @@ function mergeStates(server, client) {
   merged.customCoreGigs = client.customCoreGigs ?? server.customCoreGigs;
   merged.pins = client.pins ?? server.pins;
   merged.gigOverrides = client.gigOverrides ?? server.gigOverrides;
+  merged.corePeriodUnlockThreshold = client.corePeriodUnlockThreshold ?? server.corePeriodUnlockThreshold;
+  merged.monthStartDay = client.monthStartDay ?? server.monthStartDay;
+  merged.lastMonthReset = client.lastMonthReset ?? server.lastMonthReset;
 
   // Merge logs — dedupe by time+who+name
   const allLogs = [...(server.log || []), ...(client.log || [])];
