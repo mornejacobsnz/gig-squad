@@ -912,6 +912,12 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
             <input class="bud-input" id="bud-input" type="number" min="10" max="500" step="5" value="100">
             <button class="bud-save-btn" onclick="saveBudget()">Save</button>
           </div>
+          <div class="bud-set-row" style="margin-top:8px">
+            <span class="bud-set-lbl">Month starts on day</span>
+            <input class="bud-input" id="bud-startday" type="number" min="1" max="28" step="1" value="1">
+            <button class="bud-save-btn" onclick="saveMonthStart()">Save</button>
+          </div>
+          <div id="bud-period-label" style="font-size:.7rem;color:var(--muted);margin-top:6px;margin-bottom:2px"></div>
           <div class="bud-health" id="bud-health"></div>
         </div>
         <div class="mgr-sec"><div class="mgr-title">✏️ Manage Gigs</div><div class="mgr-list" id="mgr-list"></div>
@@ -957,7 +963,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.6.1 · Habit Tax Progress Indicators · 2026-07-21</div>
+<div class="build-version" id="build-version">v3.6.2 · Custom Month Start + Auto-Reset · 2026-07-21</div>
 
 <!-- FAMILY ONBOARDING OVERLAY -->
 <div class="family-onboard h" id="family-onboard">
@@ -1136,6 +1142,28 @@ function getLevelTitle(xp){const l=getLevel(xp);if(l<=4)return'Rookie 🌱';if(l
 function xpInLevel(xp){return xp%150}
 function xpToNext(xp){return 150-xpInLevel(xp)}
 function getBudget(){return+(S.monthlyBudget||100)}
+function getMonthStartDay(){return+(S.monthStartDay||1)}
+function getPeriodStart(startDay){
+  const sd=startDay||1,today=new Date();
+  const y=today.getFullYear(),m=today.getMonth(),d=today.getDate();
+  if(d>=sd)return new Date(y,m,sd).toDateString();
+  return new Date(y,m-1,sd).toDateString();
+}
+function getPeriodEnd(startDay){
+  const sd=startDay||1,today=new Date();
+  const y=today.getFullYear(),m=today.getMonth(),d=today.getDate();
+  let endDate;
+  if(d>=sd)endDate=new Date(y,m+1,sd-1);
+  else endDate=new Date(y,m,sd-1);
+  return endDate;
+}
+function periodLabel(){
+  const sd=getMonthStartDay();
+  const start=new Date(getPeriodStart(sd));
+  const end=getPeriodEnd(sd);
+  const fmt=d=>d.toLocaleDateString([],{month:'short',day:'numeric'});
+  return`${fmt(start)} – ${fmt(end)}`;
+}
 const MSGS=['Absolute fire! 🔥','That\'s the spirit! ⚡','Boss move! 👑','Stack that bag! 💰','Entrepreneurial energy! 🚀','CEO behaviour! 🎯','Killing it! ⭐','You\'re unstoppable! 💥'];
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
 
@@ -1156,6 +1184,7 @@ function loadS(){
     if(!d.customGigs)d.customGigs=[];
     if(d.monthlyBudget===undefined)d.monthlyBudget=100;
     if(!d.gigOverrides)d.gigOverrides={};
+    if(d.monthStartDay===undefined)d.monthStartDay=1;
     // Self-heal corrupted xpSpent — can never exceed total xp earned
     const accessoryIds=['a1','a2','a3','a4'];
     ['zara','lune'].forEach(w=>{
@@ -1174,6 +1203,20 @@ function loadS(){
       d.zara.completedToday=[];d.zara.pending=[];
       d.lune.completedToday=[];d.lune.pending=[];
       d.lastResetDate=todayStr;
+      localStorage.setItem('gs4',JSON.stringify(d));
+    }
+    // Monthly period reset
+    const periodStart=getPeriodStart(d.monthStartDay||1);
+    if(d.lastMonthReset!==periodStart){
+      ['zara','lune'].forEach(w=>{
+        const uncashed=Math.max(0,Math.round((Math.min(d[w].earned,d.monthlyBudget||100)-d[w].cashedOut)*100)/100);
+        if(uncashed>0){
+          if(!d[w].pendingCashouts)d[w].pendingCashouts=[];
+          d[w].pendingCashouts.push({amt:uncashed,date:'Period end',time:'Auto',auto:true});
+        }
+        d[w].earned=0;d[w].cashedOut=0;d[w].completedMonth=[];
+      });
+      d.lastMonthReset=periodStart;
       localStorage.setItem('gs4',JSON.stringify(d));
     }
     return d;
@@ -1578,7 +1621,7 @@ function renderDash(){
   set('w-money',`$${avail.toFixed(2)}`);
   // Change subtitle when at cap
   const moneySubEl=document.getElementById('w-moneysub');
-  if(moneySubEl)moneySubEl.textContent=avail>=getBudget()?'cap reached · cash out to keep earning':'earned this month';
+  if(moneySubEl)moneySubEl.textContent=avail>=getBudget()?'cap reached · cash out to keep earning':`earned · ${periodLabel()}`;
   set('w-pl',`$${avail.toFixed(2)} of $${getBudget()}`);
   set('w-pr',avail>=getBudget()?'🏆 Cash out to keep earning!':`$${(getBudget()-avail).toFixed(2)} left`);
   document.getElementById('w-mfill').style.width=pct+'%';
@@ -2257,10 +2300,23 @@ function saveBudget(){
   const inp=document.getElementById('bud-input');
   if(inp&&inp.parentNode){const old=inp.parentNode.querySelector('.bud-saved-msg');if(old)old.remove();msg.className='bud-saved-msg';inp.parentNode.appendChild(msg);setTimeout(()=>msg.remove(),2000)}
 }
+function saveMonthStart(){
+  const val=parseInt(document.getElementById('bud-startday').value)||1;
+  S.monthStartDay=Math.max(1,Math.min(28,val));
+  save();renderBudgetHealth();
+  const msg=document.createElement('div');
+  msg.style.cssText='font-size:.7rem;color:var(--green);margin-top:6px';
+  msg.textContent='✅ Period saved! Resets on the '+S.monthStartDay+(S.monthStartDay===1?'st':S.monthStartDay===2?'nd':S.monthStartDay===3?'rd':'th')+' each month.';
+  const inp=document.getElementById('bud-startday');
+  if(inp&&inp.parentNode){const old=inp.parentNode.querySelector('.bud-startday-msg');if(old)old.remove();msg.className='bud-startday-msg';inp.parentNode.appendChild(msg);setTimeout(()=>msg.remove(),3000)}
+}
 function renderBudgetHealth(){
   const el=document.getElementById('bud-health');if(!el)return;
   const budget=getBudget();
   const inp=document.getElementById('bud-input');if(inp)inp.value=budget;
+  const sdInp=document.getElementById('bud-startday');if(sdInp)sdInp.value=getMonthStartDay();
+  const periodEl=document.getElementById('bud-period-label');
+  if(periodEl)periodEl.textContent='📅 Current period: '+periodLabel();
   const earnZ=Math.min(S.zara.earned,budget),earnL=Math.min(S.lune.earned,budget);
   const pctZ=Math.min((earnZ/budget)*100,100),pctL=Math.min((earnL/budget)*100,100);
   const colour=p=>p>=100?'#ef4444':p>=75?'#fb923c':p>=40?'#ffd166':'#06d6a0';
