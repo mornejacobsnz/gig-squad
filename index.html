@@ -670,6 +670,47 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   transition:opacity .2s;
 }
 .build-version:hover{color:rgba(255,255,255,.5)}
+/* ── FAMILY ONBOARDING OVERLAY ── */
+.family-onboard{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.family-onboard.h{display:none}
+.fob-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:28px 22px;max-width:340px;width:100%;text-align:center}
+.fob-emoji{font-size:3rem;margin-bottom:8px}
+.fob-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.fob-sub{font-size:.78rem;color:var(--muted);line-height:1.5;margin-bottom:20px}
+.fob-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;margin-bottom:10px}
+.fob-btn.primary{background:linear-gradient(135deg,var(--la),var(--go));color:#000}
+.fob-btn.secondary{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.fob-or{font-size:.72rem;color:var(--muted);margin:4px 0 10px}
+.fob-inp{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-family:monospace;font-size:1.1rem;font-weight:700;letter-spacing:3px;text-align:center;text-transform:uppercase;box-sizing:border-box;margin-bottom:10px}
+.fob-inp:focus{outline:none;border-color:var(--la)}
+.fob-code-display{font-family:monospace;font-size:2rem;font-weight:900;letter-spacing:6px;color:var(--la);margin:12px 0 4px;word-break:break-all}
+.fob-status{font-size:.75rem;min-height:18px;margin-top:4px;margin-bottom:8px}
+.fob-skip{font-size:.7rem;color:var(--muted);margin-top:14px;cursor:pointer;text-decoration:underline;opacity:.6}
+/* ── FAMILY SYNC SECTION ── */
+.fam-sec{background:var(--card);border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid rgba(94,231,223,.2)}
+.fam-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:#5EE7DF;margin-bottom:10px}
+.fam-code{font-family:monospace;font-size:1.9rem;font-weight:900;letter-spacing:5px;color:var(--la);text-align:center;margin:10px 0 4px}
+.fam-hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:12px}
+.fam-btn{width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;margin-bottom:7px}
+.fam-btn.danger{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2);color:#ef4444}
+/* ── EDIT GIG MODAL ── */
+.edit-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:8000;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+.edit-modal.h{display:none}
+.edit-modal-card{background:#1a1a2e;border-radius:24px 24px 0 0;padding:22px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;border:1px solid var(--border);border-bottom:none}
+.em-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;margin-bottom:14px}
+.em-row{display:flex;gap:8px;margin-bottom:10px}
+.em-inp{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-size:.85rem}
+.em-inp:focus{outline:none;border-color:var(--la)}
+.em-lbl{font-size:.68rem;color:var(--muted);margin-bottom:4px}
+.em-btn{padding:12px;border-radius:12px;border:none;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;flex:1}
+.em-save{background:linear-gradient(135deg,var(--la),var(--go));color:#000}
+.em-cancel{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted)}
+/* ── HABIT TAX / CORE UNLOCK ── */
+.core-lock-bar{background:rgba(255,255,255,.04);border-radius:8px;height:6px;margin:6px 0 2px;overflow:hidden}
+.core-lock-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--la),var(--go));transition:width .4s ease}
+.core-unlock-badge{display:inline-block;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:5px;vertical-align:middle}
+.core-unlock-badge.locked{background:rgba(255,255,255,.08);color:var(--muted)}
+.core-unlock-badge.unlocked{background:rgba(6,214,160,.15);color:var(--green);border:1px solid rgba(6,214,160,.3)}
 </style>
 </head>
 <body>
@@ -720,7 +761,10 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   <div id="main-app-inner">
     <header>
       <div class="hdr-name" id="hdr-name">GIG SQUAD</div>
-      <div class="hdr-logout" onclick="logout()">← Switch</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="sync-badge" style="display:none;font-size:.75rem;opacity:.7;cursor:pointer" title="Sync status" onclick="switchTab('parent')"></span>
+        <div class="hdr-logout" onclick="logout()">← Switch</div>
+      </div>
     </header>
 
     <!-- DASHBOARD PAGE -->
@@ -904,13 +948,62 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
           <div class="pc-row"><span class="pc-who">🔐 Parent</span><input class="pc-input" id="pc-p" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('parent')">Save</button></div>
           <div style="font-size:.68rem;color:var(--muted);margin-top:6px" id="pc-msg"></div>
         </div>
+        <div id="family-section"></div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.5.1 · Household Chores + Budget Fix · 2026-07-21</div>
+<div class="build-version" id="build-version">v3.6.0 · Sync + Edit + Habit Tax · 2026-07-21</div>
+
+<!-- FAMILY ONBOARDING OVERLAY -->
+<div class="family-onboard h" id="family-onboard">
+  <div class="fob-card">
+    <div class="fob-emoji">🏠</div>
+    <div class="fob-title">Family Sync</div>
+    <div id="fob-step1">
+      <div class="fob-sub">Sync progress across all your family devices. Create a family to get started, or enter your family code to join one.</div>
+      <div id="fob-status" class="fob-status"></div>
+      <button class="fob-btn primary" onclick="createFamily()">🆕 Create New Family</button>
+      <div class="fob-or">— or join existing —</div>
+      <input id="fob-join-inp" class="fob-inp" placeholder="FAMILY CODE" maxlength="12" autocapitalize="characters">
+      <button class="fob-btn secondary" onclick="joinFamily()">Join Family</button>
+      <div class="fob-skip" onclick="skipSync()">Skip for now (local only)</div>
+    </div>
+    <div id="fob-step2" class="h">
+      <div class="fob-sub">Your family is ready! Share this code with all family devices:</div>
+      <div class="fob-code-display" id="fob-created-code"></div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">Screenshot this or find it anytime in Parent Hub → Family Sync</div>
+      <button class="fob-btn primary" onclick="closeFamilyOnboard()">✅ Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT GIG MODAL -->
+<div class="edit-modal h" id="edit-gig-modal">
+  <div class="edit-modal-card">
+    <div class="em-title">✏️ Edit Chore</div>
+    <div class="em-row">
+      <div style="width:70px"><div class="em-lbl">Emoji</div><input class="em-inp" id="em-emoji" maxlength="4" style="text-align:center;font-size:1.4rem"></div>
+      <div style="flex:1"><div class="em-lbl">Name</div><input class="em-inp" id="em-name" placeholder="Chore name"></div>
+    </div>
+    <div class="em-row"><div style="flex:1"><div class="em-lbl">Description</div><input class="em-inp" id="em-desc" placeholder="Short description"></div></div>
+    <div class="em-row">
+      <div style="flex:1" id="em-pay-row"><div class="em-lbl">Pay ($)</div><input class="em-inp em-num" id="em-pay" type="number" min="0.5" max="50" step="0.5"></div>
+      <div style="flex:1"><div class="em-lbl">XP</div><input class="em-inp" id="em-xp" type="number" min="5" max="500" step="5"></div>
+      <div style="flex:1"><div class="em-lbl">Frequency</div><select class="em-inp" id="em-freq"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="anytime">Anytime</option></select></div>
+    </div>
+    <div class="em-row" id="em-who-row">
+      <div style="flex:1"><div class="em-lbl">Who</div><select class="em-inp" id="em-who"><option value="all">Both girls</option><option value="zara">Zara only</option><option value="lune">Luné only</option></select></div>
+    </div>
+    <button id="em-reset-btn" class="fob-btn" style="width:100%;padding:9px;border-radius:12px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;font-size:.78rem;font-weight:700;cursor:pointer;margin-bottom:10px;display:none" onclick="resetGigOverride()">↩ Reset to default values</button>
+    <div class="em-row">
+      <button class="em-btn em-cancel" onclick="closeEditGig()">Cancel</button>
+      <button class="em-btn em-save" onclick="saveEditGig()">Save Changes</button>
+    </div>
+  </div>
+</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -1004,9 +1097,9 @@ const CORE_GIGS=[
   {id:'core5',emoji:'👕',name:'Laundry Loop',desc:'Collect, sort, and put away your clothes.',xp:55,tags:['core'],freq:'weekly'},
   {id:'core6',emoji:'🧼',name:'Bathroom Tidy',desc:'Sink, counter, floor — yours to own daily.',xp:50,tags:['core'],freq:'daily'},
   {id:'core7',emoji:'🍱',name:'Lunch Packed',desc:'Pack your own healthy school lunch.',xp:40,tags:['core'],freq:'daily'},
-  {id:'core8',emoji:'🍽️',name:'Dishwasher Duty',desc:'Pack or unpack the dishwasher. Take turns with your sister.',xp:20,tags:['core'],freq:'daily'},
-  {id:'core9',emoji:'🗑️',name:'Trash Run',desc:'Take out the kitchen trash and replace the bag. Take turns with your sister.',xp:15,tags:['core'],freq:'daily'},
-  {id:'core10',emoji:'🧹',name:'Wipe Kitchen Counter',desc:'Wipe down the kitchen counter after meals. Take turns with your sister.',xp:15,tags:['core'],freq:'daily'},
+  {id:'core8',emoji:'🍽️',name:'Dishwasher Duty',desc:'Pack or unpack the dishwasher. Take turns with your sister.',xp:20,tags:['core'],freq:'daily',unlockedPay:1},
+  {id:'core9',emoji:'🗑️',name:'Trash Run',desc:'Take out the kitchen trash and replace the bag. Take turns with your sister.',xp:15,tags:['core'],freq:'daily',unlockedPay:1},
+  {id:'core10',emoji:'🧹',name:'Wipe Kitchen Counter',desc:'Wipe down the kitchen counter after meals. Take turns with your sister.',xp:15,tags:['core'],freq:'daily',unlockedPay:0.5},
 ];
 const XP_REWARDS=[
   {id:'r1',emoji:'📱',name:'30 min Screen Time',cost:150},
@@ -1047,7 +1140,7 @@ function rand(a){return a[Math.floor(Math.random()*a.length)]}
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[]}}
+function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[],coreDaysTotal:0,lastCoreDay:''}}
 function loadS(){
   try{
     const s=localStorage.getItem('gs4');
@@ -1060,6 +1153,7 @@ function loadS(){
     if(!d.log)d.log=[];
     if(!d.customGigs)d.customGigs=[];
     if(d.monthlyBudget===undefined)d.monthlyBudget=100;
+    if(!d.gigOverrides)d.gigOverrides={};
     // Self-heal corrupted xpSpent — can never exceed total xp earned
     const accessoryIds=['a1','a2','a3','a4'];
     ['zara','lune'].forEach(w=>{
@@ -1083,7 +1177,9 @@ function loadS(){
     return d;
   }catch{return{zara:defP(),lune:defP(),customGigs:[],customCoreGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
 }
-function save(){localStorage.setItem('gs4',JSON.stringify(S))}
+function save(){localStorage.setItem('gs4',JSON.stringify(S));if(FAMILY_CODE)syncToServer();}
+function applyOverride(g){const ov=S.gigOverrides&&S.gigOverrides[g.id];return ov?{...g,...ov}:g;}
+function getGig(id){return allPaid().map(applyOverride).find(g=>g.id===id)||allCore().find(g=>g.id===id)}
 let S=loadS();
 let CU=null;
 let selectedProfile=null;
@@ -1093,8 +1189,8 @@ let parentUnlocked=false;
 let boardFilters={cat:'all',user:'all'};
 let confirmCB=null;
 
-function allPaid(){return[...DEFAULT_PAID,...(S.customGigs||[])]}
-function allCore(){return[...CORE_GIGS,...(S.customCoreGigs||[])]}
+function allPaid(){return[...DEFAULT_PAID,...(S.customGigs||[])].map(g=>applyOverride(g))}
+function allCore(){return[...CORE_GIGS,...(S.customCoreGigs||[])].map(g=>applyOverride(g))}
 function paidForUser(who){return allPaid().filter(g=>!g.who||g.who==='all'||g.who===who)}
 function streakMult(n){if(n>=14)return 2.0;if(n>=10)return 1.75;if(n>=7)return 1.5;if(n>=5)return 1.35;if(n>=3)return 1.2;if(n>=1)return 1.1;return 1.0}
 function multLbl(m){return m===1.0?'1.0×':'🔥'+m.toFixed(2)+'× BONUS'}
@@ -1778,17 +1874,33 @@ function completePaid(gig,who,e){
   confetti(e.clientX,e.clientY);
   showModal(gig.emoji,'GIG CRUSHED!',rand(MSGS)+' '+gig.name,actualPay,xpGained,mult,who,false);
 }
+const CORE_UNLOCK_DAYS=25;
+function isCoreUnlocked(who){return(S[who].coreDaysTotal||0)>=CORE_UNLOCK_DAYS}
+function trackCoreDay(who){
+  const today=new Date().toDateString();
+  if(S[who].lastCoreDay!==today){S[who].lastCoreDay=today;S[who].coreDaysTotal=(S[who].coreDaysTotal||0)+1}
+}
 function completeCore(gig,who,e){
   const s=S[who],mult=streakMult(s.streak),xpGained=Math.round(gig.xp*mult);
+  trackCoreDay(who);
   s.xp+=xpGained;s.completedToday.push(gig.id);
-  updateStreak(s);addLog(who,gig.emoji,gig.name,0,xpGained);
+  updateStreak(s);
+  let moneyGained=0;
+  if(isCoreUnlocked(who)&&gig.unlockedPay>0){
+    const cap=getBudget();
+    moneyGained=Math.min(gig.unlockedPay,cap-s.earned);
+    if(moneyGained>0){s.earned=Math.round((s.earned+moneyGained)*100)/100}
+    else moneyGained=0;
+  }
+  addLog(who,gig.emoji,gig.name,moneyGained,xpGained);
   save();
   gmReactToGig(who);
   showXpFloat(e.clientX,e.clientY,xpGained);
   renderDash();
   if(document.getElementById('board-grid')&&!document.getElementById('board-grid').closest('.h'))renderBoard();
   confetti(e.clientX,e.clientY,true);
-  showModal(gig.emoji,'DUTY DONE! ✅',gig.name+' — reliable & responsible.',0,xpGained,mult,who,false);
+  const subtitle=moneyGained>0?`${gig.name} — +$${moneyGained.toFixed(2)} earned!`:gig.name+' — reliable & responsible.';
+  showModal(gig.emoji,'DUTY DONE! ✅',subtitle,moneyGained,xpGained,mult,who,false);
 }
 function updateStreak(s){
   const today=new Date().toDateString();if(s.lastDate===today)return;
@@ -2006,7 +2118,7 @@ function renderParentDash(){
     set(`pd-${pre}-str`,s.streak+'d 🔥');
     set(`pd-${pre}-bud`,s.budgetScore||'Not done');
   });
-  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();renderBudgetHealth();
+  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();renderBudgetHealth();renderFamilySection();
 }
 function addLog(who,emoji,name,money,xp){
   if(!S.log)S.log=[];
@@ -2037,19 +2149,36 @@ function renderCoPending(){
 function confirmCO(who,i){S[who].pendingCashouts.splice(i,1);save();renderCoPending();renderParentDash()}
 function renderMgrList(){
   const el=document.getElementById('mgr-list');if(!el)return;el.innerHTML='';
-  const customs=S.customGigs||[];
-  const customCores=S.customCoreGigs||[];
-  if(!customs.length&&!customCores.length){const d=document.createElement('div');d.className='no-log';d.textContent=DEFAULT_PAID.length+' default gigs active. Add custom chores below.';el.appendChild(d);return}
-  customCores.forEach(g=>{
+  // Default core gigs
+  CORE_GIGS.forEach(g=>{
+    const applied=applyOverride(g);
     const d=document.createElement('div');d.className='mgr-item';
-    d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name} <span style="font-size:.6rem;color:var(--la);font-weight:700;text-transform:uppercase;letter-spacing:1px">Core</span></div><div class="mgr-meta">${g.xp}XP · ${g.tags.join(',')} · ${g.freq} · ${g.who==='all'?'Both':g.who}</div></div><div class="mgr-del" onclick="deleteCoreGig('${g.id}')">Remove</div>`;
+    const payTag=applied.unlockedPay?` · 🔒$${applied.unlockedPay}/unlock`:'';
+    d.innerHTML=`<div class="mgr-e">${applied.emoji}</div><div class="mgr-info"><div class="mgr-name">${applied.name} <span style="font-size:.6rem;color:var(--la);font-weight:700;text-transform:uppercase;letter-spacing:1px">Core</span></div><div class="mgr-meta">${applied.xp}XP${payTag} · ${applied.freq}</div></div><div style="display:flex;gap:6px"><div class="mgr-del" style="background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.25);color:var(--xp)" onclick="openEditGig('${g.id}','core')">Edit</div></div>`;
     el.appendChild(d);
   });
-  customs.forEach(g=>{
+  // Custom core gigs
+  (S.customCoreGigs||[]).forEach(g=>{
     const d=document.createElement('div');d.className='mgr-item';
-    d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name}</div><div class="mgr-meta">$${g.pay} · ${g.xp}XP · ${g.tags.join(',')} · ${g.freq} · ${g.who==='all'?'Both':g.who}</div></div><div class="mgr-del" onclick="deleteGig('${g.id}')">Remove</div>`;
+    d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name} <span style="font-size:.6rem;color:var(--la);font-weight:700;text-transform:uppercase;letter-spacing:1px">Core</span></div><div class="mgr-meta">${g.xp}XP · ${g.freq}</div></div><div style="display:flex;gap:6px"><div class="mgr-del" style="background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.25);color:var(--xp)" onclick="openEditGig('${g.id}','custom-core')">Edit</div><div class="mgr-del" onclick="deleteCoreGig('${g.id}')">Remove</div></div>`;
     el.appendChild(d);
   });
+  // Default paid gigs
+  DEFAULT_PAID.forEach(g=>{
+    const applied=applyOverride(g);
+    const d=document.createElement('div');d.className='mgr-item';
+    const whoLbl=applied.who==='all'?'Both':applied.who==='zara'?'Zara':'Luné';
+    d.innerHTML=`<div class="mgr-e">${applied.emoji}</div><div class="mgr-info"><div class="mgr-name">${applied.name}</div><div class="mgr-meta">$${applied.pay} · ${applied.xp}XP · ${applied.freq} · ${whoLbl}</div></div><div style="display:flex;gap:6px"><div class="mgr-del" style="background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.25);color:var(--xp)" onclick="openEditGig('${g.id}','default')">Edit</div></div>`;
+    el.appendChild(d);
+  });
+  // Custom paid gigs
+  (S.customGigs||[]).forEach(g=>{
+    const d=document.createElement('div');d.className='mgr-item';
+    const whoLbl=g.who==='all'?'Both':g.who==='zara'?'Zara':'Luné';
+    d.innerHTML=`<div class="mgr-e">${g.emoji}</div><div class="mgr-info"><div class="mgr-name">${g.name}</div><div class="mgr-meta">$${g.pay} · ${g.xp}XP · ${g.freq} · ${whoLbl}</div></div><div style="display:flex;gap:6px"><div class="mgr-del" style="background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.25);color:var(--xp)" onclick="openEditGig('${g.id}','custom')">Edit</div><div class="mgr-del" onclick="deleteGig('${g.id}')">Remove</div></div>`;
+    el.appendChild(d);
+  });
+  if(!el.children.length){const d=document.createElement('div');d.className='no-log';d.textContent='No gigs yet.';el.appendChild(d)}
 }
 let choreType='gig';
 function setChoreType(type){
@@ -2407,9 +2536,208 @@ function switchTab(tab){
 }
 
 // ═══════════════════════════════════════════════
+// SYNC — Family Code System
+// ═══════════════════════════════════════════════
+let FAMILY_CODE=null,LAST_SYNCED_AT=0,syncTimer=null,syncSt='idle';
+
+function initSync(){
+  try{
+    const stored=JSON.parse(localStorage.getItem('gs_family')||'null');
+    if(stored&&stored.code){FAMILY_CODE=stored.code;LAST_SYNCED_AT=stored.lastSyncedAt||0;startPolling();updateSyncBadge();return}
+  }catch{}
+  showFamilyOnboard();
+}
+function showFamilyOnboard(){document.getElementById('family-onboard').classList.remove('h')}
+function closeFamilyOnboard(){document.getElementById('family-onboard').classList.add('h')}
+function setOnboardStatus(msg,err){const e=document.getElementById('fob-status');if(e){e.textContent=msg;e.style.color=err?'#ef4444':'var(--muted)'}}
+
+async function createFamily(){
+  setOnboardStatus('Creating family…',false);
+  try{
+    const r=await fetch('/api/family/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:S})});
+    if(!r.ok)throw 0;
+    const{code}=await r.json();
+    setFamilyCode(code);
+    document.getElementById('fob-step1').classList.add('h');
+    document.getElementById('fob-created-code').textContent=code;
+    document.getElementById('fob-step2').classList.remove('h');
+  }catch{setOnboardStatus('Failed. Check internet and try again.',true)}
+}
+async function joinFamily(){
+  const inp=document.getElementById('fob-join-inp');
+  const code=(inp?.value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length<4){setOnboardStatus('Enter a valid family code.',true);return}
+  setOnboardStatus('Joining…',false);
+  try{
+    const r=await fetch(`/api/state/${code}`);
+    if(r.status===404){setOnboardStatus('Family not found. Double-check the code.',true);return}
+    if(!r.ok)throw 0;
+    const data=await r.json();
+    if(data.state){S=mergeStateLocal(S,data.state);localStorage.setItem('gs4',JSON.stringify(S))}
+    setFamilyCode(code);closeFamilyOnboard();
+  }catch{setOnboardStatus('Connection failed. Check internet.',true)}
+}
+function skipSync(){closeFamilyOnboard()}
+
+function setFamilyCode(code){
+  FAMILY_CODE=code;LAST_SYNCED_AT=Date.now();
+  localStorage.setItem('gs_family',JSON.stringify({code,lastSyncedAt:LAST_SYNCED_AT}));
+  startPolling();updateSyncBadge();renderFamilySection();
+}
+function leaveFamily(){
+  if(!confirm('Leave family sync? Your data stays on this device but changes won\'t sync.'))return;
+  FAMILY_CODE=null;LAST_SYNCED_AT=0;localStorage.removeItem('gs_family');
+  if(syncTimer)clearInterval(syncTimer);syncTimer=null;
+  updateSyncBadge();renderFamilySection();
+}
+function copyFamilyCode(){
+  navigator.clipboard.writeText(FAMILY_CODE).then(()=>{
+    const b=document.getElementById('fam-copy-btn');if(b){b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy Code',2000)}
+  });
+}
+
+async function syncToServer(){
+  if(!FAMILY_CODE)return;
+  try{
+    setSyncSt('syncing');
+    const r=await fetch(`/api/state/${FAMILY_CODE}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:S,lastSyncedAt:LAST_SYNCED_AT})});
+    if(!r.ok){setSyncSt('error');return}
+    const d=await r.json();
+    LAST_SYNCED_AT=d.updatedAt||Date.now();
+    localStorage.setItem('gs_family',JSON.stringify({code:FAMILY_CODE,lastSyncedAt:LAST_SYNCED_AT}));
+    setSyncSt('synced');
+  }catch{setSyncSt('offline')}
+}
+async function syncFromServer(){
+  if(!FAMILY_CODE)return;
+  try{
+    const r=await fetch(`/api/state/${FAMILY_CODE}`);
+    if(!r.ok)return;
+    const data=await r.json();
+    if((data.updatedAt||0)>LAST_SYNCED_AT+1000){
+      const merged=mergeStateLocal(S,data.state);
+      if(JSON.stringify(merged)!==JSON.stringify(S)){
+        S=merged;LAST_SYNCED_AT=data.updatedAt;
+        localStorage.setItem('gs_family',JSON.stringify({code:FAMILY_CODE,lastSyncedAt:LAST_SYNCED_AT}));
+        localStorage.setItem('gs4',JSON.stringify(S));
+        if(CU)renderDash();
+        if(parentUnlocked)renderParentDash();
+      }
+    }
+    setSyncSt('synced');
+  }catch{setSyncSt('offline')}
+}
+function mergeStateLocal(local,remote){
+  if(!remote)return local;
+  const merged={...remote};
+  ['zara','lune'].forEach(who=>{
+    if(!local[who]||!remote[who])return;
+    const l=local[who],r=remote[who];
+    merged[who]={...r,
+      earned:Math.max(l.earned||0,r.earned||0),
+      xp:Math.max(l.xp||0,r.xp||0),xpSpent:Math.max(l.xpSpent||0,r.xpSpent||0),
+      cashedOut:Math.max(l.cashedOut||0,r.cashedOut||0),
+      streak:Math.max(l.streak||0,r.streak||0),
+      coreDaysTotal:Math.max(l.coreDaysTotal||0,r.coreDaysTotal||0),
+      completedToday:[...new Set([...(l.completedToday||[]),(r.completedToday||[])])],
+      completedMonth:[...new Set([...(l.completedMonth||[]),(r.completedMonth||[])])],
+      claimedRewards:[...new Set([...(l.claimedRewards||[]),(r.claimedRewards||[])])],
+      pending:[...new Set([...(l.pending||[]),(r.pending||[])])],
+    };
+  });
+  merged.monthlyBudget=local.monthlyBudget??remote.monthlyBudget;
+  merged.customGigs=local.customGigs??remote.customGigs;
+  merged.customCoreGigs=local.customCoreGigs??remote.customCoreGigs;
+  merged.pins=local.pins??remote.pins;
+  merged.gigOverrides=local.gigOverrides??remote.gigOverrides;
+  const allLogs=[...(local.log||[]),...(remote.log||[])];
+  const seen=new Set();
+  merged.log=allLogs.filter(e=>{const k=`${e.ts||e.time}-${e.who}-${e.name}`;if(seen.has(k))return false;seen.add(k);return true}).slice(0,100);
+  return merged;
+}
+function startPolling(){if(syncTimer)clearInterval(syncTimer);syncTimer=setInterval(syncFromServer,30000);syncFromServer()}
+function setSyncSt(s){syncSt=s;updateSyncBadge()}
+function updateSyncBadge(){
+  const el=document.getElementById('sync-badge');if(!el)return;
+  if(!FAMILY_CODE){el.style.display='none';return}
+  el.style.display='';
+  const labels={syncing:'⟳ Syncing',synced:'☁️ Synced',error:'⚠️ Sync error',offline:'📵 Offline',idle:'☁️'};
+  el.textContent=labels[syncSt]||'☁️';
+}
+function renderFamilySection(){
+  const el=document.getElementById('family-section');if(!el)return;
+  if(!FAMILY_CODE){
+    el.innerHTML=`<div class="fam-sec"><div class="fam-title">🔗 Family Sync</div><p style="color:var(--muted);font-size:.75rem;margin-bottom:12px;line-height:1.5">Not connected. Set up sync to share progress across all family devices.</p><button class="fam-btn" onclick="showFamilyOnboard()">⚡ Set Up Sync</button></div>`;
+  }else{
+    el.innerHTML=`<div class="fam-sec"><div class="fam-title">🔗 Family Sync <span style="font-size:.65rem;color:var(--green);font-weight:600">● Connected</span></div><div class="fam-code">${FAMILY_CODE}</div><div class="fam-hint">Share this code with family devices — all devices sync automatically every 30s</div><button class="fam-btn" id="fam-copy-btn" onclick="copyFamilyCode()">📋 Copy Code</button><button class="fam-btn danger" onclick="leaveFamily()">✂️ Leave Family Sync</button></div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// EDIT GIG MODAL
+// ═══════════════════════════════════════════════
+let editingGigId=null,editingGigType=null;
+function openEditGig(id,type){
+  editingGigId=id;editingGigType=type;
+  const base=type==='core'?CORE_GIGS.find(g=>g.id===id):
+    type==='custom-core'?(S.customCoreGigs||[]).find(g=>g.id===id):
+    type==='default'?DEFAULT_PAID.find(g=>g.id===id):
+    (S.customGigs||[]).find(g=>g.id===id);
+  if(!base)return;
+  const applied=applyOverride(base);
+  const isPaid=type==='default'||type==='custom';
+  const modal=document.getElementById('edit-gig-modal');
+  document.getElementById('em-emoji').value=applied.emoji;
+  document.getElementById('em-name').value=applied.name;
+  document.getElementById('em-desc').value=applied.desc||'';
+  document.getElementById('em-xp').value=applied.xp;
+  const payRow=document.getElementById('em-pay-row');
+  if(payRow)payRow.style.display=isPaid?'':'none';
+  if(isPaid)document.getElementById('em-pay').value=applied.pay;
+  const freqEl=document.getElementById('em-freq');if(freqEl)freqEl.value=applied.freq||'weekly';
+  const whoRowEl=document.getElementById('em-who-row');if(whoRowEl)whoRowEl.style.display=isPaid?'':'none';
+  const whoEl=document.getElementById('em-who');if(whoEl&&isPaid)whoEl.value=applied.who||'all';
+  const resetBtn=document.getElementById('em-reset-btn');
+  const hasOverride=S.gigOverrides&&S.gigOverrides[id];
+  if(resetBtn)resetBtn.style.display=(type==='default'||type==='core')&&hasOverride?'':'none';
+  modal.classList.remove('h');
+}
+function closeEditGig(){document.getElementById('edit-gig-modal').classList.add('h')}
+function saveEditGig(){
+  const id=editingGigId,type=editingGigType;
+  if(!id)return;
+  const emoji=document.getElementById('em-emoji').value.trim()||'⭐';
+  const name=document.getElementById('em-name').value.trim();if(!name)return;
+  const desc=document.getElementById('em-desc').value.trim();
+  const xp=parseInt(document.getElementById('em-xp').value)||50;
+  const isPaid=type==='default'||type==='custom';
+  const pay=isPaid?(parseFloat(document.getElementById('em-pay').value)||1):undefined;
+  const freq=document.getElementById('em-freq')?.value||'weekly';
+  const who=isPaid?(document.getElementById('em-who')?.value||'all'):undefined;
+
+  if(type==='default'||type==='core'){
+    // Store as override
+    if(!S.gigOverrides)S.gigOverrides={};
+    S.gigOverrides[id]={emoji,name,desc,xp,freq,...(pay!==undefined?{pay}:{}),... (who!==undefined?{who}:{})};
+  }else if(type==='custom'){
+    const idx=(S.customGigs||[]).findIndex(g=>g.id===id);
+    if(idx>=0)S.customGigs[idx]={...S.customGigs[idx],emoji,name,desc,xp,pay,freq,who};
+  }else if(type==='custom-core'){
+    const idx=(S.customCoreGigs||[]).findIndex(g=>g.id===id);
+    if(idx>=0)S.customCoreGigs[idx]={...S.customCoreGigs[idx],emoji,name,desc,xp,freq};
+  }
+  save();closeEditGig();renderMgrList();renderBudgetHealth();
+}
+function resetGigOverride(){
+  const id=editingGigId;if(!id||!S.gigOverrides)return;
+  delete S.gigOverrides[id];save();closeEditGig();renderMgrList();
+}
+
+// ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
 document.getElementById('login-screen').classList.remove('h');
+initSync();
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{

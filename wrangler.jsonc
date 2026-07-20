@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gig-squad",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-21",
+  "observability": { "enabled": true },
+  "assets": { "directory": ".", "binding": "ASSETS" },
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    { "binding": "GS_STATE", "id": "1d0a415dcad34d12b26bec4a55a223ce" }
+  ]
+}
