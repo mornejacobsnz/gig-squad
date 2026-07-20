@@ -910,7 +910,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.5.0 · Budget Control · 2026-07-20</div>
+<div class="build-version" id="build-version">v3.5.1 · Household Chores + Budget Fix · 2026-07-21</div>
 
 <!-- BOTTOM NAV -->
 <nav class="bnav h" id="bottom-nav">
@@ -990,6 +990,11 @@ const DEFAULT_PAID=[
   {id:'s4',emoji:'🌱',name:'Startup Pitch',desc:'3-min business idea: name, product, price, customer',pay:12,xp:110,tags:['brain','social'],freq:'monthly',who:'all'},
   {id:'x1',emoji:'⭐',name:'Unsolicited Awesome',desc:'Do something helpful nobody asked for — parent must approve',pay:6,xp:80,tags:['bonus'],freq:'anytime',who:'all',needsApproval:true},
   {id:'x2',emoji:'📖',name:'Read & Report',desc:'Read 30 min then share 3 things you learned',pay:3,xp:45,tags:['bonus','brain'],freq:'daily',who:'all'},
+  {id:'h1',emoji:'🐕',name:'Pick Up Poo',desc:'Backyard poop patrol — twice a week. Take turns with your sister.',pay:2,xp:20,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'h2',emoji:'🐱',name:'Oakley\'s Litter Box',desc:'Scoop and refresh Oakley\'s litter box. Take turns with your sister.',pay:2,xp:20,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'h3',emoji:'👕',name:'Fold Clothes',desc:'Fold and put away the laundry — neatly!',pay:3,xp:30,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'h4',emoji:'🚽',name:'Bathroom Bins',desc:'Empty bathroom bins and replace the bag. Take turns with your sister.',pay:2,xp:20,tags:['physical'],freq:'weekly',who:'all'},
+  {id:'h5',emoji:'🧽',name:'Clean Bathroom',desc:'Full bathroom clean — toilet, sink, mirror, floor. Take turns with your sister.',pay:4,xp:40,tags:['physical'],freq:'weekly',who:'all'},
 ];
 const CORE_GIGS=[
   {id:'core1',emoji:'🛏️',name:'Make Your Bed',desc:'Neat, tidy, pillows straight. Every morning.',xp:50,tags:['core'],freq:'daily'},
@@ -999,6 +1004,9 @@ const CORE_GIGS=[
   {id:'core5',emoji:'👕',name:'Laundry Loop',desc:'Collect, sort, and put away your clothes.',xp:55,tags:['core'],freq:'weekly'},
   {id:'core6',emoji:'🧼',name:'Bathroom Tidy',desc:'Sink, counter, floor — yours to own daily.',xp:50,tags:['core'],freq:'daily'},
   {id:'core7',emoji:'🍱',name:'Lunch Packed',desc:'Pack your own healthy school lunch.',xp:40,tags:['core'],freq:'daily'},
+  {id:'core8',emoji:'🍽️',name:'Dishwasher Duty',desc:'Pack or unpack the dishwasher. Take turns with your sister.',xp:20,tags:['core'],freq:'daily'},
+  {id:'core9',emoji:'🗑️',name:'Trash Run',desc:'Take out the kitchen trash and replace the bag. Take turns with your sister.',xp:15,tags:['core'],freq:'daily'},
+  {id:'core10',emoji:'🧹',name:'Wipe Kitchen Counter',desc:'Wipe down the kitchen counter after meals. Take turns with your sister.',xp:15,tags:['core'],freq:'daily'},
 ];
 const XP_REWARDS=[
   {id:'r1',emoji:'📱',name:'30 min Screen Time',cost:150},
@@ -2077,20 +2085,23 @@ function renderBudgetHealth(){
   const el=document.getElementById('bud-health');if(!el)return;
   const budget=getBudget();
   const inp=document.getElementById('bud-input');if(inp)inp.value=budget;
-  const mZ=theoreticalMonthlyMax('zara'),mL=theoreticalMonthlyMax('lune');
-  const pctZ=Math.min((mZ/budget)*100,100),pctL=Math.min((mL/budget)*100,100);
-  const colour=p=>p>=100?'#ef4444':p>=80?'#fb923c':'#06d6a0';
-  const warn=p=>p>=100?'over':p>=80?'near':'ok';
+  const earnZ=Math.min(S.zara.earned,budget),earnL=Math.min(S.lune.earned,budget);
+  const pctZ=Math.min((earnZ/budget)*100,100),pctL=Math.min((earnL/budget)*100,100);
+  const colour=p=>p>=100?'#ef4444':p>=75?'#fb923c':p>=40?'#ffd166':'#06d6a0';
+  const remZ=Math.max(0,budget-earnZ),remL=Math.max(0,budget-earnL);
+  const poolZ=Math.round(theoreticalMonthlyMax('zara')),poolL=Math.round(theoreticalMonthlyMax('lune'));
   const maxPct=Math.max(pctZ,pctL);
   let warnHtml='';
-  if(maxPct>=100)warnHtml=`<div class="bud-warn over">⚠️ Gigs exceed budget — if all completed, kids could earn more than $${budget}/mo each. Reduce pay on some gigs or raise the budget.</div>`;
-  else if(maxPct>=80)warnHtml=`<div class="bud-warn near">🟡 Nearing budget limit. Consider lowering pay on frequent gigs to keep headroom.</div>`;
-  else warnHtml=`<div class="bud-warn ok">✅ Budget looks healthy — plenty of headroom for both kids.</div>`;
+  if(maxPct>=100)warnHtml=`<div class="bud-warn over">🏆 Budget cap reached for one or both kids this month!</div>`;
+  else if(maxPct>=75)warnHtml=`<div class="bud-warn near">🟡 Getting close to the cap — ${Math.round(100-maxPct)}% left.</div>`;
+  else warnHtml=`<div class="bud-warn ok">✅ Budget on track this month.</div>`;
   el.innerHTML=`
-    <div class="bud-child-row"><span class="bud-child-lbl">🌸 Zara — if all gigs done</span><span class="bud-child-val" style="color:${colour(pctZ)}">$${Math.round(mZ)} / $${budget}</span></div>
+    <div class="bud-child-row"><span class="bud-child-lbl">🌸 Zara — earned this month</span><span class="bud-child-val" style="color:${colour(pctZ)}">$${earnZ.toFixed(2)} / $${budget}</span></div>
     <div class="bud-bar"><div class="bud-fill" style="width:${pctZ}%;background:${colour(pctZ)}"></div></div>
-    <div class="bud-child-row"><span class="bud-child-lbl">✨ Luné — if all gigs done</span><span class="bud-child-val" style="color:${colour(pctL)}">$${Math.round(mL)} / $${budget}</span></div>
+    <div class="bud-child-row" style="margin-bottom:10px"><span class="bud-child-lbl" style="color:var(--muted)">$${remZ.toFixed(2)} remaining · $${poolZ} gig pool</span></div>
+    <div class="bud-child-row"><span class="bud-child-lbl">✨ Luné — earned this month</span><span class="bud-child-val" style="color:${colour(pctL)}">$${earnL.toFixed(2)} / $${budget}</span></div>
     <div class="bud-bar"><div class="bud-fill" style="width:${pctL}%;background:${colour(pctL)}"></div></div>
+    <div class="bud-child-row" style="margin-bottom:10px"><span class="bud-child-lbl" style="color:var(--muted)">$${remL.toFixed(2)} remaining · $${poolL} gig pool</span></div>
     ${warnHtml}`;
 }
 function updateBudgetHint(){
