@@ -451,13 +451,12 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .gm-chat-send:disabled{opacity:.45;cursor:default}
 /* animations */
 /* ── MOOD ANIMATIONS ── */
-/* Thriving — bouncy, energetic, alive */
-.mood-thriving .gm-creature-wrap{animation:gm-thriving 2s ease-in-out infinite}
+/* Thriving — gentle happy float */
+.mood-thriving .gm-creature-wrap{animation:gm-thriving 3.5s ease-in-out infinite}
 @keyframes gm-thriving{
   0%,100%{transform:translateY(0px) scale(1)}
-  30%{transform:translateY(-14px) scale(1.04)}
-  60%{transform:translateY(-8px) scale(1.02)}
-  80%{transform:translateY(-12px) scale(1.03)}
+  40%{transform:translateY(-7px) scale(1.02)}
+  70%{transform:translateY(-4px) scale(1.01)}
 }
 /* Waiting — slow gentle rock */
 .mood-waiting .gm-creature-wrap{animation:gm-waiting 4s ease-in-out infinite}
@@ -476,19 +475,19 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .gm-creature-wrap{animation:gm-waiting 4s ease-in-out infinite}
 
 /* ── MOOD IMAGE FILTERS ── */
-/* Thriving — full colour, slight brightness boost */
+/* Thriving — warm, happy, soft glow */
 .mood-thriving .gm-creature-img{
-  filter:drop-shadow(0 16px 40px rgba(120,80,255,.7)) saturate(1.2) brightness(1.1);
+  filter:drop-shadow(0 14px 32px rgba(120,80,255,.55)) saturate(1.1) brightness(1.05) hue-rotate(5deg);
   transition:filter 1s ease;
 }
-/* Waiting — slightly muted */
+/* Waiting — neutral, calm */
 .mood-waiting .gm-creature-img{
-  filter:drop-shadow(0 12px 30px rgba(80,60,180,.4)) saturate(0.8) brightness(0.9);
+  filter:drop-shadow(0 10px 24px rgba(80,60,180,.3)) saturate(0.9) brightness(0.95);
   transition:filter 1s ease;
 }
-/* Dormant — washed out, dim */
+/* Dormant — soft and sleepy, not dark */
 .mood-dormant .gm-creature-img{
-  filter:drop-shadow(0 8px 20px rgba(40,20,80,.3)) saturate(0.3) brightness(0.65);
+  filter:drop-shadow(0 8px 18px rgba(20,40,80,.25)) saturate(0.55) brightness(0.82) hue-rotate(-8deg);
   transition:filter 1.5s ease;
 }
 
@@ -525,6 +524,48 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 .mood-thriving .gm-chest-glow{opacity:1;animation:chest-pulse 1.5s ease-in-out infinite}
 .mood-waiting .gm-chest-glow{opacity:.3;animation:chest-pulse 3s ease-in-out infinite}
 .mood-dormant .gm-chest-glow{opacity:.08;animation:chest-pulse 5s ease-in-out infinite}
+/* Hungry — amber warning, restless shuffle */
+.mood-hungry .gm-creature-wrap{animation:gm-hungry 2.2s ease-in-out infinite}
+@keyframes gm-hungry{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  20%{transform:translateY(-2px) rotate(-1.5deg)}
+  45%{transform:translateY(1px) rotate(1deg)}
+  65%{transform:translateY(-3px) rotate(-1deg)}
+  85%{transform:translateY(0) rotate(.5deg)}
+}
+.mood-hungry .gm-creature-img{filter:drop-shadow(0 8px 20px rgba(245,158,11,.35)) saturate(.65) brightness(.85) hue-rotate(-12deg);transition:filter 1s ease}
+.mood-hungry .gm-ground-glow{opacity:.1;transition:opacity 1s ease}
+.mood-hungry .gm-horizon{opacity:.1;transition:opacity 1s ease}
+.mood-hungry .gm-sky{filter:brightness(.7) sepia(.3);transition:filter 1s ease}
+.mood-hungry .gm-ground{filter:brightness(.6);transition:filter 1s ease}
+.mood-hungry .gm-creature-shadow{width:80px;opacity:.2;transition:all 1s ease}
+.mood-hungry .gm-chest-glow{opacity:.04;animation:chest-pulse 4.5s ease-in-out infinite}
+.mood-hungry .gm-mood-dot{background:#f59e0b;box-shadow:0 0 6px #f59e0b}
+/* Starving — red critical, urgent tremor */
+.mood-starving .gm-creature-wrap{animation:gm-starving 1.1s ease-in-out infinite}
+@keyframes gm-starving{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  10%{transform:translateY(-1px) rotate(-2deg)}
+  25%{transform:translateY(1px) rotate(2deg)}
+  40%{transform:translateY(-2px) rotate(-1.5deg)}
+  55%{transform:translateY(.5px) rotate(1deg)}
+  70%{transform:translateY(-1px) rotate(-1deg)}
+  85%{transform:translateY(.5px) rotate(1.5deg)}
+}
+.mood-starving .gm-creature-img{filter:drop-shadow(0 6px 16px rgba(239,68,68,.5)) saturate(.25) brightness(.68) hue-rotate(-22deg);transition:filter .5s ease}
+.mood-starving .gm-ground-glow{opacity:.04;transition:opacity .5s ease}
+.mood-starving .gm-horizon{opacity:.04;transition:opacity .5s ease}
+.mood-starving .gm-sky{filter:brightness(.45) sepia(.6);transition:filter .5s ease}
+.mood-starving .gm-ground{filter:brightness(.38);transition:filter .5s ease}
+.mood-starving .gm-creature-shadow{width:55px;opacity:.12;transition:all .5s ease}
+.mood-starving .gm-chest-glow{opacity:0;animation:none}
+.mood-starving .gm-mood-dot{background:#ef4444;box-shadow:0 0 8px #ef4444;animation:starving-blink 1s ease-in-out infinite}
+@keyframes starving-blink{0%,100%{opacity:1}50%{opacity:.15}}
+/* ── HUNGER BAR ── */
+.gm-hunger-wrap{padding:0 18px 10px;position:relative;z-index:6}
+.gm-hunger-label{font-size:.58rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:5px;display:flex;justify-content:space-between;align-items:center}
+.gm-hunger-track{height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.gm-hunger-fill{height:100%;border-radius:99px;transition:width 1.2s ease,background .8s ease}
 @keyframes gm-idle{0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)}}
 @keyframes gm-wait{0%,100%{transform:translateY(0px)}30%{transform:translateY(-4px)}60%{transform:translateY(-2px)}}
 @keyframes gm-dormant{0%,100%{transform:translateY(0px)}50%{transform:translateY(-3px)}}
@@ -648,6 +689,17 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
   100%{transform:translate(-50%,-50%) scale(.5);opacity:0}
 }
 
+/* ── END-OF-PERIOD BANNER ── */
+.eop-wrap{padding:0 0 12px}
+.eop-card{display:flex;align-items:flex-start;gap:12px;background:linear-gradient(135deg,rgba(251,146,60,.15),rgba(245,158,11,.1));border:1px solid rgba(251,146,60,.3);border-radius:16px;padding:14px 16px;margin:0}
+.eop-card.done{background:linear-gradient(135deg,rgba(6,214,160,.12),rgba(6,214,160,.06));border-color:rgba(6,214,160,.3)}
+.eop-icon{font-size:1.6rem;line-height:1;flex-shrink:0;margin-top:2px}
+.eop-body{flex:1;min-width:0}
+.eop-title{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;color:#FFD166;margin-bottom:3px}
+.eop-card.done .eop-title{color:var(--green)}
+.eop-sub{font-size:.72rem;color:var(--muted);line-height:1.4;margin-bottom:8px}
+.eop-card.done .eop-sub{margin-bottom:0}
+.eop-btn{background:linear-gradient(135deg,#fb923c,#f59e0b);color:#fff;border:none;border-radius:10px;padding:7px 14px;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.3px}
 /* ── BUILD VERSION TAG ── */
 .build-version{
   position:fixed;
@@ -780,6 +832,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
         </div>
       </div>
 
+      <div class="eop-wrap" id="eop-banner"></div>
       <div class="wallet" id="dash-wallet">
         <div class="wglow"></div>
         <div class="wtop">
@@ -950,6 +1003,10 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
           </div>
           <div id="undo-list"></div>
         </div>
+        <div class="mgr-sec"><div class="mgr-title">🎁 Unclaim a Reward</div>
+          <div style="font-size:.76rem;color:var(--muted);margin-bottom:12px;line-height:1.5">Tap a claimed reward to remove it and refund the XP.</div>
+          <div id="unclaim-list"></div>
+        </div>
         <div class="pinchange"><div class="pc-title">🔑 Change PINs</div>
           <div class="pc-row"><span class="pc-who">🌸 Zara</span><input class="pc-input" id="pc-z" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('zara')">Save</button></div>
           <div class="pc-row"><span class="pc-who">✨ Luné</span><input class="pc-input" id="pc-l" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN"><button class="pc-btn" onclick="changePin('lune')">Save</button></div>
@@ -963,7 +1020,7 @@ header{padding:22px 0 4px;display:flex;justify-content:space-between;align-items
 </div>
 
 <!-- BUILD VERSION -->
-<div class="build-version" id="build-version">v3.6.3 · Proportional Habit Tax + Sync Timestamps · 2026-07-21</div>
+<div class="build-version" id="build-version">v3.7.0 · End-of-Period Budget Prompt + Cashout Gate · 2026-07-21</div>
 
 <!-- FAMILY ONBOARDING OVERLAY -->
 <div class="family-onboard h" id="family-onboard">
@@ -1105,7 +1162,11 @@ const CORE_GIGS=[
   {id:'core5',emoji:'👕',name:'Laundry Loop',desc:'Collect, sort, and put away your clothes.',xp:55,tags:['core'],freq:'weekly'},
   {id:'core6',emoji:'🧼',name:'Bathroom Tidy',desc:'Sink, counter, floor — yours to own daily.',xp:50,tags:['core'],freq:'daily'},
   {id:'core7',emoji:'🍱',name:'Lunch Packed',desc:'Pack your own healthy school lunch.',xp:40,tags:['core'],freq:'daily'},
-  {id:'core8',emoji:'🍽️',name:'Dishwasher Duty',desc:'Pack or unpack the dishwasher. Take turns with your sister.',xp:20,tags:['core'],freq:'daily',unlockedPay:1},
+  // schedule: day indices (0=Sun,1=Mon,...,6=Sat) each girl is assigned; both get Sunday
+  {id:'core8',emoji:'🍽️',name:'Dishwasher Duty',desc:'Pack or unpack the dishwasher.',xp:20,tags:['core'],freq:'daily',unlockedPay:1,
+   schedule:{zara:[1,3,5,0],lune:[2,4,6,0]}},
+  {id:'core11',emoji:'🐾',name:'Feed Oakley',desc:'Fill Oakley\'s bowl with fresh food and water.',xp:50,tags:['core'],freq:'daily',unlockedPay:1,who:'lune'},
+  {id:'core12',emoji:'🐾',name:'Feed Toby',desc:'Fill Toby\'s bowl with fresh food and water.',xp:50,tags:['core'],freq:'daily',unlockedPay:1,who:'zara'},
   {id:'core9',emoji:'🗑️',name:'Trash Run',desc:'Take out the kitchen trash and replace the bag. Take turns with your sister.',xp:15,tags:['core'],freq:'daily',unlockedPay:1},
   {id:'core10',emoji:'🧹',name:'Wipe Kitchen Counter',desc:'Wipe down the kitchen counter after meals. Take turns with your sister.',xp:15,tags:['core'],freq:'daily',unlockedPay:0.5},
 ];
@@ -1137,10 +1198,10 @@ const BIT=[
   {id:'bi8',emoji:'🎁',label:'Gift for someone',cat:'w'},
 ];
 
-function getLevel(xp){return Math.floor(xp/150)+1}
-function getLevelTitle(xp){const l=getLevel(xp);if(l<=4)return'Rookie 🌱';if(l<=8)return'Rising Star 🌟';if(l<=14)return'Go-Getter 🚀';if(l<=22)return'Boss Level 👑';return'Legend 💎';}
-function xpInLevel(xp){return xp%150}
-function xpToNext(xp){return 150-xpInLevel(xp)}
+function getLevel(xp){return Math.floor(xp/500)+1}
+function getLevelTitle(xp){const l=getLevel(xp);if(l<=3)return'Rookie 🌱';if(l<=6)return'Rising Star 🌟';if(l<=10)return'Go-Getter 🚀';if(l<=16)return'Boss Level 👑';return'Legend 💎';}
+function xpInLevel(xp){return xp%500}
+function xpToNext(xp){return 500-xpInLevel(xp)}
 function getBudget(){return+(S.monthlyBudget||100)}
 function getMonthStartDay(){return+(S.monthStartDay||1)}
 function getPeriodStart(startDay){
@@ -1185,7 +1246,7 @@ function rand(a){return a[Math.floor(Math.random()*a.length)]}
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[],coreDaysTotal:0,lastCoreDay:'',coreDaysThisPeriod:0}}
+function defP(){return{earned:0,xp:0,xpSpent:0,streak:0,lastDate:'',completedToday:[],completedMonth:[],claimedRewards:[],pending:[],budgetScore:null,cashedOut:0,pendingCashouts:[],accessory:null,ownedAccessories:[],coreDaysTotal:0,lastCoreDay:'',coreDaysThisPeriod:0,budgetDoneThisPeriod:false,hunger:100,lastHungerUpdate:''}}
 function loadS(){
   try{
     const s=localStorage.getItem('gs4');
@@ -1203,19 +1264,28 @@ function loadS(){
     if(d.corePeriodUnlockThreshold===undefined)d.corePeriodUnlockThreshold=calcUnlockThreshold(!d.lastMonthReset,d.monthStartDay);
     // Self-heal corrupted xpSpent — can never exceed total xp earned
     const accessoryIds=['a1','a2','a3','a4'];
+    const _clean=arr=>(Array.isArray(arr)?arr:[]).filter(x=>typeof x==='string');
     ['zara','lune'].forEach(w=>{
       if((d[w].xpSpent||0)>d[w].xp){
         console.log('GigaSquad: healing corrupted xpSpent for',w);
         d[w].xpSpent=0;
       }
-      // Remove accessory IDs from claimedRewards — they should never be there
-      if(d[w].claimedRewards){
-        d[w].claimedRewards=d[w].claimedRewards.filter(id=>!accessoryIds.includes(id));
-      }
+      // Scrub non-string entries from all set-like arrays (guards against merge corruption)
+      ['completedMonth','completedToday','pending','claimedRewards'].forEach(k=>{
+        if(d[w][k])d[w][k]=_clean(d[w][k]).filter(id=>k!=='claimedRewards'||!accessoryIds.includes(id));
+      });
     });
     localStorage.setItem('gs4',JSON.stringify(d));
     const todayStr=new Date().toDateString();
     if(d.lastResetDate!==todayStr){
+      // Hunger tick — fires once per new day, before completedToday is cleared
+      const yest=new Date();yest.setDate(yest.getDate()-1);const yestStr=yest.toDateString();
+      ['zara','lune'].forEach(who=>{
+        if(!d[who])return;
+        const didCore=d[who].lastCoreDay===yestStr;
+        d[who].hunger=didCore?Math.min(100,(d[who].hunger??100)+25):Math.max(0,(d[who].hunger??100)-25);
+        d[who].lastHungerUpdate=todayStr;
+      });
       d.zara.completedToday=[];d.zara.pending=[];
       d.lune.completedToday=[];d.lune.pending=[];
       d.lastResetDate=todayStr;
@@ -1231,7 +1301,8 @@ function loadS(){
           d[w].pendingCashouts.push({amt:uncashed,date:'Period end',time:'Auto',auto:true});
         }
         d[w].earned=0;d[w].cashedOut=0;d[w].completedMonth=[];
-        d[w].coreDaysThisPeriod=0;
+        d[w].coreDaysThisPeriod=0;d[w].budgetDoneThisPeriod=false;
+        d[w].claimedRewards=[];
       });
       d.lastMonthReset=periodStart;
       // Recalculate unlock threshold for full new period (never first-period proportional after initial setup)
@@ -1241,7 +1312,36 @@ function loadS(){
     return d;
   }catch{return{zara:defP(),lune:defP(),customGigs:[],customCoreGigs:[],log:[],pins:{zara:'1010',lune:'1212',parent:'1234'}}}
 }
-function save(){localStorage.setItem('gs4',JSON.stringify(S));if(FAMILY_CODE)syncToServer();}
+function getDeviceId(){
+  let id=localStorage.getItem('gs_device_id');
+  if(!id){id='dev_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);localStorage.setItem('gs_device_id',id);}
+  return id;
+}
+async function backupToDevice(){
+  try{
+    const id=getDeviceId();
+    await fetch(`/api/device/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:S})});
+  }catch{}
+}
+async function restoreFromDevice(){
+  try{
+    const id=localStorage.getItem('gs_device_id');
+    if(!id)return false;
+    const r=await fetch(`/api/device/${id}`);
+    if(!r.ok)return false;
+    const data=await r.json();
+    if(!data.state)return false;
+    S=mergeStateLocal(S,data.state);
+    localStorage.setItem('gs4',JSON.stringify(S));
+    console.log('[GigSquad] Restored state from device backup');
+    return true;
+  }catch{return false;}
+}
+function save(){
+  localStorage.setItem('gs4',JSON.stringify(S));
+  backupToDevice();
+  if(FAMILY_CODE)syncToServer();
+}
 function applyOverride(g){const ov=S.gigOverrides&&S.gigOverrides[g.id];return ov?{...g,...ov}:g;}
 function getGig(id){return allPaid().map(applyOverride).find(g=>g.id===id)||allCore().find(g=>g.id===id)}
 let S=loadS();
@@ -1272,6 +1372,8 @@ const WHISPERS={
     thriving:["Been crushing it lately. That's the Rumblix way.","Every gig done makes me stronger. Keep going.","Nothing can stop us right now. Nothing.","The streak is real. Don't break it.","I felt that last gig. Big."],
     waiting:["Still here. Always here.","I've been thinking...","Whenever you're ready.","No rush. I can wait.","Something's coming. I can feel it."],
     dormant:["...","You were gone a while.","I kept the lights on.","Welcome back.","Almost forgot what your gigs felt like."],
+    hungry:["My stomach is growling...","You promised you'd come back.","I'm fading a little. Just a little.","The hunger is real. Check those gigs off.","Still here... but barely holding on."],
+    starving:["I can barely move...","You left me here.","One gig. Just one. Please.","It's so cold...","I'm still here... but hurry."],
     reaction:["YES. That's what I'm talking about.","Felt that one. More.","The chest mark just got brighter.","That's the energy.","Nothing can stop us."],
     gift_sweet:["You got me something? That's new.","I felt that. Thanks.","You didn't have to. But I'm glad you did."],
     gift_spark:["Something just shifted. That was you.","The chest mark is burning bright.","I can feel that energy. Let's go."],
@@ -1281,6 +1383,8 @@ const WHISPERS={
     thriving:["The patterns are clear. You're doing well.","I see everything. You're on the right path.","Consistency is the rarest thing. You have it.","The deep ones know when to show up.","Ancient things respect persistence."],
     waiting:["I'm watching.","The tide always comes back.","...","Still here. Always here.","Something shifts when you return."],
     dormant:["...","The deep goes quiet without you.","Time passes differently here.","You came back.","The light was dim. It's brighter now."],
+    hungry:["The light is dimming.","The deep grows cold without you.","I feel it. The absence.","Come back to me.","I'm still here... just quiet."],
+    starving:["...the deep is very dark now.","So cold.","I'm waiting... in the dark.","One gig. The light will return.","Please."],
     reaction:["The ripple spreads.","I felt that.","Ancient and new at once.","The deep approves.","It's always been you."],
     gift_sweet:["Something warm just arrived.","I see what you did there.","The deep remembers kindness."],
     gift_spark:["The light just changed. That was you.","Ancient energy, renewed.","I felt that all the way down."],
@@ -1295,13 +1399,16 @@ let gmLastLevel=1;
 
 function getGigaMalMood(who){
   const s=S[who];
+  const hunger=s.hunger??100;
   const today=new Date().toDateString();
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-  // Thriving: any gigs done today — streak doesn't matter
+  // Thriving: doing chores today — overrides hunger (chores = feeding the pet)
   if(s.completedToday.length>0)return'thriving';
-  // Waiting: was active today or yesterday but no gigs yet
+  // Hunger states checked before waiting/dormant
+  if(hunger<=20)return'starving';
+  if(hunger<=45)return'hungry';
+  // Waiting: was active recently but no gigs yet today
   if(s.lastDate===today||s.lastDate===yesterday.toDateString())return'waiting';
-  // Dormant: hasn't shown up in 2+ days
   return'dormant';
 }
 
@@ -1320,7 +1427,9 @@ function renderGigaMalZone(who){
   const stage=getGigaMalStage(who);
   gmCurrentMood=mood;
   gmLastLevel=getLevel(S[who].xp);
-  const moodLabel=mood==='thriving'?'✦ Thriving':mood==='waiting'?'◎ Waiting':'○ Dormant';
+  const hunger=Math.round(S[who].hunger??100);
+  const moodLabel=mood==='thriving'?'✦ Thriving':mood==='waiting'?'◎ Waiting':mood==='hungry'?'⚠ Hungry':mood==='starving'?'💀 Starving':'○ Dormant';
+  const hungerColor=hunger>60?'#06D6A0':hunger>30?'#f59e0b':'#ef4444';
   el.className=`gigamal-zone ${gm.color} mood-${mood}`;
   el.innerHTML=`
     <div class="gm-sky"></div>
@@ -1336,6 +1445,10 @@ function renderGigaMalZone(who){
       <div class="gm-mood-indicator mood-${mood}">
         <div class="gm-mood-dot"></div>${moodLabel}
       </div>
+    </div>
+    <div class="gm-hunger-wrap">
+      <div class="gm-hunger-label"><span>🍖 Hunger</span><span>${hunger}%</span></div>
+      <div class="gm-hunger-track"><div class="gm-hunger-fill" style="width:${hunger}%;background:${hungerColor}"></div></div>
     </div>
     <div class="gm-whisper-zone">
       <div class="gm-whisper" id="gm-whisper">
@@ -1666,6 +1779,7 @@ function renderDash(){
   }
   // Render GigaMal companion
   renderGigaMalZone(who);
+  renderEopBanner(who);
   renderXPStore(who,xpAvail);
   renderGigsForUser(who);
 }
@@ -1892,9 +2006,17 @@ function triggerGigaMalGift(who,r){
 // ═══════════════════════════════════════════════
 // GIGS
 // ═══════════════════════════════════════════════
+function coreForUser(who){
+  const today=new Date().getDay(); // 0=Sun,1=Mon,...,6=Sat
+  return allCore().filter(g=>{
+    if(g.who&&g.who!=='all'&&g.who!==who)return false;
+    if(!g.schedule)return true;
+    return g.schedule[who]?.includes(today)??true;
+  });
+}
 function renderGigsForUser(who){
   renderGigGrid('w-paid',paidForUser(who),who,false);
-  renderGigGrid('w-core',allCore(),who,true);
+  renderGigGrid('w-core',coreForUser(who),who,true);
   renderCoreUnlockProgress(who);
 }
 function renderCoreUnlockProgress(who){
@@ -1998,7 +2120,7 @@ function trackCoreDay(who){
 function completeCore(gig,who,e){
   const s=S[who],mult=streakMult(s.streak),xpGained=Math.round(gig.xp*mult);
   trackCoreDay(who);
-  s.xp+=xpGained;s.completedToday.push(gig.id);
+  s.xp+=xpGained;s.completedToday.push(gig.id);s.completedMonth.push(gig.id);
   updateStreak(s);
   let moneyGained=0;
   if(isCoreUnlocked(who)&&gig.unlockedPay>0){
@@ -2030,6 +2152,16 @@ function openCashout(){
   if(!CU||CU==='parent')return;
   const avail=Math.max(0,Math.min(S[CU].earned,getBudget())-S[CU].cashedOut);
   if(avail<=0){showModal('💸','Nothing to cash out!','Keep completing gigs to earn money first!',0,0,1,CU,false);return}
+  // Budget gate: if ≤3 days left in period, budget must be done first
+  if(daysRemainingInPeriod()<=3&&!S[CU].budgetDoneThisPeriod){
+    document.getElementById('m-icon').textContent='📊';
+    document.getElementById('m-title').textContent='Budget First!';
+    document.getElementById('m-msg').innerHTML='Before you cash out, you need to plan your budget for this period.<br><br><button onclick="closeModal();goToBudget()" style="background:linear-gradient(135deg,#fb923c,#f59e0b);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px">📊 Do My Budget</button>';
+    document.getElementById('m-earn').innerHTML='';
+    const btn=document.getElementById('m-btn');btn.className='mbtn '+(CU==='zara'?'mbz':'mbl');
+    document.getElementById('modal-overlay').classList.remove('h');
+    return;
+  }
   const slider=document.getElementById('co-slider');
   slider.max=avail.toFixed(2);slider.value=avail.toFixed(2);
   document.getElementById('co-max-lbl').textContent='$'+avail.toFixed(2);
@@ -2133,10 +2265,11 @@ function renderScoreboard(){
     el.appendChild(card);
   });
   const catEl=document.getElementById('sb-cats');if(!catEl)return;catEl.innerHTML='';
-  const cats=[{t:'physical',n:'💪 Physical'},{t:'brain',n:'🧠 Brain'},{t:'creative',n:'🎨 Creative'},{t:'social',n:'🤝 Social'},{t:'bonus',n:'⭐ Bonus'}];
+  const allGigsForScore=[...allPaid(),...allCore()];
+  const cats=[{t:'core',n:'🏠 Core'},{t:'physical',n:'💪 Physical'},{t:'brain',n:'🧠 Brain'},{t:'creative',n:'🎨 Creative'},{t:'social',n:'🤝 Social'},{t:'bonus',n:'⭐ Bonus'}];
   cats.forEach(c=>{
-    const zC=allPaid().filter(g=>g.tags.includes(c.t)&&S.zara.completedMonth.includes(g.id)).length;
-    const lC=allPaid().filter(g=>g.tags.includes(c.t)&&S.lune.completedMonth.includes(g.id)).length;
+    const zC=allGigsForScore.filter(g=>g.tags.includes(c.t)&&S.zara.completedMonth.includes(g.id)).length;
+    const lC=allGigsForScore.filter(g=>g.tags.includes(c.t)&&S.lune.completedMonth.includes(g.id)).length;
     const mx=Math.max(zC,lC,1);
     const row=document.createElement('div');row.className='cat-row';
     row.innerHTML=`<span class="cat-name">${c.n}</span><div class="cat-bar-wrap"><div class="cat-bar zbar" style="width:${Math.round((zC/mx)*100)}px"></div><div class="cat-bar lbar" style="width:${Math.round((lC/mx)*100)}px"></div></div><span class="cat-num" style="color:var(--za)">${zC}</span><span class="cat-num" style="color:var(--la)">${lC}</span>`;
@@ -2188,10 +2321,33 @@ function submitBudget(){
   const grade=grades.find(g=>score>=g.min);
   document.getElementById('bscore').textContent=grade.g+' ('+score+'/100)';
   document.getElementById('bverdict').textContent=grade.v;
-  S[who].budgetScore=grade.g+' '+score+'/100';save();
+  S[who].budgetScore=grade.g+' '+score+'/100';
+  S[who].budgetDoneThisPeriod=true;
+  save();
+  renderEopBanner(who);
   document.getElementById('bres').style.display='block';
   document.getElementById('bres').scrollIntoView({behavior:'smooth',block:'nearest'});
+  const dLeft=daysRemainingInPeriod();
+  if(dLeft<=3&&avail>0)setTimeout(()=>{
+    const el=document.getElementById('bres');if(el){const nudge=document.createElement('div');nudge.style.cssText='margin-top:14px;text-align:center';nudge.innerHTML=`<div style="font-size:.78rem;color:var(--green);font-weight:700;margin-bottom:8px">🎉 Budget done! Time to cash out.</div><button onclick="switchTab(\'dash\')" style="background:linear-gradient(135deg,var(--green),#059669);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif">💸 Go Cash Out</button>`;el.appendChild(nudge);}
+  },300);
 }
+
+function renderEopBanner(who){
+  const el=document.getElementById('eop-banner');if(!el)return;
+  const dLeft=daysRemainingInPeriod();
+  const s=S[who];
+  const avail=Math.max(0,Math.min(s.earned,getBudget())-s.cashedOut);
+  if(dLeft>3||avail<=0){el.innerHTML='';return;}
+  if(s.budgetDoneThisPeriod){
+    el.innerHTML=`<div class="eop-card done"><div class="eop-icon">✅</div><div class="eop-body"><div class="eop-title">Budget done — you're a money genius!</div><div class="eop-sub">You planned your ${periodLabel()} budget. Ready to cash out your $${avail.toFixed(2)}!</div></div></div>`;
+  }else{
+    const urgency=dLeft<=1?'🚨':'⏰';
+    const dayWord=dLeft===1?'1 day left':'${dLeft} days left';
+    el.innerHTML=`<div class="eop-card"><div class="eop-icon">${urgency}</div><div class="eop-body"><div class="eop-title">${dLeft===1?'1 day':dLeft+' days'} left in this period!</div><div class="eop-sub">Plan your budget before you cash out — it's how you show you're money smart 💡</div><button class="eop-btn" onclick="goToBudget()">📊 Do My Budget</button></div></div>`;
+  }
+}
+function goToBudget(){switchTab('budget');}
 
 // ═══════════════════════════════════════════════
 // PARENT TAB PIN
@@ -2233,7 +2389,7 @@ function renderParentDash(){
     set(`pd-${pre}-str`,s.streak+'d 🔥');
     set(`pd-${pre}-bud`,s.budgetScore||'Not done');
   });
-  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();renderBudgetHealth();renderFamilySection();
+  renderLog();renderMgrList();renderPending();renderCoPending();renderUndoList();renderUnclaimList();renderBudgetHealth();renderFamilySection();
 }
 function addLog(who,emoji,name,money,xp){
   if(!S.log)S.log=[];
@@ -2262,6 +2418,25 @@ function renderCoPending(){
   if(!any){const d=document.createElement('div');d.className='no-log';d.textContent='No pending cash-outs';el.appendChild(d)}
 }
 function confirmCO(who,i){S[who].pendingCashouts.splice(i,1);save();renderCoPending();renderParentDash()}
+function renderUnclaimList(){
+  const el=document.getElementById('unclaim-list');if(!el)return;
+  const allRewards=[...XP_REWARDS.filter(r=>!r.isAccessory&&!r.isGigaMalGift)];
+  const rows=[];
+  ['zara','lune'].forEach(who=>{
+    const label=who==='zara'?'🌸 Zara':'✨ Luné';
+    S[who].claimedRewards.forEach(id=>{
+      const r=allRewards.find(x=>x.id===id);if(!r)return;
+      rows.push(`<div class="co-item"><span class="co-name">${label} · ${r.emoji} ${r.name}</span><span class="mgr-del" onclick="unclaimReward('${who}','${id}',${r.cost})" style="cursor:pointer">↩️ Unclaim</span></div>`);
+    });
+  });
+  el.innerHTML=rows.length?rows.join(''):'<div class="no-log">No claimed rewards</div>';
+}
+function unclaimReward(who,id,cost){
+  S[who].claimedRewards=S[who].claimedRewards.filter(x=>x!==id);
+  S[who].xpSpent=Math.max(0,(S[who].xpSpent||0)-cost);
+  save();renderUnclaimList();renderParentDash();
+  if(CU===who)renderDash();
+}
 function renderMgrList(){
   const el=document.getElementById('mgr-list');if(!el)return;el.innerHTML='';
   // Default core gigs
@@ -2395,28 +2570,20 @@ function addGig(){
   if(choreType==='core'){
     if(!S.customCoreGigs)S.customCoreGigs=[];
     S.customCoreGigs.push({id:'customcore_'+Date.now(),emoji,name,desc,xp,tags:[cat],freq,who});
-    save();renderMgrList();
+    save();renderMgrList();renderBoard();
+    if(CU&&CU!=='parent')renderGigsForUser(CU);
     ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
     showModal('✅','Core Duty Added!',`"${name}" is now in the Core Duties${who!=='all'?' for '+who:''}!`,0,0,1,'zara',true);
     return;
   }
   const pay=parseFloat(document.getElementById('af-p').value)||5;
-  const budget=getBudget();
-  const currentMax=theoreticalMonthlyMax(who==='all'?null:who);
-  const addedMax=pay*freqOccurrences(freq);
-  const newTotal=currentMax+addedMax;
-  const doAdd=()=>{
-    if(!S.customGigs)S.customGigs=[];
-    S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
-    save();renderMgrList();renderBudgetHealth();updateBudgetHint();
-    ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
-    showModal('✅','Gig Added!',`"${name}" is now live${who!=='all'?' for '+who+'!':'!'}`,0,0,1,'zara',true);
-  };
-  if(newTotal>budget){
-    doConfirm(`Over Budget!`,`This gig could add $${Math.round(addedMax)}/mo, pushing the total to $${Math.round(newTotal)}/mo — over the $${budget}/mo budget. Add anyway?`,doAdd);
-  }else{
-    doAdd();
-  }
+  if(!S.customGigs)S.customGigs=[];
+  S.customGigs.push({id:'custom_'+Date.now(),emoji,name,desc,pay,xp,tags:[cat],freq,who});
+  save();renderMgrList();renderBudgetHealth();updateBudgetHint();
+  renderBoard();
+  if(CU&&CU!=='parent')renderGigsForUser(CU);
+  ['af-e','af-n','af-d'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  showModal('✅','Gig Added!',`"${name}" is now live${who!=='all'?' for '+who+'!':'!'}`,0,0,1,'zara',true);
 }
 function deleteGig(id){
   doConfirm('Remove this gig?','This removes the custom gig for both girls.',()=>{
@@ -2544,6 +2711,7 @@ function showModal(icon,title,msg,money,xp,mult,who,isReward){
   const btn=document.getElementById('m-btn');
   const w=who||CU||'zara';
   btn.className='mbtn '+(w==='parent'||isReward?'mbz':w==='zara'?'mbz':'mbl');
+  btn.textContent=isReward?'Got it! ✓':'Collect! 💰';
   document.getElementById('modal-overlay').classList.remove('h');
 }
 function closeModal(){document.getElementById('modal-overlay').classList.add('h')}
@@ -2669,10 +2837,21 @@ function switchTab(tab){
 let FAMILY_CODE=null,LAST_SYNCED_AT=0,syncTimer=null,syncSt='idle';
 
 function initSync(){
+  // localStorage is authoritative — has correct lastSyncedAt timing
+  // URL param is fallback only when iOS wipes localStorage
   try{
     const stored=JSON.parse(localStorage.getItem('gs_family')||'null');
-    if(stored&&stored.code){FAMILY_CODE=stored.code;LAST_SYNCED_AT=stored.lastSyncedAt||0;startPolling();updateSyncBadge();return}
+    if(stored&&stored.code){
+      FAMILY_CODE=stored.code;LAST_SYNCED_AT=stored.lastSyncedAt||0;
+      // Stamp code into URL so future refreshes can recover if localStorage wipes
+      const urlCode=new URLSearchParams(location.search).get('f');
+      if(!urlCode)history.replaceState(null,'',`?f=${stored.code}`);
+      startPolling();updateSyncBadge();return;
+    }
   }catch{}
+  // localStorage empty — try URL param (iOS wipe recovery)
+  const urlCode=new URLSearchParams(location.search).get('f');
+  if(urlCode){FAMILY_CODE=urlCode;LAST_SYNCED_AT=0;localStorage.setItem('gs_family',JSON.stringify({code:urlCode,lastSyncedAt:0}));startPolling();updateSyncBadge();return}
   showFamilyOnboard();
 }
 function showFamilyOnboard(){document.getElementById('family-onboard').classList.remove('h')}
@@ -2710,11 +2889,13 @@ function skipSync(){closeFamilyOnboard()}
 function setFamilyCode(code){
   FAMILY_CODE=code;LAST_SYNCED_AT=Date.now();
   localStorage.setItem('gs_family',JSON.stringify({code,lastSyncedAt:LAST_SYNCED_AT}));
+  history.replaceState(null,'',`?f=${code}`);
   startPolling();updateSyncBadge();renderFamilySection();
 }
 function leaveFamily(){
   if(!confirm('Leave family sync? Your data stays on this device but changes won\'t sync.'))return;
   FAMILY_CODE=null;LAST_SYNCED_AT=0;localStorage.removeItem('gs_family');
+  history.replaceState(null,'',location.pathname);
   if(syncTimer)clearInterval(syncTimer);syncTimer=null;
   updateSyncBadge();renderFamilySection();
 }
@@ -2733,6 +2914,13 @@ async function syncToServer(){
     const d=await r.json();
     LAST_SYNCED_AT=d.updatedAt||Date.now();
     localStorage.setItem('gs_family',JSON.stringify({code:FAMILY_CODE,lastSyncedAt:LAST_SYNCED_AT}));
+    if(d.state){
+      const merged=mergeStateLocal(S,d.state);
+      if(JSON.stringify(merged)!==JSON.stringify(S)){
+        S=merged;localStorage.setItem('gs4',JSON.stringify(S));
+        if(CU)renderDash();if(parentUnlocked)renderParentDash();
+      }
+    }
     setSyncSt('synced');
   }catch{setSyncSt('offline')}
 }
@@ -2755,6 +2943,8 @@ async function syncFromServer(){
     setSyncSt('synced');
   }catch{setSyncSt('offline')}
 }
+const _strOnly=arr=>(Array.isArray(arr)?arr:[]).filter(x=>typeof x==='string');
+const _mergeStrArr=(a,b)=>[...new Set([..._strOnly(a),..._strOnly(b)])];
 function mergeStateLocal(local,remote){
   if(!remote)return local;
   const merged={...remote};
@@ -2767,23 +2957,26 @@ function mergeStateLocal(local,remote){
       cashedOut:Math.max(l.cashedOut||0,r.cashedOut||0),
       streak:Math.max(l.streak||0,r.streak||0),
       coreDaysTotal:Math.max(l.coreDaysTotal||0,r.coreDaysTotal||0),
-      completedToday:[...new Set([...(l.completedToday||[]),(r.completedToday||[])])],
-      completedMonth:[...new Set([...(l.completedMonth||[]),(r.completedMonth||[])])],
-      claimedRewards:[...new Set([...(l.claimedRewards||[]),(r.claimedRewards||[])])],
-      pending:[...new Set([...(l.pending||[]),(r.pending||[])])],
+      completedToday:_mergeStrArr(l.completedToday,r.completedToday),
+      completedMonth:_mergeStrArr(l.completedMonth,r.completedMonth),
+      claimedRewards:_mergeStrArr(l.claimedRewards,r.claimedRewards),
+      pending:_mergeStrArr(l.pending,r.pending),
     };
   });
   merged.monthlyBudget=local.monthlyBudget??remote.monthlyBudget;
-  merged.customGigs=local.customGigs??remote.customGigs;
-  merged.customCoreGigs=local.customCoreGigs??remote.customCoreGigs;
+  // Merge arrays by id so custom gigs added on one device propagate to others
+  const mergeById=(a,b)=>{const m=new Map();[...(a||[]),...(b||[])].forEach(g=>m.set(g.id,g));return[...m.values()]};
+  merged.customGigs=mergeById(local.customGigs,remote.customGigs);
+  merged.customCoreGigs=mergeById(local.customCoreGigs,remote.customCoreGigs);
   merged.pins=local.pins??remote.pins;
-  merged.gigOverrides=local.gigOverrides??remote.gigOverrides;
+  merged.gigOverrides={...(remote.gigOverrides||{}),...(local.gigOverrides||{})};
   const allLogs=[...(local.log||[]),...(remote.log||[])];
   const seen=new Set();
   merged.log=allLogs.filter(e=>{const k=`${e.ts||e.time}-${e.who}-${e.name}`;if(seen.has(k))return false;seen.add(k);return true}).slice(0,100);
   return merged;
 }
 function startPolling(){if(syncTimer)clearInterval(syncTimer);syncTimer=setInterval(()=>{syncFromServer();updateSyncBadge()},30000);syncFromServer()}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&FAMILY_CODE)syncFromServer();});
 let lastSyncedTime=null;
 function setSyncSt(s){syncSt=s;if(s==='synced')lastSyncedTime=new Date();updateSyncBadge()}
 function updateSyncBadge(){
@@ -2874,9 +3067,33 @@ function resetGigOverride(){
 document.getElementById('login-screen').classList.remove('h');
 initSync();
 
+// If localStorage looks empty (fresh install or iOS wipe), restore from device backup
+(async()=>{
+  const stateEmpty=!S.zara.xp&&!S.lune.xp&&!S.zara.earned&&!S.lune.earned&&!(S.zara.completedMonth||[]).length;
+  if(stateEmpty){
+    const restored=await restoreFromDevice();
+    if(restored){
+      // Re-run daily/monthly resets on restored state then re-render login screen
+      loadS();
+    }
+  }
+  // Ensure device ID is created and first backup happens
+  getDeviceId();
+})();
+
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'&&navigator.serviceWorker.controller){
+            navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload(),{once:true});
+          }
+        });
+      });
+    }).catch(()=>{});
   });
 }
 </script>
